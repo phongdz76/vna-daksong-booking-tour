@@ -1,88 +1,88 @@
-# VNA Dak Song Booking Tour
+# VNA Đắk Song Booking Tour
 
 ![MERN Stack](https://img.shields.io/badge/Stack-MERN-blue?style=for-the-badge&logo=mongodb)
 ![React](https://img.shields.io/badge/Frontend-React%20Zalo%20Mini%20App-0088FF?style=for-the-badge&logo=react)
 ![NodeJS](https://img.shields.io/badge/Backend-NodeJS%20%26%20Express-339933?style=for-the-badge&logo=nodedotjs)
 
-> Zalo Mini App danh cho nen tang du lich Dak Song cua Tap doan VNA (VNA Group). Ung dung cung cap cac dich vu kham pha danh lam thang canh, trai nghiem am thuc va dac biet la he thong Dat Tour du lich toan dien ngay tren nen tang Zalo.
+> Zalo Mini App dành cho nền tảng du lịch Đắk Song của Tập đoàn VNA (VNA Group). Ứng dụng cung cấp các dịch vụ khám phá danh lam thắng cảnh, trải nghiệm ẩm thực và đặc biệt là hệ thống Đặt Tour du lịch toàn diện ngay trên nền tảng Zalo.
 
 ---
 
-## Tong quan tinh nang (Features)
+## Tổng quan tính năng (Features)
 
-### Danh cho Khach hang (User App)
-- Kham pha Dak Song: Doc cac bai viet van hoa, am thuc, ngam cac diem den check-in hot.
-- Tim kiem Tour: Loc Tour theo gia, chu de (thien nhien, lich su, van hoa), thoi luong.
-- Len lich trinh: Chon ngay khoi hanh, so luong nguoi va nhan bao gia tu dong.
-- Booking & Chot don: Trai nghiem dat tour muot ma, luu tru lich su dat chuyen an toan voi Idempotency-Key.
+### Dành cho Khách hàng (User App)
+- Khám phá Đắk Song: Đọc các bài viết văn hóa, ẩm thực, ngắm các điểm đến check-in hot.
+- Tìm kiếm Tour: Lọc Tour theo giá, chủ đề (thiên nhiên, lịch sử, văn hóa), thời lượng.
+- Lên lịch trình: Chọn ngày khởi hành, số lượng người và nhận báo giá tự động.
+- Booking & Chốt đơn: Trải nghiệm đặt tour mượt mà, lưu trữ lịch sử đặt chuyến an toàn với Idempotency-Key.
 
-### Danh cho Quan tri vien (Admin Portal)
-- Quan ly Noi dung (CMS): Them, sua, xoa cac Diem den, Bai viet thong qua trinh soan thao.
-- Quan tri Tour: Dong/mo cac chuyen khoi hanh, cap nhat gia linh hoat ma khong anh huong toi don cu.
-- Xu ly Don hang: Xem danh sach khach dat, tien hanh Xac nhan (Duyet) hoac Tu choi don hang.
-- Dashboard: Thong ke luong truy cap, luong don dat va doanh thu theo thoi gian thuc.
+### Dành cho Quản trị viên (Admin Portal)
+- Quản lý Nội dung (CMS): Thêm, sửa, xóa các Điểm đến, Bài viết thông qua trình soạn thảo.
+- Quản trị Tour: Đóng/mở các chuyến khởi hành, cập nhật giá linh hoạt mà không ảnh hưởng tới đơn cũ.
+- Xử lý Đơn hàng: Xem danh sách khách đặt, tiến hành Xác nhận (Duyệt) hoặc Từ chối đơn hàng.
+- Dashboard: Thống kê lượng truy cập, lượng đơn đặt và doanh thu theo thời gian thực.
 
 ---
 
-## Cong nghe su dung (Tech Stack)
+## Công nghệ sử dụng (Tech Stack)
 
 ### Frontend (Zalo Mini App)
-- ReactJS 18 & TypeScript: Logic giao dien an toan, de bao tri.
-- ZaUI (zmp-ui): Bo UI Components duoc thiet ke rieng, toi uu hoa cho man hinh Zalo.
-- Vite: Cong cu build sieu toc.
-- React Router (Memory Router): Dieu huong trang ma khong phu thuoc vao URL thanh trinh duyet.
+- ReactJS 18 & TypeScript: Logic giao diện an toàn, dễ bảo trì.
+- ZaUI (zmp-ui): Bộ UI Components được thiết kế riêng, tối ưu hóa cho màn hình Zalo.
+- Vite: Công cụ build siêu tốc.
+- React Router (Memory Router): Điều hướng trang mà không phụ thuộc vào URL thanh trình duyệt.
 
 ### Backend (RESTful API)
-- Node.js & Express (v5.x): Framework API manh me, toc do cao.
-- MongoDB Atlas & Mongoose (v9): Co so du lieu linh hoat, tra cuu Text-Search than toc.
-- JWT & Bcrypt: Phan quyen va bao mat tai khoan tuyet doi.
-- Cloudinary & Multer: Quan ly CDN, tu dong xu ly va luu tru hinh anh toi uu tren may.
+- Node.js & Express (v5.x): Framework API mạnh mẽ, tốc độ cao.
+- MongoDB Atlas & Mongoose (v9): Cơ sở dữ liệu linh hoạt, tra cứu Text-Search thần tốc.
+- JWT & Bcrypt: Phân quyền và bảo mật tài khoản tuyệt đối.
+- Cloudinary & Multer: Quản lý CDN, tự động xử lý và lưu trữ hình ảnh tối ưu trên mây.
 
 ---
 
-## Huong dan cai dat (Installation)
+## Hướng dẫn cài đặt (Installation)
 
-### 1. Chuan bi Moi truong
-- Dam bao da cai dat [Node.js](https://nodejs.org/en/) (>= 20.19.0).
-- Cai dat co so du lieu [MongoDB](https://www.mongodb.com/).
-- Co tai khoan [Cloudinary](https://cloudinary.com/).
+### 1. Chuẩn bị Môi trường
+- Đảm bảo đã cài đặt [Node.js](https://nodejs.org/en/) (>= 20.19.0).
+- Cài đặt cơ sở dữ liệu [MongoDB](https://www.mongodb.com/).
+- Có tài khoản [Cloudinary](https://cloudinary.com/).
 
-### 2. Cau hinh Backend
-Di chuyen vao thu muc `backend`:
+### 2. Cấu hình Backend
+Di chuyển vào thư mục `backend`:
 ```bash
 cd backend
 npm install
 ```
 
-Tao file `.env` bang cach copy tu file mau va dien cac thong tin cua ban:
+Tạo file `.env` bằng cách copy từ file mẫu và điền các thông tin của bạn:
 ```bash
 cp .env.example .env
 ```
-Mo file `.env` va dien: `MONGO_URI`, `JWT_SECRET`, `ADMIN_EMAIL`, va cau hinh `CLOUDINARY_...`.
+Mở file `.env` và điền: `MONGO_URI`, `JWT_SECRET`, `ADMIN_EMAIL`, và cấu hình `CLOUDINARY_...`.
 
-Tao tai khoan Admin mac dinh:
+Tạo tài khoản Admin mặc định:
 ```bash
 npm run create:admin
 ```
 
-Chay Server:
+Chạy Server:
 ```bash
 npm run dev
 ```
-*(Server se chay tai `http://localhost:8000`)*
+*(Server sẽ chạy tại `http://localhost:8000`)*
 
-### 3. Cau hinh Frontend
-Di chuyen vao thu muc `frontend`:
+### 3. Cấu hình Frontend
+Di chuyển vào thư mục `frontend`:
 ```bash
 cd frontend
 npm install
 ```
-Chay ung dung Frontend:
+Chạy ứng dụng Frontend:
 ```bash
 npm run dev
 ```
 
 ---
 
-## Giay phep (License)
-Ban quyen thuoc ve VNA Group. Nghiem cam sao chep duoi moi hinh thuc neu khong duoc phep.
+## Giấy phép (License)
+Bản quyền thuộc về VNA Group. Nghiêm cấm sao chép dưới mọi hình thức nếu không được phép.
