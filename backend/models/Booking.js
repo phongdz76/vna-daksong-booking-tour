@@ -1,0 +1,43 @@
+import mongoose from "mongoose";
+
+export const bookingStatuses = ["pending_confirmation", "confirmed", "completed", "cancelled", "rejected"];
+const bookingSchema = new mongoose.Schema({
+  code: { type: String, required: true, unique: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true, immutable: true },
+  tourId: { type: mongoose.Schema.Types.ObjectId, ref: "Tour", required: true, immutable: true },
+  departureId: { type: mongoose.Schema.Types.ObjectId, ref: "Departure", required: true, index: true, immutable: true },
+  adults: { type: Number, required: true, min: 1 },
+  children: { type: Number, required: true, min: 0 },
+  contact: {
+    name: { type: String, required: true, maxlength: 200 },
+    phone: { type: String, required: true, maxlength: 20 },
+  },
+  note: { type: String, maxlength: 2000, default: "" },
+  snapshot: {
+    tourName: { type: String, required: true },
+    departureAt: { type: Date, required: true },
+    meetingPoint: { type: String, required: true },
+    childPolicy: { type: String, default: "" },
+    cancellationPolicy: { type: String, required: true },
+    adultPrice: { type: Number, required: true },
+    childPrice: { type: Number, default: null },
+    total: { type: Number, required: true },
+    currency: { type: String, enum: ["VND"], default: "VND" },
+  },
+  status: { type: String, enum: bookingStatuses, default: "pending_confirmation", index: true },
+  history: [{
+    _id: false,
+    status: { type: String, enum: bookingStatuses, required: true },
+    actorId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    reason: { type: String, maxlength: 1000, default: "" },
+    at: { type: Date, default: Date.now },
+  }],
+  idempotencyKey: { type: String, required: true, select: false },
+  requestHash: { type: String, required: true, select: false },
+}, { timestamps: true, optimisticConcurrency: true });
+
+bookingSchema.index({ userId: 1, idempotencyKey: 1 }, { unique: true });
+bookingSchema.index({ userId: 1, createdAt: -1 });
+const Booking = mongoose.model("Booking", bookingSchema);
+
+export default Booking;
