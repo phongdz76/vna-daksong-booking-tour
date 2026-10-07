@@ -1,0 +1,50 @@
+# Dependencies and package-manager caches
+node_modules/
+.npm/
+.npm-cache/
+.pnpm-store/
+.yarn/cache/
+
+# Build output and temporary files
+dist/
+build/
+coverage/
+.vite/
+*.tsbuildinfo
+*.log
+logs/
+tmp/
+temp/
+
+# Local configuration and credentials (keep shared examples)
+.env
+.env.*
+!.env.example
+!.env.*.example
+.npmrc
+*.pem
+*.key
+
+# Local Zalo tooling state
+.zmp/
+.zmp-cache/
+
+# Local project skills
+/skills/
+
+# Editor and operating-system files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+
+# Agent configuration (local only)
+AGENTS.md
+
+# Documents
+docs/
