@@ -152,7 +152,8 @@ export const createArticle = async (req, res) => {
       destinationIds: Array.isArray(destinationIds) ? [...new Set(destinationIds)] : [],
       images: Array.isArray(images) ? images : [],
       sources: Array.isArray(sources) ? sources : [],
-      status: finalStatus
+      status: finalStatus,
+      publishedAt: finalStatus === "published" ? new Date() : null,
     });
 
     res.status(201).json(article);
@@ -177,6 +178,8 @@ export const updateArticle = async (req, res) => {
     if (!article) {
       return res.status(404).json({ message: "Bài viết không tồn tại." });
     }
+
+    const wasPublished = article.status === "published";
 
     const { title, slug, summary, content, category, destinationIds, images, sources, status } = req.body;
 
@@ -218,6 +221,9 @@ export const updateArticle = async (req, res) => {
       return res.status(400).json({ message: "Nội dung xuất bản cần có ít nhất một nguồn." });
     }
 
+    if (article.status === "published" && !article.publishedAt) {
+      article.publishedAt = wasPublished ? article.createdAt : new Date();
+    }
     await article.save();
     res.json(article);
   } catch (error) {

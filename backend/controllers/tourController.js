@@ -2,6 +2,7 @@ import Tour from "../models/Tour.js";
 import Destination from "../models/Destination.js";
 import User from "../models/User.js";
 import mongoose from "mongoose";
+import { getReviewSummary } from "../utils/reviewStats.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 const ALLOWED_THEMES = ["nature", "culture", "food", "history"];
@@ -115,7 +116,12 @@ export const getTours = async (req, res) => {
     }
     
     pipeline.push({ $unset: ["availableDepartures", "description", "bookingRevision"] });
-    pipeline.push({ $facet: { data: [{ $sort: sortCriteria }, { $skip: skip }, { $limit: pageLimit }], count: [{ $count: "total" }] } });
+    pipeline.push({ $facet: { data: [
+      { $sort: sortCriteria }, { $skip: skip }, { $limit: pageLimit },
+      { $lookup: { from: "reviews", localField: "_id", foreignField: "tourId", pipeline: [{ $group: { _id: null, averageRating: { $avg: "$rating" }, reviewCount: { $sum: 1 } } }], as: "reviewSummary" } },
+      { $set: { averageRating: { $ifNull: [{ $first: "$reviewSummary.averageRating" }, null] }, reviewCount: { $ifNull: [{ $first: "$reviewSummary.reviewCount" }, 0] } } },
+      { $unset: "reviewSummary" },
+    ], count: [{ $count: "total" }] } });
     
     const [result] = await Tour.aggregate(pipeline);
     const total = result.count[0]?.total || 0;
@@ -153,7 +159,8 @@ export const getTourById = async (req, res) => {
       return res.status(404).json({ message: "Tour không tồn tại." });
     }
 
-    res.json(tour);
+    const summary = await getReviewSummary(tour._id);
+    res.json({ ...tour.toObject(), averageRating: summary.averageRating, reviewCount: summary.reviewCount });
   } catch (error) {
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }

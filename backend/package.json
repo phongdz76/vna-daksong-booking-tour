@@ -7,8 +7,8 @@
     "dev": "nodemon server.js",
     "start": "node server.js",
     "create:admin": "node createAdmin.js",
-    "seed:test-users": "node scripts/seedTestUsers.js",
-    "test:api": "node tests/all-api.test.mjs"
+    "test:api": "node tests/all-api.test.mjs",
+    "test:notifications": "node tests/notifications.test.mjs"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

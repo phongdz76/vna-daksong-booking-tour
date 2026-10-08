@@ -10,12 +10,16 @@ import {
   toggleSavedTour,
 } from "../controllers/tourController.js";
 import { getTourDepartures } from "../controllers/departureController.js";
+import { getTourReviews, getReviewEligibility, createReview } from "../controllers/reviewController.js";
 
 const router = express.Router();
 
 router.get("/saved", protect, getSavedTours); // ⬆ Note: Specific route MUST be placed before /:id route
 
 router.get("/", optionalProtect, getTours);
+router.get("/:id/reviews/eligibility", protect, getReviewEligibility);
+router.get("/:id/reviews", optionalProtect, getTourReviews);
+router.post("/:id/reviews", protect, createReview);
 router.get("/:id/departures", optionalProtect, getTourDepartures);
 router.get("/:id", optionalProtect, getTourById);
 router.post("/:id/save", protect, toggleSavedTour);

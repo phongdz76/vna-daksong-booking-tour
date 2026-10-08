@@ -1,20 +1,20 @@
 {
-  "startedAt": "2026-10-08T04:31:06.969Z",
-  "finishedAt": "2026-10-08T04:32:24.023Z",
-  "runId": "1791433866969-7e525611",
+  "startedAt": "2026-10-08T10:15:19.433Z",
+  "finishedAt": "2026-10-08T10:16:46.773Z",
+  "runId": "1791454519432-8983db1b",
   "mode": "Actual server.js, real local HTTP, isolated MongoDB database, simulated external providers",
-  "databaseName": "vna_api_test_1791433866969_7e525611",
+  "databaseName": "vna_api_test_1791454519432_8983db1b",
   "dbConnected": true,
   "temporaryDatabaseDropped": true,
   "summary": {
-    "total": 220,
-    "passed": 220,
+    "total": 253,
+    "passed": 253,
     "failed": 0,
-    "coveredEndpoints": 50,
-    "totalEndpoints": 50,
-    "coveredApiEndpoints": 49,
-    "totalApiEndpoints": 49,
-    "httpRequests": 358
+    "coveredEndpoints": 58,
+    "totalEndpoints": 58,
+    "coveredApiEndpoints": 57,
+    "totalApiEndpoints": 57,
+    "httpRequests": 429
   },
   "infrastructureError": null,
   "notVerified": [
@@ -189,9 +189,36 @@
     {
       "method": "GET",
       "path": "/api/tours",
-      "requests": 13,
-      "successResponses": 7,
-      "passCases": 13,
+      "requests": 14,
+      "successResponses": 8,
+      "passCases": 14,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/tours/:id/reviews/eligibility",
+      "requests": 5,
+      "successResponses": 4,
+      "passCases": 4,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/tours/:id/reviews",
+      "requests": 18,
+      "successResponses": 8,
+      "passCases": 9,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/tours/:id/reviews",
+      "requests": 23,
+      "successResponses": 3,
+      "passCases": 16,
       "failCases": 0,
       "externalMocked": false
     },
@@ -207,9 +234,9 @@
     {
       "method": "GET",
       "path": "/api/tours/:id",
-      "requests": 7,
-      "successResponses": 4,
-      "passCases": 6,
+      "requests": 9,
+      "successResponses": 6,
+      "passCases": 8,
       "failCases": 0,
       "externalMocked": false
     },
@@ -473,6 +500,51 @@
       "passCases": 3,
       "failCases": 0,
       "externalMocked": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/reviews/:id",
+      "requests": 9,
+      "successResponses": 1,
+      "passCases": 4,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/reviews/:id",
+      "requests": 6,
+      "successResponses": 3,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/notifications",
+      "requests": 4,
+      "successResponses": 4,
+      "passCases": 3,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/notifications/read-all",
+      "requests": 2,
+      "successResponses": 1,
+      "passCases": 1,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/notifications/:id/read",
+      "requests": 1,
+      "successResponses": 1,
+      "passCases": 1,
+      "failCases": 0,
+      "externalMocked": false
     }
   ],
   "results": [
@@ -490,7 +562,7 @@
           "message": null
         }
       ],
-      "durationMs": 21
+      "durationMs": 27
     },
     {
       "id": 2,
@@ -506,7 +578,7 @@
           "message": "Không tìm thấy API."
         }
       ],
-      "durationMs": 5,
+      "durationMs": 11,
       "evidence": {
         "message": "Không tìm thấy API.",
         "code": "NOT_FOUND"
@@ -526,7 +598,7 @@
           "message": "Unexpected end of JSON input"
         }
       ],
-      "durationMs": 16,
+      "durationMs": 22,
       "evidence": {
         "message": "Unexpected end of JSON input"
       }
@@ -545,7 +617,7 @@
           "message": null
         }
       ],
-      "durationMs": 150
+      "durationMs": 166
     },
     {
       "id": 5,
@@ -561,7 +633,7 @@
           "message": "Email hoặc mật khẩu không đúng."
         }
       ],
-      "durationMs": 128,
+      "durationMs": 135,
       "evidence": {
         "message": "Email hoặc mật khẩu không đúng."
       }
@@ -580,7 +652,7 @@
           "message": "Email is required"
         }
       ],
-      "durationMs": 4,
+      "durationMs": 3,
       "evidence": {
         "message": "Email is required"
       }
@@ -599,7 +671,7 @@
           "message": "Mật khẩu không hợp lệ."
         }
       ],
-      "durationMs": 3,
+      "durationMs": 2,
       "evidence": {
         "message": "Mật khẩu không hợp lệ."
       }
@@ -618,7 +690,7 @@
           "message": "Mock login không được phép. Cần cấu hình ALLOW_MOCK_LOGIN=true trong .env."
         }
       ],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "id": 9,
@@ -634,7 +706,7 @@
           "message": "Mock login không được phép. Cần cấu hình ALLOW_MOCK_LOGIN=true trong .env."
         }
       ],
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "id": 10,
@@ -650,7 +722,7 @@
           "message": null
         }
       ],
-      "durationMs": 68
+      "durationMs": 66
     },
     {
       "id": 11,
@@ -666,7 +738,7 @@
           "message": null
         }
       ],
-      "durationMs": 64
+      "durationMs": 61
     },
     {
       "id": 12,
@@ -717,7 +789,7 @@
           "message": "Bạn cần đăng nhập để tiếp tục."
         }
       ],
-      "durationMs": 1,
+      "durationMs": 2,
       "evidence": {
         "message": "Bạn cần đăng nhập để tiếp tục.",
         "code": "AUTH_REQUIRED"
@@ -737,7 +809,7 @@
           "message": "Token không hợp lệ hoặc đã hết hạn."
         }
       ],
-      "durationMs": 1,
+      "durationMs": 2,
       "evidence": {
         "message": "Token không hợp lệ hoặc đã hết hạn.",
         "code": "INVALID_TOKEN"
@@ -773,7 +845,7 @@
           "message": "Token không hợp lệ hoặc đã hết hạn."
         }
       ],
-      "durationMs": 2
+      "durationMs": 4
     },
     {
       "id": 18,
@@ -789,7 +861,7 @@
           "message": "Tài khoản không còn hoạt động."
         }
       ],
-      "durationMs": 181
+      "durationMs": 175
     },
     {
       "id": 19,
@@ -805,7 +877,7 @@
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 67
+      "durationMs": 72
     },
     {
       "id": 20,
@@ -821,7 +893,7 @@
           "message": null
         }
       ],
-      "durationMs": 63
+      "durationMs": 64
     },
     {
       "id": 21,
@@ -875,7 +947,7 @@
           "message": "Zalo không xác nhận được phiên đăng nhập."
         }
       ],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "id": 24,
@@ -907,7 +979,7 @@
           "message": "Chưa liên lạc được với Zalo. Vui lòng thử lại."
         }
       ],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "id": 26,
@@ -923,7 +995,7 @@
           "message": "Chưa cấu hình ZALO_APP_SECRET."
         }
       ],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "id": 27,
@@ -939,7 +1011,7 @@
           "message": null
         }
       ],
-      "durationMs": 130
+      "durationMs": 121
     },
     {
       "id": 28,
@@ -955,7 +1027,7 @@
           "message": null
         }
       ],
-      "durationMs": 184
+      "durationMs": 175
     },
     {
       "id": 29,
@@ -971,7 +1043,7 @@
           "message": null
         }
       ],
-      "durationMs": 182
+      "durationMs": 174
     },
     {
       "id": 30,
@@ -987,7 +1059,7 @@
           "message": null
         }
       ],
-      "durationMs": 180
+      "durationMs": 178
     },
     {
       "id": 31,
@@ -1003,7 +1075,7 @@
           "message": null
         }
       ],
-      "durationMs": 121
+      "durationMs": 115
     },
     {
       "id": 32,
@@ -1019,7 +1091,7 @@
           "message": null
         }
       ],
-      "durationMs": 119
+      "durationMs": 113
     },
     {
       "id": 33,
@@ -1029,13 +1101,13 @@
       "requests": [
         {
           "method": "GET",
-          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "path": "/api/destinations/6ac76d3ab0a5167040e77078",
           "status": 200,
           "endpoint": "GET /api/destinations/:id",
           "message": null
         }
       ],
-      "durationMs": 60
+      "durationMs": 57
     },
     {
       "id": 34,
@@ -1045,20 +1117,20 @@
       "requests": [
         {
           "method": "PUT",
-          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "path": "/api/destinations/6ac76d3ab0a5167040e77078",
           "status": 200,
           "endpoint": "PUT /api/destinations/:id",
           "message": null
         },
         {
           "method": "GET",
-          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "path": "/api/destinations/6ac76d3ab0a5167040e77078",
           "status": 200,
           "endpoint": "GET /api/destinations/:id",
           "message": null
         }
       ],
-      "durationMs": 298
+      "durationMs": 285
     },
     {
       "id": 35,
@@ -1068,20 +1140,20 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "path": "/api/destinations/6ac76d3ab0a5167040e77078",
           "status": 200,
           "endpoint": "PATCH /api/destinations/:id",
           "message": null
         },
         {
           "method": "GET",
-          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "path": "/api/destinations/6ac76d3ab0a5167040e77078",
           "status": 200,
           "endpoint": "GET /api/destinations/:id",
           "message": null
         }
       ],
-      "durationMs": 293
+      "durationMs": 290
     },
     {
       "id": 36,
@@ -1097,7 +1169,7 @@
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 61,
+      "durationMs": 59,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1111,13 +1183,13 @@
       "requests": [
         {
           "method": "PUT",
-          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "path": "/api/destinations/6ac76d3ab0a5167040e77078",
           "status": 403,
           "endpoint": "PUT /api/destinations/:id",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 59,
+      "durationMs": 58,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1131,13 +1203,13 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "path": "/api/destinations/6ac76d3ab0a5167040e77078",
           "status": 403,
           "endpoint": "PATCH /api/destinations/:id",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 59,
+      "durationMs": 58,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1151,13 +1223,13 @@
       "requests": [
         {
           "method": "DELETE",
-          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "path": "/api/destinations/6ac76d3ab0a5167040e77078",
           "status": 403,
           "endpoint": "DELETE /api/destinations/:id",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 59,
+      "durationMs": 57,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1177,7 +1249,7 @@
           "message": "Invalid destination ID"
         }
       ],
-      "durationMs": 58,
+      "durationMs": 56,
       "evidence": {
         "message": "Invalid destination ID"
       }
@@ -1190,13 +1262,13 @@
       "requests": [
         {
           "method": "GET",
-          "path": "/api/destinations/6ac71c90888a0e02336bdab6",
+          "path": "/api/destinations/6ac76d3cb0a5167040e7707d",
           "status": 404,
           "endpoint": "GET /api/destinations/:id",
           "message": "Điểm đến không tồn tại."
         }
       ],
-      "durationMs": 119,
+      "durationMs": 109,
       "evidence": {
         "message": "Điểm đến không tồn tại."
       }
@@ -1215,7 +1287,7 @@
           "message": null
         }
       ],
-      "durationMs": 125
+      "durationMs": 111
     },
     {
       "id": 43,
@@ -1225,13 +1297,13 @@
       "requests": [
         {
           "method": "GET",
-          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "path": "/api/articles/6ac76d3ab0a5167040e77079",
           "status": 200,
           "endpoint": "GET /api/articles/:id",
           "message": null
         }
       ],
-      "durationMs": 59
+      "durationMs": 57
     },
     {
       "id": 44,
@@ -1241,20 +1313,20 @@
       "requests": [
         {
           "method": "PUT",
-          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "path": "/api/articles/6ac76d3ab0a5167040e77079",
           "status": 200,
           "endpoint": "PUT /api/articles/:id",
           "message": null
         },
         {
           "method": "GET",
-          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "path": "/api/articles/6ac76d3ab0a5167040e77079",
           "status": 200,
           "endpoint": "GET /api/articles/:id",
           "message": null
         }
       ],
-      "durationMs": 295
+      "durationMs": 277
     },
     {
       "id": 45,
@@ -1264,20 +1336,20 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "path": "/api/articles/6ac76d3ab0a5167040e77079",
           "status": 200,
           "endpoint": "PATCH /api/articles/:id",
           "message": null
         },
         {
           "method": "GET",
-          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "path": "/api/articles/6ac76d3ab0a5167040e77079",
           "status": 200,
           "endpoint": "GET /api/articles/:id",
           "message": null
         }
       ],
-      "durationMs": 297
+      "durationMs": 282
     },
     {
       "id": 46,
@@ -1293,7 +1365,7 @@
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 60,
+      "durationMs": 57,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1307,13 +1379,13 @@
       "requests": [
         {
           "method": "PUT",
-          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "path": "/api/articles/6ac76d3ab0a5167040e77079",
           "status": 403,
           "endpoint": "PUT /api/articles/:id",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 59,
+      "durationMs": 57,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1327,13 +1399,13 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "path": "/api/articles/6ac76d3ab0a5167040e77079",
           "status": 403,
           "endpoint": "PATCH /api/articles/:id",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 57,
+      "durationMs": 60,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1347,13 +1419,13 @@
       "requests": [
         {
           "method": "DELETE",
-          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "path": "/api/articles/6ac76d3ab0a5167040e77079",
           "status": 403,
           "endpoint": "DELETE /api/articles/:id",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 59,
+      "durationMs": 58,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1373,7 +1445,7 @@
           "message": "Invalid article ID"
         }
       ],
-      "durationMs": 61,
+      "durationMs": 59,
       "evidence": {
         "message": "Invalid article ID"
       }
@@ -1386,13 +1458,13 @@
       "requests": [
         {
           "method": "GET",
-          "path": "/api/articles/6ac71c91888a0e02336bdab7",
+          "path": "/api/articles/6ac76d3db0a5167040e7707e",
           "status": 404,
           "endpoint": "GET /api/articles/:id",
           "message": "Bài viết không tồn tại."
         }
       ],
-      "durationMs": 119,
+      "durationMs": 118,
       "evidence": {
         "message": "Bài viết không tồn tại."
       }
@@ -1411,7 +1483,7 @@
           "message": null
         }
       ],
-      "durationMs": 62
+      "durationMs": 59
     },
     {
       "id": 53,
@@ -1421,13 +1493,13 @@
       "requests": [
         {
           "method": "GET",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a",
           "status": 200,
           "endpoint": "GET /api/tours/:id",
           "message": null
         }
       ],
-      "durationMs": 60
+      "durationMs": 118
     },
     {
       "id": 54,
@@ -1437,20 +1509,20 @@
       "requests": [
         {
           "method": "PUT",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a",
           "status": 200,
           "endpoint": "PUT /api/tours/:id",
           "message": null
         },
         {
           "method": "GET",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a",
           "status": 200,
           "endpoint": "GET /api/tours/:id",
           "message": null
         }
       ],
-      "durationMs": 291
+      "durationMs": 338
     },
     {
       "id": 55,
@@ -1460,20 +1532,20 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a",
           "status": 200,
           "endpoint": "PATCH /api/tours/:id",
           "message": null
         },
         {
           "method": "GET",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a",
           "status": 200,
           "endpoint": "GET /api/tours/:id",
           "message": null
         }
       ],
-      "durationMs": 292
+      "durationMs": 336
     },
     {
       "id": 56,
@@ -1489,7 +1561,7 @@
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 59,
+      "durationMs": 57,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1503,13 +1575,13 @@
       "requests": [
         {
           "method": "PUT",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a",
           "status": 403,
           "endpoint": "PUT /api/tours/:id",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 58,
+      "durationMs": 57,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1523,13 +1595,13 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a",
           "status": 403,
           "endpoint": "PATCH /api/tours/:id",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 62,
+      "durationMs": 57,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1543,7 +1615,7 @@
       "requests": [
         {
           "method": "DELETE",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a",
           "status": 403,
           "endpoint": "DELETE /api/tours/:id",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
@@ -1569,7 +1641,7 @@
           "message": "ID tour không hợp lệ."
         }
       ],
-      "durationMs": 58,
+      "durationMs": 56,
       "evidence": {
         "message": "ID tour không hợp lệ."
       }
@@ -1582,13 +1654,13 @@
       "requests": [
         {
           "method": "GET",
-          "path": "/api/tours/6ac71c92888a0e02336bdab8",
+          "path": "/api/tours/6ac76d3eb0a5167040e7707f",
           "status": 404,
           "endpoint": "GET /api/tours/:id",
           "message": "Tour không tồn tại."
         }
       ],
-      "durationMs": 151,
+      "durationMs": 112,
       "evidence": {
         "message": "Tour không tồn tại."
       }
@@ -1607,7 +1679,7 @@
           "message": null
         }
       ],
-      "durationMs": 177
+      "durationMs": 167
     },
     {
       "id": 63,
@@ -1617,13 +1689,13 @@
       "requests": [
         {
           "method": "GET",
-          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "path": "/api/departures/6ac76d3bb0a5167040e7707b",
           "status": 200,
           "endpoint": "GET /api/departures/:id",
           "message": null
         }
       ],
-      "durationMs": 120
+      "durationMs": 110
     },
     {
       "id": 64,
@@ -1633,20 +1705,20 @@
       "requests": [
         {
           "method": "PUT",
-          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "path": "/api/departures/6ac76d3bb0a5167040e7707b",
           "status": 200,
           "endpoint": "PUT /api/departures/:id",
           "message": null
         },
         {
           "method": "GET",
-          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "path": "/api/departures/6ac76d3bb0a5167040e7707b",
           "status": 200,
           "endpoint": "GET /api/departures/:id",
           "message": null
         }
       ],
-      "durationMs": 289
+      "durationMs": 308
     },
     {
       "id": 65,
@@ -1656,20 +1728,20 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "path": "/api/departures/6ac76d3bb0a5167040e7707b",
           "status": 200,
           "endpoint": "PATCH /api/departures/:id",
           "message": null
         },
         {
           "method": "GET",
-          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "path": "/api/departures/6ac76d3bb0a5167040e7707b",
           "status": 200,
           "endpoint": "GET /api/departures/:id",
           "message": null
         }
       ],
-      "durationMs": 290
+      "durationMs": 278
     },
     {
       "id": 66,
@@ -1685,7 +1757,7 @@
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 60,
+      "durationMs": 58,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1699,13 +1771,13 @@
       "requests": [
         {
           "method": "PUT",
-          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "path": "/api/departures/6ac76d3bb0a5167040e7707b",
           "status": 403,
           "endpoint": "PUT /api/departures/:id",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 62,
+      "durationMs": 56,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1719,13 +1791,13 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "path": "/api/departures/6ac76d3bb0a5167040e7707b",
           "status": 403,
           "endpoint": "PATCH /api/departures/:id",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 64,
+      "durationMs": 56,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1739,13 +1811,13 @@
       "requests": [
         {
           "method": "DELETE",
-          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "path": "/api/departures/6ac76d3bb0a5167040e7707b",
           "status": 403,
           "endpoint": "DELETE /api/departures/:id",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 59,
+      "durationMs": 55,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1765,7 +1837,7 @@
           "message": "Invalid ID"
         }
       ],
-      "durationMs": 59,
+      "durationMs": 57,
       "evidence": {
         "message": "Invalid ID"
       }
@@ -1778,13 +1850,13 @@
       "requests": [
         {
           "method": "GET",
-          "path": "/api/departures/6ac71c93888a0e02336bdab9",
+          "path": "/api/departures/6ac76d40b0a5167040e77080",
           "status": 404,
           "endpoint": "GET /api/departures/:id",
           "message": "Chuyến không tồn tại"
         }
       ],
-      "durationMs": 131,
+      "durationMs": 111,
       "evidence": {
         "message": "Chuyến không tồn tại"
       }
@@ -1803,7 +1875,7 @@
           "message": null
         }
       ],
-      "durationMs": 174
+      "durationMs": 172
     },
     {
       "id": 73,
@@ -1813,13 +1885,13 @@
       "requests": [
         {
           "method": "PUT",
-          "path": "/api/coupons/6ac71c8f888a0e02336bdab5",
+          "path": "/api/coupons/6ac76d3bb0a5167040e7707c",
           "status": 200,
           "endpoint": "PUT /api/coupons/:id",
           "message": null
         }
       ],
-      "durationMs": 181
+      "durationMs": 170
     },
     {
       "id": 74,
@@ -1835,7 +1907,7 @@
           "message": "Mã giảm giá đã tồn tại."
         }
       ],
-      "durationMs": 118,
+      "durationMs": 113,
       "evidence": {
         "message": "Mã giảm giá đã tồn tại."
       }
@@ -1854,7 +1926,7 @@
           "message": "Phần trăm giảm không được vượt quá 100%."
         }
       ],
-      "durationMs": 61,
+      "durationMs": 57,
       "evidence": {
         "message": "Phần trăm giảm không được vượt quá 100%."
       }
@@ -1873,7 +1945,7 @@
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 63,
+      "durationMs": 57,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1893,7 +1965,7 @@
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 58,
+      "durationMs": 57,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1907,13 +1979,13 @@
       "requests": [
         {
           "method": "PUT",
-          "path": "/api/coupons/6ac71c8f888a0e02336bdab5",
+          "path": "/api/coupons/6ac76d3bb0a5167040e7707c",
           "status": 403,
           "endpoint": "PUT /api/coupons/:id",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 59,
+      "durationMs": 55,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1927,13 +1999,13 @@
       "requests": [
         {
           "method": "DELETE",
-          "path": "/api/coupons/6ac71c8f888a0e02336bdab5",
+          "path": "/api/coupons/6ac76d3bb0a5167040e7707c",
           "status": 403,
           "endpoint": "DELETE /api/coupons/:id",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 59,
+      "durationMs": 56,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -1953,7 +2025,7 @@
           "message": null
         }
       ],
-      "durationMs": 116
+      "durationMs": 115
     },
     {
       "id": 81,
@@ -1969,7 +2041,7 @@
           "message": null
         }
       ],
-      "durationMs": 117
+      "durationMs": 111
     },
     {
       "id": 82,
@@ -1985,7 +2057,7 @@
           "message": null
         }
       ],
-      "durationMs": 115
+      "durationMs": 112
     },
     {
       "id": 83,
@@ -2001,7 +2073,7 @@
           "message": null
         }
       ],
-      "durationMs": 60
+      "durationMs": 79
     },
     {
       "id": 84,
@@ -2011,13 +2083,13 @@
       "requests": [
         {
           "method": "GET",
-          "path": "/api/tours?destinationId=6ac71c8e888a0e02336bdab1&theme=nature&maxDurationHours=4&minPrice=400000&maxPrice=600000&dateFrom=2026-10-13T04%3A31%3A17.198Z&dateTo=2026-10-16T04%3A31%3A17.198Z&sort=price_asc",
+          "path": "/api/tours?destinationId=6ac76d3ab0a5167040e77078&theme=nature&maxDurationHours=4&minPrice=400000&maxPrice=600000&dateFrom=2026-10-13T10%3A15%3A29.403Z&dateTo=2026-10-16T10%3A15%3A29.403Z&sort=price_asc",
           "status": 200,
           "endpoint": "GET /api/tours",
           "message": null
         }
       ],
-      "durationMs": 67
+      "durationMs": 63
     },
     {
       "id": 85,
@@ -2033,26 +2105,26 @@
           "message": null
         }
       ],
-      "durationMs": 60,
+      "durationMs": 65,
       "evidence": {
         "data": [
           {
-            "_id": "6ac71c8e888a0e02336bdab3",
-            "name": "API TEST TOUR 1791433866969-7e525611",
-            "slug": "api-test-tour-1791433866969-7e525611",
+            "_id": "6ac76d3bb0a5167040e7707a",
+            "name": "API TEST TOUR 1791454519432-8983db1b",
+            "slug": "api-test-tour-1791454519432-8983db1b",
             "summary": "Tóm tắt tour đã sửa",
             "durationHours": 4,
             "themes": [
               "nature"
             ],
             "destinationIds": [
-              "6ac71c8e888a0e02336bdab1"
+              "6ac76d3ab0a5167040e77078"
             ],
             "itinerary": [
               {
                 "title": "Điểm dừng demo",
                 "description": "Hoạt động giả lập.",
-                "destinationId": "6ac71c8e888a0e02336bdab1"
+                "destinationId": "6ac76d3ab0a5167040e77078"
               }
             ],
             "images": [],
@@ -2065,11 +2137,13 @@
             "cancellationPolicy": "Chính sách demo.",
             "status": "published",
             "soldCount": 0,
-            "createdAt": "2026-10-08T04:31:10.810Z",
-            "updatedAt": "2026-10-08T04:31:14.080Z",
+            "createdAt": "2026-10-08T10:15:23.109Z",
+            "updatedAt": "2026-10-08T10:15:26.369Z",
             "__v": 2,
             "priceFrom": 500000,
-            "hasUpcomingDeparture": true
+            "hasUpcomingDeparture": true,
+            "averageRating": null,
+            "reviewCount": 0
           }
         ],
         "pagination": {
@@ -2094,26 +2168,26 @@
           "message": null
         }
       ],
-      "durationMs": 60,
+      "durationMs": 57,
       "evidence": {
         "data": [
           {
-            "_id": "6ac71c8e888a0e02336bdab3",
-            "name": "API TEST TOUR 1791433866969-7e525611",
-            "slug": "api-test-tour-1791433866969-7e525611",
+            "_id": "6ac76d3bb0a5167040e7707a",
+            "name": "API TEST TOUR 1791454519432-8983db1b",
+            "slug": "api-test-tour-1791454519432-8983db1b",
             "summary": "Tóm tắt tour đã sửa",
             "durationHours": 4,
             "themes": [
               "nature"
             ],
             "destinationIds": [
-              "6ac71c8e888a0e02336bdab1"
+              "6ac76d3ab0a5167040e77078"
             ],
             "itinerary": [
               {
                 "title": "Điểm dừng demo",
                 "description": "Hoạt động giả lập.",
-                "destinationId": "6ac71c8e888a0e02336bdab1"
+                "destinationId": "6ac76d3ab0a5167040e77078"
               }
             ],
             "images": [],
@@ -2126,11 +2200,13 @@
             "cancellationPolicy": "Chính sách demo.",
             "status": "published",
             "soldCount": 0,
-            "createdAt": "2026-10-08T04:31:10.810Z",
-            "updatedAt": "2026-10-08T04:31:14.080Z",
+            "createdAt": "2026-10-08T10:15:23.109Z",
+            "updatedAt": "2026-10-08T10:15:26.369Z",
             "__v": 2,
             "priceFrom": 500000,
-            "hasUpcomingDeparture": true
+            "hasUpcomingDeparture": true,
+            "averageRating": null,
+            "reviewCount": 0
           }
         ],
         "pagination": {
@@ -2155,26 +2231,26 @@
           "message": null
         }
       ],
-      "durationMs": 58,
+      "durationMs": 57,
       "evidence": {
         "data": [
           {
-            "_id": "6ac71c8e888a0e02336bdab3",
-            "name": "API TEST TOUR 1791433866969-7e525611",
-            "slug": "api-test-tour-1791433866969-7e525611",
+            "_id": "6ac76d3bb0a5167040e7707a",
+            "name": "API TEST TOUR 1791454519432-8983db1b",
+            "slug": "api-test-tour-1791454519432-8983db1b",
             "summary": "Tóm tắt tour đã sửa",
             "durationHours": 4,
             "themes": [
               "nature"
             ],
             "destinationIds": [
-              "6ac71c8e888a0e02336bdab1"
+              "6ac76d3ab0a5167040e77078"
             ],
             "itinerary": [
               {
                 "title": "Điểm dừng demo",
                 "description": "Hoạt động giả lập.",
-                "destinationId": "6ac71c8e888a0e02336bdab1"
+                "destinationId": "6ac76d3ab0a5167040e77078"
               }
             ],
             "images": [],
@@ -2187,11 +2263,13 @@
             "cancellationPolicy": "Chính sách demo.",
             "status": "published",
             "soldCount": 0,
-            "createdAt": "2026-10-08T04:31:10.810Z",
-            "updatedAt": "2026-10-08T04:31:14.080Z",
+            "createdAt": "2026-10-08T10:15:23.109Z",
+            "updatedAt": "2026-10-08T10:15:26.369Z",
             "__v": 2,
             "priceFrom": 500000,
-            "hasUpcomingDeparture": true
+            "hasUpcomingDeparture": true,
+            "averageRating": null,
+            "reviewCount": 0
           }
         ],
         "pagination": {
@@ -2216,26 +2294,26 @@
           "message": null
         }
       ],
-      "durationMs": 60,
+      "durationMs": 57,
       "evidence": {
         "data": [
           {
-            "_id": "6ac71c8e888a0e02336bdab3",
-            "name": "API TEST TOUR 1791433866969-7e525611",
-            "slug": "api-test-tour-1791433866969-7e525611",
+            "_id": "6ac76d3bb0a5167040e7707a",
+            "name": "API TEST TOUR 1791454519432-8983db1b",
+            "slug": "api-test-tour-1791454519432-8983db1b",
             "summary": "Tóm tắt tour đã sửa",
             "durationHours": 4,
             "themes": [
               "nature"
             ],
             "destinationIds": [
-              "6ac71c8e888a0e02336bdab1"
+              "6ac76d3ab0a5167040e77078"
             ],
             "itinerary": [
               {
                 "title": "Điểm dừng demo",
                 "description": "Hoạt động giả lập.",
-                "destinationId": "6ac71c8e888a0e02336bdab1"
+                "destinationId": "6ac76d3ab0a5167040e77078"
               }
             ],
             "images": [],
@@ -2248,11 +2326,13 @@
             "cancellationPolicy": "Chính sách demo.",
             "status": "published",
             "soldCount": 0,
-            "createdAt": "2026-10-08T04:31:10.810Z",
-            "updatedAt": "2026-10-08T04:31:14.080Z",
+            "createdAt": "2026-10-08T10:15:23.109Z",
+            "updatedAt": "2026-10-08T10:15:26.369Z",
             "__v": 2,
             "priceFrom": 500000,
-            "hasUpcomingDeparture": true
+            "hasUpcomingDeparture": true,
+            "averageRating": null,
+            "reviewCount": 0
           }
         ],
         "pagination": {
@@ -2277,7 +2357,7 @@
           "message": "Chủ đề không hợp lệ."
         }
       ],
-      "durationMs": 1,
+      "durationMs": 2,
       "evidence": {
         "message": "Chủ đề không hợp lệ."
       }
@@ -2315,7 +2395,7 @@
           "message": "minPrice phải nhỏ hơn hoặc bằng maxPrice."
         }
       ],
-      "durationMs": 2,
+      "durationMs": 1,
       "evidence": {
         "message": "minPrice phải nhỏ hơn hoặc bằng maxPrice."
       }
@@ -2353,7 +2433,7 @@
           "message": "dateFrom không hợp lệ."
         }
       ],
-      "durationMs": 1,
+      "durationMs": 2,
       "evidence": {
         "message": "dateFrom không hợp lệ."
       }
@@ -2366,13 +2446,13 @@
       "requests": [
         {
           "method": "GET",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3/departures",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/departures",
           "status": 200,
           "endpoint": "GET /api/tours/:id/departures",
           "message": null
         }
       ],
-      "durationMs": 179
+      "durationMs": 167
     },
     {
       "id": 95,
@@ -2388,7 +2468,7 @@
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 58,
+      "durationMs": 59,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -2409,20 +2489,20 @@
         },
         {
           "method": "GET",
-          "path": "/api/destinations/6ac71c95888a0e02336bdabb",
+          "path": "/api/destinations/6ac76d41b0a5167040e77082",
           "status": 404,
           "endpoint": "GET /api/destinations/:id",
           "message": "Điểm đến không tồn tại."
         },
         {
           "method": "GET",
-          "path": "/api/destinations/6ac71c95888a0e02336bdabb",
+          "path": "/api/destinations/6ac76d41b0a5167040e77082",
           "status": 200,
           "endpoint": "GET /api/destinations/:id",
           "message": null
         }
       ],
-      "durationMs": 298
+      "durationMs": 284
     },
     {
       "id": 97,
@@ -2438,7 +2518,7 @@
           "message": "Token không hợp lệ hoặc đã hết hạn."
         }
       ],
-      "durationMs": 1,
+      "durationMs": 2,
       "evidence": {
         "message": "Token không hợp lệ hoặc đã hết hạn.",
         "code": "INVALID_TOKEN"
@@ -2458,7 +2538,7 @@
           "message": "Nội dung xuất bản cần có ít nhất một nguồn."
         }
       ],
-      "durationMs": 60,
+      "durationMs": 59,
       "evidence": {
         "message": "Nội dung xuất bản cần có ít nhất một nguồn."
       }
@@ -2477,7 +2557,7 @@
           "message": "Nội dung xuất bản cần có ít nhất một nguồn."
         }
       ],
-      "durationMs": 116,
+      "durationMs": 114,
       "evidence": {
         "message": "Nội dung xuất bản cần có ít nhất một nguồn."
       }
@@ -2496,7 +2576,7 @@
           "message": "Tour xuất bản cần có lịch trình."
         }
       ],
-      "durationMs": 117,
+      "durationMs": 125,
       "evidence": {
         "message": "Tour xuất bản cần có lịch trình."
       }
@@ -2515,7 +2595,7 @@
           "message": "Điểm dừng phải thuộc destinationIds của tour."
         }
       ],
-      "durationMs": 116,
+      "durationMs": 115,
       "evidence": {
         "message": "Điểm dừng phải thuộc destinationIds của tour."
       }
@@ -2534,7 +2614,7 @@
           "message": "Hạn đặt phải trước thời điểm khởi hành."
         }
       ],
-      "durationMs": 119,
+      "durationMs": 113,
       "evidence": {
         "message": "Hạn đặt phải trước thời điểm khởi hành."
       }
@@ -2553,7 +2633,7 @@
           "message": "Invalid adultPrice"
         }
       ],
-      "durationMs": 61,
+      "durationMs": 56,
       "evidence": {
         "message": "Invalid adultPrice"
       }
@@ -2566,7 +2646,7 @@
       "requests": [
         {
           "method": "POST",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3/save",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/save",
           "status": 200,
           "endpoint": "POST /api/tours/:id/save",
           "message": "Đã lưu tour."
@@ -2579,7 +2659,7 @@
           "message": null
         }
       ],
-      "durationMs": 415
+      "durationMs": 403
     },
     {
       "id": 105,
@@ -2589,7 +2669,7 @@
       "requests": [
         {
           "method": "POST",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3/save",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/save",
           "status": 200,
           "endpoint": "POST /api/tours/:id/save",
           "message": "Đã bỏ lưu tour."
@@ -2602,7 +2682,7 @@
           "message": null
         }
       ],
-      "durationMs": 354
+      "durationMs": 376
     },
     {
       "id": 106,
@@ -2638,7 +2718,7 @@
           "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
         }
       ],
-      "durationMs": 226
+      "durationMs": 114
     },
     {
       "id": 108,
@@ -2692,7 +2772,7 @@
           "message": "Số lượng người lớn không hợp lệ."
         }
       ],
-      "durationMs": 1,
+      "durationMs": 2,
       "evidence": {
         "message": "Số lượng người lớn không hợp lệ."
       }
@@ -2711,7 +2791,7 @@
           "message": "Số lượng trẻ em không hợp lệ."
         }
       ],
-      "durationMs": 2,
+      "durationMs": 1,
       "evidence": {
         "message": "Số lượng trẻ em không hợp lệ."
       }
@@ -2730,7 +2810,7 @@
           "message": "Mỗi yêu cầu nhận tối đa 10 khách."
         }
       ],
-      "durationMs": 124,
+      "durationMs": 109,
       "evidence": {
         "message": "Mỗi yêu cầu nhận tối đa 10 khách."
       }
@@ -2768,7 +2848,7 @@
           "message": "Chuyến không tồn tại."
         }
       ],
-      "durationMs": 58,
+      "durationMs": 59,
       "evidence": {
         "message": "Chuyến không tồn tại."
       }
@@ -2787,7 +2867,7 @@
           "message": "Mã giảm giá không tồn tại."
         }
       ],
-      "durationMs": 173,
+      "durationMs": 169,
       "evidence": {
         "message": "Mã giảm giá không tồn tại."
       }
@@ -2806,7 +2886,7 @@
           "message": "Chuyến chưa có chính sách/giá trẻ em. Vui lòng liên hệ VNA."
         }
       ],
-      "durationMs": 294
+      "durationMs": 289
     },
     {
       "id": 117,
@@ -2822,7 +2902,7 @@
           "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
         }
       ],
-      "durationMs": 233
+      "durationMs": 232
     },
     {
       "id": 118,
@@ -2838,7 +2918,7 @@
           "message": "Mã giảm giá đã hết hạn hoặc hết lượt sử dụng."
         }
       ],
-      "durationMs": 239
+      "durationMs": 230
     },
     {
       "id": 119,
@@ -2854,7 +2934,7 @@
           "message": "Mã giảm giá đã hết hạn hoặc hết lượt sử dụng."
         }
       ],
-      "durationMs": 232
+      "durationMs": 224
     },
     {
       "id": 120,
@@ -2870,7 +2950,7 @@
           "message": "Mã giảm giá đã hết hạn hoặc hết lượt sử dụng."
         }
       ],
-      "durationMs": 235
+      "durationMs": 225
     },
     {
       "id": 121,
@@ -2886,7 +2966,7 @@
           "message": "Đơn hàng chưa đạt điều kiện áp dụng mã giảm giá này."
         }
       ],
-      "durationMs": 234
+      "durationMs": 232
     },
     {
       "id": 122,
@@ -2909,7 +2989,7 @@
           "message": null
         }
       ],
-      "durationMs": 557
+      "durationMs": 507
     },
     {
       "id": 123,
@@ -2925,7 +3005,7 @@
           "message": null
         }
       ],
-      "durationMs": 177
+      "durationMs": 166
     },
     {
       "id": 124,
@@ -2941,7 +3021,7 @@
           "message": "Idempotency-Key đã dùng cho một yêu cầu khác."
         }
       ],
-      "durationMs": 122
+      "durationMs": 113
     },
     {
       "id": 125,
@@ -2957,7 +3037,7 @@
           "message": null
         }
       ],
-      "durationMs": 114
+      "durationMs": 109
     },
     {
       "id": 126,
@@ -3008,11 +3088,11 @@
           "message": null
         }
       ],
-      "durationMs": 1602,
+      "durationMs": 1694,
       "evidence": {
         "statuses": [
-          200,
           201,
+          200,
           200,
           200,
           200
@@ -3053,7 +3133,7 @@
           "message": "Thông tin liên hệ là bắt buộc."
         }
       ],
-      "durationMs": 59,
+      "durationMs": 63,
       "evidence": {
         "message": "Thông tin liên hệ là bắt buộc."
       }
@@ -3072,7 +3152,7 @@
           "message": "Số điện thoại liên hệ là bắt buộc."
         }
       ],
-      "durationMs": 59,
+      "durationMs": 71,
       "evidence": {
         "message": "Số điện thoại liên hệ là bắt buộc."
       }
@@ -3091,7 +3171,7 @@
           "message": "Header Idempotency-Key là bắt buộc (ít nhất 8 ký tự)."
         }
       ],
-      "durationMs": 60,
+      "durationMs": 61,
       "evidence": {
         "message": "Header Idempotency-Key là bắt buộc (ít nhất 8 ký tự)."
       }
@@ -3110,7 +3190,7 @@
           "message": "Header Idempotency-Key là bắt buộc (ít nhất 8 ký tự)."
         }
       ],
-      "durationMs": 60,
+      "durationMs": 62,
       "evidence": {
         "message": "Header Idempotency-Key là bắt buộc (ít nhất 8 ký tự)."
       }
@@ -3129,7 +3209,7 @@
           "message": "Báo giá không hợp lệ hoặc đã hết hạn. Vui lòng lấy báo giá mới."
         }
       ],
-      "durationMs": 117
+      "durationMs": 123
     },
     {
       "id": 133,
@@ -3145,7 +3225,7 @@
           "message": "Báo giá không hợp lệ hoặc đã hết hạn. Vui lòng lấy báo giá mới."
         }
       ],
-      "durationMs": 119
+      "durationMs": 126
     },
     {
       "id": 134,
@@ -3162,7 +3242,7 @@
         },
         {
           "method": "PATCH",
-          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "path": "/api/departures/6ac76d3bb0a5167040e7707b",
           "status": 200,
           "endpoint": "PATCH /api/departures/:id",
           "message": null
@@ -3175,7 +3255,7 @@
           "message": "Giá hoặc điều kiện chuyến đã thay đổi. Vui lòng kiểm tra báo giá mới."
         }
       ],
-      "durationMs": 985
+      "durationMs": 1032
     },
     {
       "id": 135,
@@ -3198,7 +3278,7 @@
           "message": "Số khách vượt quá giới hạn cho phép của chuyến. Vui lòng lấy báo giá mới."
         }
       ],
-      "durationMs": 583
+      "durationMs": 610
     },
     {
       "id": 136,
@@ -3221,7 +3301,7 @@
           "message": "Chuyến không còn nhận yêu cầu."
         }
       ],
-      "durationMs": 587
+      "durationMs": 616
     },
     {
       "id": 137,
@@ -3237,7 +3317,7 @@
           "message": null
         }
       ],
-      "durationMs": 172
+      "durationMs": 183
     },
     {
       "id": 138,
@@ -3253,7 +3333,7 @@
           "message": null
         }
       ],
-      "durationMs": 172
+      "durationMs": 214
     },
     {
       "id": 139,
@@ -3263,13 +3343,13 @@
       "requests": [
         {
           "method": "GET",
-          "path": "/api/bookings/6ac71c99888a0e02336bdac2",
+          "path": "/api/bookings/6ac76d45b0a5167040e77089",
           "status": 200,
           "endpoint": "GET /api/bookings/:id",
           "message": null
         }
       ],
-      "durationMs": 175
+      "durationMs": 186
     },
     {
       "id": 140,
@@ -3279,13 +3359,13 @@
       "requests": [
         {
           "method": "GET",
-          "path": "/api/bookings/6ac71c99888a0e02336bdac2",
+          "path": "/api/bookings/6ac76d45b0a5167040e77089",
           "status": 404,
           "endpoint": "GET /api/bookings/:id",
           "message": "Đơn không tồn tại."
         }
       ],
-      "durationMs": 116,
+      "durationMs": 146,
       "evidence": {
         "message": "Đơn không tồn tại."
       }
@@ -3298,13 +3378,13 @@
       "requests": [
         {
           "method": "GET",
-          "path": "/api/bookings?code=VNA-4C6D130CE4EE&departureId=6ac71c8e888a0e02336bdab4",
+          "path": "/api/bookings?code=VNA-0B10FDD37BE0&departureId=6ac76d3bb0a5167040e7707b",
           "status": 200,
           "endpoint": "GET /api/bookings",
           "message": null
         }
       ],
-      "durationMs": 175
+      "durationMs": 182
     },
     {
       "id": 142,
@@ -3314,13 +3394,13 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71c99888a0e02336bdac2/status",
+          "path": "/api/bookings/6ac76d45b0a5167040e77089/status",
           "status": 403,
           "endpoint": "PATCH /api/bookings/:id/status",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 59,
+      "durationMs": 64,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -3334,13 +3414,13 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71c99888a0e02336bdac2/status",
+          "path": "/api/bookings/6ac76d45b0a5167040e77089/status",
           "status": 200,
           "endpoint": "PATCH /api/bookings/:id/status",
           "message": null
         }
       ],
-      "durationMs": 320
+      "durationMs": 316
     },
     {
       "id": 144,
@@ -3350,13 +3430,13 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71c99888a0e02336bdac2/status",
+          "path": "/api/bookings/6ac76d45b0a5167040e77089/status",
           "status": 409,
           "endpoint": "PATCH /api/bookings/:id/status",
           "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
         }
       ],
-      "durationMs": 174,
+      "durationMs": 182,
       "evidence": {
         "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
       }
@@ -3369,13 +3449,13 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71c99888a0e02336bdac2/status",
+          "path": "/api/bookings/6ac76d45b0a5167040e77089/status",
           "status": 409,
           "endpoint": "PATCH /api/bookings/:id/status",
           "message": "Tour chưa kết thúc nên chưa thể hoàn thành."
         }
       ],
-      "durationMs": 173,
+      "durationMs": 183,
       "evidence": {
         "message": "Tour chưa kết thúc nên chưa thể hoàn thành."
       }
@@ -3388,13 +3468,13 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "path": "/api/departures/6ac76d3bb0a5167040e7707b",
           "status": 409,
           "endpoint": "PATCH /api/departures/:id",
           "message": "Chuyến đã có yêu cầu đặt. Hãy tạo chuyến mới và xử lý với khách trước khi đổi lịch."
         }
       ],
-      "durationMs": 173,
+      "durationMs": 178,
       "evidence": {
         "message": "Chuyến đã có yêu cầu đặt. Hãy tạo chuyến mới và xử lý với khách trước khi đổi lịch."
       }
@@ -3413,7 +3493,7 @@
           "message": null
         }
       ],
-      "durationMs": 118
+      "durationMs": 121
     },
     {
       "id": 148,
@@ -3429,7 +3509,7 @@
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 59,
+      "durationMs": 62,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -3457,13 +3537,13 @@
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71ca1888a0e02336bdac8/cancel",
+          "path": "/api/bookings/6ac76d4db0a5167040e7708f/cancel",
           "status": 400,
           "endpoint": "PATCH /api/bookings/:id/cancel",
           "message": "Cần lý do hủy/từ chối đơn."
         }
       ],
-      "durationMs": 597
+      "durationMs": 614
     },
     {
       "id": 150,
@@ -3473,13 +3553,13 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71ca1888a0e02336bdac8/cancel",
+          "path": "/api/bookings/6ac76d4db0a5167040e7708f/cancel",
           "status": 404,
           "endpoint": "PATCH /api/bookings/:id/cancel",
           "message": "Đơn không tồn tại."
         }
       ],
-      "durationMs": 174,
+      "durationMs": 181,
       "evidence": {
         "message": "Đơn không tồn tại."
       }
@@ -3492,20 +3572,20 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71ca1888a0e02336bdac8/cancel",
+          "path": "/api/bookings/6ac76d4db0a5167040e7708f/cancel",
           "status": 200,
           "endpoint": "PATCH /api/bookings/:id/cancel",
           "message": null
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71ca1888a0e02336bdac8/cancel",
+          "path": "/api/bookings/6ac76d4db0a5167040e7708f/cancel",
           "status": 409,
           "endpoint": "PATCH /api/bookings/:id/cancel",
           "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
         }
       ],
-      "durationMs": 508
+      "durationMs": 505
     },
     {
       "id": 152,
@@ -3515,13 +3595,13 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71ca1888a0e02336bdac8/status",
+          "path": "/api/bookings/6ac76d4db0a5167040e7708f/status",
           "status": 409,
           "endpoint": "PATCH /api/bookings/:id/status",
           "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
         }
       ],
-      "durationMs": 176,
+      "durationMs": 184,
       "evidence": {
         "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
       }
@@ -3548,13 +3628,13 @@
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71ca2888a0e02336bdac9/cancel",
+          "path": "/api/bookings/6ac76d4fb0a5167040e77090/cancel",
           "status": 200,
           "endpoint": "PATCH /api/bookings/:id/cancel",
           "message": null
         }
       ],
-      "durationMs": 1166
+      "durationMs": 1224
     },
     {
       "id": 154,
@@ -3578,27 +3658,27 @@
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71ca3888a0e02336bdaca/status",
+          "path": "/api/bookings/6ac76d50b0a5167040e77091/status",
           "status": 400,
           "endpoint": "PATCH /api/bookings/:id/status",
           "message": "Cần lý do hủy/từ chối đơn."
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71ca3888a0e02336bdaca/status",
+          "path": "/api/bookings/6ac76d50b0a5167040e77091/status",
           "status": 200,
           "endpoint": "PATCH /api/bookings/:id/status",
           "message": null
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71ca3888a0e02336bdaca/status",
+          "path": "/api/bookings/6ac76d50b0a5167040e77091/status",
           "status": 409,
           "endpoint": "PATCH /api/bookings/:id/status",
           "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
         }
       ],
-      "durationMs": 1083
+      "durationMs": 1102
     },
     {
       "id": 155,
@@ -3608,20 +3688,20 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71ca4888a0e02336bdacb/status",
+          "path": "/api/bookings/6ac76d50b0a5167040e77092/status",
           "status": 200,
           "endpoint": "PATCH /api/bookings/:id/status",
           "message": null
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71ca4888a0e02336bdacb/status",
+          "path": "/api/bookings/6ac76d50b0a5167040e77092/status",
           "status": 409,
           "endpoint": "PATCH /api/bookings/:id/status",
           "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
         }
       ],
-      "durationMs": 824,
+      "durationMs": 846,
       "evidence": {
         "fixture": "Chỉ database test; departureAt quá khứ",
         "pointsAdded": 135
@@ -3641,7 +3721,7 @@
           "message": "Không có quyền thanh toán đơn này."
         }
       ],
-      "durationMs": 120,
+      "durationMs": 122,
       "evidence": {
         "message": "Không có quyền thanh toán đơn này."
       }
@@ -3660,7 +3740,7 @@
           "message": "Đơn hàng không thể thanh toán ở trạng thái hiện tại."
         }
       ],
-      "durationMs": 120,
+      "durationMs": 129,
       "evidence": {
         "message": "Đơn hàng không thể thanh toán ở trạng thái hiện tại."
       }
@@ -3679,7 +3759,7 @@
           "message": "Không tìm thấy đơn hàng."
         }
       ],
-      "durationMs": 117,
+      "durationMs": 119,
       "evidence": {
         "message": "Không tìm thấy đơn hàng."
       }
@@ -3728,7 +3808,7 @@
           "message": null
         }
       ],
-      "durationMs": 1223
+      "durationMs": 1263
     },
     {
       "id": 161,
@@ -3744,11 +3824,11 @@
           "message": "Đã có giao dịch đang chờ. Hãy truy vấn trạng thái giao dịch."
         }
       ],
-      "durationMs": 538,
+      "durationMs": 541,
       "evidence": {
         "message": "Đã có giao dịch đang chờ. Hãy truy vấn trạng thái giao dịch.",
         "code": "PAYMENT_PENDING",
-        "appTransId": "261008_0982fcfe2db2711150a98b41"
+        "appTransId": "261008_fcf6afef08d621745765b851"
       }
     },
     {
@@ -3765,7 +3845,7 @@
           "message": "Invalid callback"
         }
       ],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "id": 163,
@@ -3781,7 +3861,7 @@
           "message": "Invalid app_id/app_trans_id"
         }
       ],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "id": 164,
@@ -3797,7 +3877,7 @@
           "message": "Transaction/amount mismatch"
         }
       ],
-      "durationMs": 120
+      "durationMs": 121
     },
     {
       "id": 165,
@@ -3814,13 +3894,13 @@
         },
         {
           "method": "GET",
-          "path": "/api/bookings/6ac71ca5888a0e02336bdacd",
+          "path": "/api/bookings/6ac76d52b0a5167040e77094",
           "status": 200,
           "endpoint": "GET /api/bookings/:id",
           "message": null
         }
       ],
-      "durationMs": 532
+      "durationMs": 555
     },
     {
       "id": 166,
@@ -3836,7 +3916,7 @@
           "message": "success"
         }
       ],
-      "durationMs": 235
+      "durationMs": 238
     },
     {
       "id": 167,
@@ -3852,7 +3932,7 @@
           "message": "Đơn hàng đã được thanh toán hoặc đang hoàn tiền."
         }
       ],
-      "durationMs": 116,
+      "durationMs": 125,
       "evidence": {
         "message": "Đơn hàng đã được thanh toán hoặc đang hoàn tiền."
       }
@@ -3865,13 +3945,13 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71ca5888a0e02336bdacd/cancel",
+          "path": "/api/bookings/6ac76d52b0a5167040e77094/cancel",
           "status": 200,
           "endpoint": "PATCH /api/bookings/:id/cancel",
           "message": null
         }
       ],
-      "durationMs": 316
+      "durationMs": 314
     },
     {
       "id": 169,
@@ -3902,7 +3982,7 @@
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71ca9888a0e02336bdacf/cancel",
+          "path": "/api/bookings/6ac76d55b0a5167040e77096/cancel",
           "status": 200,
           "endpoint": "PATCH /api/bookings/:id/cancel",
           "message": null
@@ -3915,7 +3995,7 @@
           "message": "success"
         }
       ],
-      "durationMs": 1936
+      "durationMs": 1972
     },
     {
       "id": 170,
@@ -3952,7 +4032,7 @@
           "message": "Transaction/amount mismatch"
         }
       ],
-      "durationMs": 1475
+      "durationMs": 1616
     },
     {
       "id": 171,
@@ -3982,7 +4062,7 @@
           "message": "Lỗi tạo giao dịch ZaloPay."
         }
       ],
-      "durationMs": 1250
+      "durationMs": 1350
     },
     {
       "id": 172,
@@ -3998,7 +4078,7 @@
           "message": "Upload thành công"
         }
       ],
-      "durationMs": 66
+      "durationMs": 68
     },
     {
       "id": 173,
@@ -4014,7 +4094,7 @@
           "message": "Vui lòng chọn ảnh để upload."
         }
       ],
-      "durationMs": 60,
+      "durationMs": 64,
       "evidence": {
         "message": "Vui lòng chọn ảnh để upload.",
         "code": "NO_FILE_PROVIDED"
@@ -4034,7 +4114,7 @@
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         }
       ],
-      "durationMs": 60,
+      "durationMs": 61,
       "evidence": {
         "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
         "code": "ADMIN_REQUIRED"
@@ -4054,7 +4134,7 @@
           "message": "Bạn cần đăng nhập để tiếp tục."
         }
       ],
-      "durationMs": 1,
+      "durationMs": 3,
       "evidence": {
         "message": "Bạn cần đăng nhập để tiếp tục.",
         "code": "AUTH_REQUIRED"
@@ -4074,7 +4154,7 @@
           "message": "Không xử lý được yêu cầu."
         }
       ],
-      "durationMs": 60
+      "durationMs": 65
     },
     {
       "id": 177,
@@ -4090,7 +4170,7 @@
           "message": "Địa chỉ không hợp lệ."
         }
       ],
-      "durationMs": 59
+      "durationMs": 60
     },
     {
       "id": 178,
@@ -4106,7 +4186,7 @@
           "message": "Chính sách trẻ em không hợp lệ."
         }
       ],
-      "durationMs": 60
+      "durationMs": 61
     },
     {
       "id": 179,
@@ -4122,7 +4202,7 @@
           "message": "bookingId không hợp lệ."
         }
       ],
-      "durationMs": 60
+      "durationMs": 62
     },
     {
       "id": 180,
@@ -4138,7 +4218,7 @@
           "message": "Chỉ chấp nhận tập tin ảnh."
         }
       ],
-      "durationMs": 60
+      "durationMs": 67
     },
     {
       "id": 181,
@@ -4154,7 +4234,7 @@
           "message": "Ảnh vượt quá giới hạn 5MB."
         }
       ],
-      "durationMs": 77
+      "durationMs": 88
     },
     {
       "id": 182,
@@ -4186,7 +4266,7 @@
           "message": "Dữ liệu không hợp lệ."
         }
       ],
-      "durationMs": 64
+      "durationMs": 67
     },
     {
       "id": 184,
@@ -4196,13 +4276,13 @@
       "requests": [
         {
           "method": "PUT",
-          "path": "/api/coupons/6ac71cae888a0e02336bdad6",
+          "path": "/api/coupons/6ac76d5ab0a5167040e7709d",
           "status": 400,
           "endpoint": "PUT /api/coupons/:id",
           "message": "isActive phải là boolean."
         }
       ],
-      "durationMs": 121
+      "durationMs": 130
     },
     {
       "id": 185,
@@ -4226,13 +4306,13 @@
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71cae888a0e02336bdad7/status",
+          "path": "/api/bookings/6ac76d5bb0a5167040e7709e/status",
           "status": 400,
           "endpoint": "PATCH /api/bookings/:id/status",
           "message": "Lý do phải là chuỗi tối đa 1000 ký tự."
         }
       ],
-      "durationMs": 591
+      "durationMs": 614
     },
     {
       "id": 186,
@@ -4270,13 +4350,13 @@
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71caf888a0e02336bdad8/status",
+          "path": "/api/bookings/6ac76d5cb0a5167040e7709f/status",
           "status": 200,
           "endpoint": "PATCH /api/bookings/:id/status",
           "message": null
         }
       ],
-      "durationMs": 1878
+      "durationMs": 1953
     },
     {
       "id": 187,
@@ -4284,7 +4364,7 @@
       "kind": "regression",
       "status": "PASS",
       "requests": [],
-      "durationMs": 57
+      "durationMs": 60
     },
     {
       "id": 188,
@@ -4300,7 +4380,7 @@
           "message": "success"
         }
       ],
-      "durationMs": 235
+      "durationMs": 243
     },
     {
       "id": 189,
@@ -4344,7 +4424,7 @@
           "message": "success"
         }
       ],
-      "durationMs": 1751
+      "durationMs": 1841
     },
     {
       "id": 190,
@@ -4382,13 +4462,13 @@
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_17128cb59712b0851072a7ae/query",
+          "path": "/api/payments/zalopay/261008_10a9c6a4049a3448583fa67c/query",
           "status": 200,
           "endpoint": "POST /api/payments/zalopay/:appTransId/query",
           "message": null
         }
       ],
-      "durationMs": 2379
+      "durationMs": 2418
     },
     {
       "id": 191,
@@ -4412,20 +4492,20 @@
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71cb5888a0e02336bdade/cancel",
+          "path": "/api/bookings/6ac76d62b0a5167040e770a5/cancel",
           "status": 200,
           "endpoint": "PATCH /api/bookings/:id/cancel",
           "message": null
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71cb5888a0e02336bdade/cancel",
+          "path": "/api/bookings/6ac76d62b0a5167040e770a5/cancel",
           "status": 409,
           "endpoint": "PATCH /api/bookings/:id/cancel",
           "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
         }
       ],
-      "durationMs": 1321
+      "durationMs": 1382
     },
     {
       "id": 192,
@@ -4456,7 +4536,7 @@
         },
         {
           "method": "DELETE",
-          "path": "/api/coupons/6ac71cb6888a0e02336bdadf",
+          "path": "/api/coupons/6ac76d63b0a5167040e770a6",
           "status": 200,
           "endpoint": "DELETE /api/coupons/:id",
           "message": "Đã xóa mã giảm giá."
@@ -4470,13 +4550,13 @@
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71cb7888a0e02336bdae0/cancel",
+          "path": "/api/bookings/6ac76d64b0a5167040e770a7/cancel",
           "status": 200,
           "endpoint": "PATCH /api/bookings/:id/cancel",
           "message": null
         }
       ],
-      "durationMs": 1549
+      "durationMs": 1628
     },
     {
       "id": 193,
@@ -4534,7 +4614,7 @@
           "message": "Đã có giao dịch đang chờ. Hãy truy vấn trạng thái giao dịch."
         }
       ],
-      "durationMs": 1424
+      "durationMs": 1568
     },
     {
       "id": 194,
@@ -4599,7 +4679,7 @@
           "message": "success"
         }
       ],
-      "durationMs": 1585
+      "durationMs": 1629
     },
     {
       "id": 195,
@@ -4629,21 +4709,21 @@
           "message": null
         },
         {
-          "method": "PATCH",
-          "path": "/api/bookings/6ac71cbb888a0e02336bdaea/cancel",
-          "status": 200,
-          "endpoint": "PATCH /api/bookings/:id/cancel",
-          "message": null
-        },
-        {
           "method": "POST",
           "path": "/api/payments/zalopay/webhook",
           "status": 200,
           "endpoint": "POST /api/payments/zalopay/webhook",
           "message": "success"
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac76d68b0a5167040e770b1/cancel",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/cancel",
+          "message": null
         }
       ],
-      "durationMs": 1823
+      "durationMs": 1868
     },
     {
       "id": 196,
@@ -4653,27 +4733,27 @@
       "requests": [
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/query",
+          "path": "/api/payments/zalopay/261008_776aeb95d1f280aaf29dbee4/query",
           "status": 403,
           "endpoint": "POST /api/payments/zalopay/:appTransId/query",
           "message": "Không có quyền xem giao dịch này."
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/query",
+          "path": "/api/payments/zalopay/261008_776aeb95d1f280aaf29dbee4/query",
           "status": 401,
           "endpoint": "POST /api/payments/zalopay/:appTransId/query",
           "message": "Bạn cần đăng nhập để tiếp tục."
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/query",
+          "path": "/api/payments/zalopay/261008_776aeb95d1f280aaf29dbee4/query",
           "status": 200,
           "endpoint": "POST /api/payments/zalopay/:appTransId/query",
           "message": null
         }
       ],
-      "durationMs": 412
+      "durationMs": 432
     },
     {
       "id": 197,
@@ -4717,7 +4797,7 @@
           "message": "Transaction/amount mismatch"
         }
       ],
-      "durationMs": 1652
+      "durationMs": 1716
     },
     {
       "id": 198,
@@ -4748,13 +4828,13 @@
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_c2fe6d383098fd6f0baf975b/query",
+          "path": "/api/payments/zalopay/261008_380b1f1ebd4c6350ddf66353/query",
           "status": 502,
           "endpoint": "POST /api/payments/zalopay/:appTransId/query",
           "message": "Số tiền đối soát không khớp."
         }
       ],
-      "durationMs": 1567
+      "durationMs": 1638
     },
     {
       "id": 199,
@@ -4785,7 +4865,7 @@
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_94fb3dc4ee1f496d730107e0/query",
+          "path": "/api/payments/zalopay/261008_604ede5da5eb3f6fcde3f681/query",
           "status": 200,
           "endpoint": "POST /api/payments/zalopay/:appTransId/query",
           "message": null
@@ -4798,7 +4878,7 @@
           "message": null
         }
       ],
-      "durationMs": 2145
+      "durationMs": 2267
     },
     {
       "id": 200,
@@ -4829,7 +4909,7 @@
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_5ab1493b960b01d7010ce064/query",
+          "path": "/api/payments/zalopay/261008_868594e1e631ae863e9606f4/query",
           "status": 200,
           "endpoint": "POST /api/payments/zalopay/:appTransId/query",
           "message": null
@@ -4842,7 +4922,7 @@
           "message": "Đã có giao dịch đang chờ. Hãy truy vấn trạng thái giao dịch."
         }
       ],
-      "durationMs": 2030
+      "durationMs": 2127
     },
     {
       "id": 201,
@@ -4852,13 +4932,13 @@
       "requests": [
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/query",
+          "path": "/api/payments/zalopay/261008_776aeb95d1f280aaf29dbee4/query",
           "status": 502,
           "endpoint": "POST /api/payments/zalopay/:appTransId/query",
           "message": "Chưa xác định được kết quả ZaloPay. Vui lòng truy vấn trạng thái trước khi thử lại."
         }
       ],
-      "durationMs": 232
+      "durationMs": 248
     },
     {
       "id": 202,
@@ -4895,7 +4975,7 @@
           "message": "success"
         }
       ],
-      "durationMs": 1582
+      "durationMs": 1664
     },
     {
       "id": 203,
@@ -4932,7 +5012,7 @@
           "message": "Đơn hàng đã được thanh toán hoặc đang hoàn tiền."
         }
       ],
-      "durationMs": 2043
+      "durationMs": 2245
     },
     {
       "id": 204,
@@ -4942,13 +5022,13 @@
       "requests": [
         {
           "method": "GET",
-          "path": "/api/bookings/6ac71ca9888a0e02336bdacf",
+          "path": "/api/bookings/6ac76d55b0a5167040e77096",
           "status": 200,
           "endpoint": "GET /api/bookings/:id",
           "message": null
         }
       ],
-      "durationMs": 175
+      "durationMs": 181
     },
     {
       "id": 205,
@@ -4958,21 +5038,21 @@
       "requests": [
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund",
+          "path": "/api/payments/zalopay/261008_776aeb95d1f280aaf29dbee4/refund",
           "status": 403,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund/query",
+          "path": "/api/payments/zalopay/261008_776aeb95d1f280aaf29dbee4/refund/query",
           "status": 403,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
           "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund",
+          "path": "/api/payments/zalopay/261008_776aeb95d1f280aaf29dbee4/refund",
           "status": 401,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
           "message": "Bạn cần đăng nhập để tiếp tục."
@@ -5000,20 +5080,20 @@
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_8a2b15d611943a5321ddaa9e/refund",
+          "path": "/api/payments/zalopay/261008_feef2f674f95783059298a96/refund",
           "status": 409,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
           "message": "Giao dịch chưa ở trạng thái cần hoàn tiền."
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_8a2b15d611943a5321ddaa9e/refund/query",
+          "path": "/api/payments/zalopay/261008_feef2f674f95783059298a96/refund/query",
           "status": 409,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
           "message": "Chưa có yêu cầu hoàn tiền."
         }
       ],
-      "durationMs": 1741
+      "durationMs": 1818
     },
     {
       "id": 206,
@@ -5023,27 +5103,27 @@
       "requests": [
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund",
+          "path": "/api/payments/zalopay/261008_776aeb95d1f280aaf29dbee4/refund",
           "status": 202,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
           "message": null
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund",
+          "path": "/api/payments/zalopay/261008_776aeb95d1f280aaf29dbee4/refund",
           "status": 409,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
           "message": "Đã gửi yêu cầu hoàn tiền. Hãy truy vấn kết quả."
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund/query",
+          "path": "/api/payments/zalopay/261008_776aeb95d1f280aaf29dbee4/refund/query",
           "status": 200,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
           "message": null
         }
       ],
-      "durationMs": 1108
+      "durationMs": 1147
     },
     {
       "id": 207,
@@ -5053,14 +5133,14 @@
       "requests": [
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund/query",
+          "path": "/api/payments/zalopay/261008_776aeb95d1f280aaf29dbee4/refund/query",
           "status": 200,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
           "message": null
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund/query",
+          "path": "/api/payments/zalopay/261008_776aeb95d1f280aaf29dbee4/refund/query",
           "status": 200,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
           "message": null
@@ -5073,7 +5153,7 @@
           "message": "success"
         }
       ],
-      "durationMs": 1205
+      "durationMs": 1265
     },
     {
       "id": 208,
@@ -5111,34 +5191,34 @@
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71ccd888a0e02336bdafb/cancel",
+          "path": "/api/bookings/6ac76d7bb0a5167040e770c2/cancel",
           "status": 200,
           "endpoint": "PATCH /api/bookings/:id/cancel",
           "message": null
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_149cdca2e30797acd71475bc/refund",
+          "path": "/api/payments/zalopay/261008_475a858cf56d1176007e037e/refund",
           "status": 502,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
           "message": "Chưa xác định được kết quả ZaloPay. Vui lòng truy vấn trạng thái trước khi thử lại."
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_149cdca2e30797acd71475bc/refund",
+          "path": "/api/payments/zalopay/261008_475a858cf56d1176007e037e/refund",
           "status": 409,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
           "message": "Đã gửi yêu cầu hoàn tiền. Hãy truy vấn kết quả."
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_149cdca2e30797acd71475bc/refund/query",
+          "path": "/api/payments/zalopay/261008_475a858cf56d1176007e037e/refund/query",
           "status": 200,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
           "message": null
         }
       ],
-      "durationMs": 3090
+      "durationMs": 3245
     },
     {
       "id": 209,
@@ -5148,20 +5228,20 @@
       "requests": [
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_0982fcfe2db2711150a98b41/refund",
+          "path": "/api/payments/zalopay/261008_fcf6afef08d621745765b851/refund",
           "status": 202,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
           "message": null
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_0982fcfe2db2711150a98b41/refund",
+          "path": "/api/payments/zalopay/261008_fcf6afef08d621745765b851/refund",
           "status": 409,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
           "message": "Đã gửi yêu cầu hoàn tiền. Hãy truy vấn kết quả."
         }
       ],
-      "durationMs": 493
+      "durationMs": 487
     },
     {
       "id": 210,
@@ -5171,20 +5251,20 @@
       "requests": [
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_0982fcfe2db2711150a98b41/refund/query",
+          "path": "/api/payments/zalopay/261008_fcf6afef08d621745765b851/refund/query",
           "status": 500,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
           "message": "Không xử lý được yêu cầu."
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/261008_0982fcfe2db2711150a98b41/refund/query",
+          "path": "/api/payments/zalopay/261008_fcf6afef08d621745765b851/refund/query",
           "status": 200,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
           "message": null
         }
       ],
-      "durationMs": 1215
+      "durationMs": 1266
     },
     {
       "id": 211,
@@ -5200,7 +5280,7 @@
           "message": "success"
         }
       ],
-      "durationMs": 463
+      "durationMs": 485
     },
     {
       "id": 212,
@@ -5245,20 +5325,20 @@
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/LEGACY-DUP-1791433866969-7e525611/refund",
+          "path": "/api/payments/zalopay/LEGACY-DUP-1791454519432-8983db1b/refund",
           "status": 202,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
           "message": null
         },
         {
           "method": "POST",
-          "path": "/api/payments/zalopay/LEGACY-DUP-1791433866969-7e525611/refund/query",
+          "path": "/api/payments/zalopay/LEGACY-DUP-1791454519432-8983db1b/refund/query",
           "status": 200,
           "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
           "message": null
         }
       ],
-      "durationMs": 3044
+      "durationMs": 3142
     },
     {
       "id": 213,
@@ -5268,176 +5348,973 @@
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71cd4888a0e02336bdb01/status",
+          "path": "/api/bookings/6ac76d83b0a5167040e770c8/status",
           "status": 500,
           "endpoint": "PATCH /api/bookings/:id/status",
           "message": "Không xử lý được yêu cầu."
         },
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71cd4888a0e02336bdb01/status",
+          "path": "/api/bookings/6ac76d83b0a5167040e770c8/status",
           "status": 200,
           "endpoint": "PATCH /api/bookings/:id/status",
           "message": null
         }
       ],
-      "durationMs": 1013
+      "durationMs": 1021
     },
     {
       "id": 214,
+      "name": "Đánh giá: tour chưa có đánh giá trả trung bình null, số lượng 0",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": null
+        }
+      ],
+      "durationMs": 125
+    },
+    {
+      "id": 215,
+      "name": "Đánh giá: chuẩn bị đơn hoàn thành trong database test riêng",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [],
+      "durationMs": 186
+    },
+    {
+      "id": 216,
+      "name": "Đánh giá: cần đăng nhập khi tạo và xem quyền đánh giá",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 401,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Bạn cần đăng nhập để tiếp tục."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews/eligibility",
+          "status": 401,
+          "endpoint": "GET /api/tours/:id/reviews/eligibility",
+          "message": "Bạn cần đăng nhập để tiếp tục."
+        }
+      ],
+      "durationMs": 3
+    },
+    {
+      "id": 217,
+      "name": "Đánh giá: token sai không được bỏ qua trên API công khai",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 401,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": "Token không hợp lệ hoặc đã hết hạn."
+        }
+      ],
+      "durationMs": 2,
+      "evidence": {
+        "message": "Token không hợp lệ hoặc đã hết hạn.",
+        "code": "INVALID_TOKEN"
+      }
+    },
+    {
+      "id": 218,
+      "name": "Đánh giá: ID tour sai, không tồn tại và phân trang sai",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours/bad-id/reviews",
+          "status": 400,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": "ID tour không hợp lệ."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d84b0a5167040e770cb/reviews",
+          "status": 404,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": "Tour không tồn tại."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews?page=0",
+          "status": 400,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": "Phân trang không hợp lệ."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews?page=NaN",
+          "status": 400,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": "Phân trang không hợp lệ."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews?limit=Infinity",
+          "status": 400,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": "Phân trang không hợp lệ."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews?limit=1.5",
+          "status": 400,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": "Phân trang không hợp lệ."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews?limit=bad",
+          "status": 400,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": "Phân trang không hợp lệ."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews?page=1&page=2",
+          "status": 400,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": "Phân trang không hợp lệ."
+        }
+      ],
+      "durationMs": 66
+    },
+    {
+      "id": 219,
+      "name": "Đánh giá: quyền đánh giá chỉ có đơn hoàn thành của chính mình",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews/eligibility",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id/reviews/eligibility",
+          "message": null
+        }
+      ],
+      "durationMs": 181
+    },
+    {
+      "id": 220,
+      "name": "Đánh giá: chặn đơn chưa hoàn thành và đơn của người khác",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 403,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Chỉ được đánh giá tour từ đơn đã hoàn thành của chính bạn."
+        },
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 403,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Chỉ được đánh giá tour từ đơn đã hoàn thành của chính bạn."
+        },
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 403,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Chỉ được đánh giá tour từ đơn đã hoàn thành của chính bạn."
+        },
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 403,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Chỉ được đánh giá tour từ đơn đã hoàn thành của chính bạn."
+        }
+      ],
+      "durationMs": 721
+    },
+    {
+      "id": 221,
+      "name": "Đánh giá: đơn hoàn thành phải thuộc đúng tour",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d85b0a5167040e770cd/reviews",
+          "status": 403,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Chỉ được đánh giá tour từ đơn đã hoàn thành của chính bạn."
+        }
+      ],
+      "durationMs": 241
+    },
+    {
+      "id": 222,
+      "name": "Đánh giá: chặn số sao sai 0",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 400,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Số sao phải là số nguyên từ 1 đến 5."
+        }
+      ],
+      "durationMs": 61
+    },
+    {
+      "id": 223,
+      "name": "Đánh giá: chặn số sao sai 6",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 400,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Số sao phải là số nguyên từ 1 đến 5."
+        }
+      ],
+      "durationMs": 62
+    },
+    {
+      "id": 224,
+      "name": "Đánh giá: chặn số sao sai 2.5",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 400,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Số sao phải là số nguyên từ 1 đến 5."
+        }
+      ],
+      "durationMs": 60
+    },
+    {
+      "id": 225,
+      "name": "Đánh giá: chặn số sao sai \"5\"",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 400,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Số sao phải là số nguyên từ 1 đến 5."
+        }
+      ],
+      "durationMs": 62
+    },
+    {
+      "id": 226,
+      "name": "Đánh giá: chặn số sao sai null",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 400,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Số sao phải là số nguyên từ 1 đến 5."
+        }
+      ],
+      "durationMs": 60
+    },
+    {
+      "id": 227,
+      "name": "Đánh giá: chặn nhận xét trống",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 400,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Nhận xét cần từ 1 đến 2000 ký tự."
+        }
+      ],
+      "durationMs": 63
+    },
+    {
+      "id": 228,
+      "name": "Đánh giá: chặn nhận xét object",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 400,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Nhận xét cần từ 1 đến 2000 ký tự."
+        }
+      ],
+      "durationMs": 61
+    },
+    {
+      "id": 229,
+      "name": "Đánh giá: chặn nhận xét quá 2000 ký tự",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 400,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Nhận xét cần từ 1 đến 2000 ký tự."
+        }
+      ],
+      "durationMs": 60
+    },
+    {
+      "id": 230,
+      "name": "Đánh giá: không nhận userId hoặc tên tác giả từ client",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 400,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Chỉ gửi bookingId, rating và comment."
+        }
+      ],
+      "durationMs": 61
+    },
+    {
+      "id": 231,
+      "name": "Đánh giá: tạo đánh giá thật từ đơn hoàn thành",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 201,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Đã gửi đánh giá."
+        }
+      ],
+      "durationMs": 362
+    },
+    {
+      "id": 232,
+      "name": "Đánh giá: cùng đơn gửi lần nữa trả 409",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 409,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Đơn này đã được đánh giá. Bạn có thể sửa đánh giá đã gửi."
+        }
+      ],
+      "durationMs": 237
+    },
+    {
+      "id": 233,
+      "name": "Đánh giá: đọc công khai, thống kê đúng, không lộ thông tin đơn/tài khoản",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": null
+        }
+      ],
+      "durationMs": 180
+    },
+    {
+      "id": 234,
+      "name": "Đánh giá: chi tiết và danh sách tour có số sao thật",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id",
+          "message": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours?limit=100",
+          "status": 200,
+          "endpoint": "GET /api/tours",
+          "message": null
+        }
+      ],
+      "durationMs": 177
+    },
+    {
+      "id": 235,
+      "name": "Đánh giá: sau khi gửi, chỉ chủ thấy đánh giá của mình và đơn không còn eligible",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews/eligibility",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id/reviews/eligibility",
+          "message": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews/eligibility",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id/reviews/eligibility",
+          "message": null
+        }
+      ],
+      "durationMs": 412
+    },
+    {
+      "id": 236,
+      "name": "Đánh giá: người khác và admin không sửa số sao của tác giả",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/reviews/6ac76d86b0a5167040e770ce",
+          "status": 404,
+          "endpoint": "PATCH /api/reviews/:id",
+          "message": "Không tìm thấy đánh giá của bạn."
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/reviews/6ac76d86b0a5167040e770ce",
+          "status": 404,
+          "endpoint": "PATCH /api/reviews/:id",
+          "message": "Không tìm thấy đánh giá của bạn."
+        }
+      ],
+      "durationMs": 241
+    },
+    {
+      "id": 237,
+      "name": "Đánh giá: chặn sửa ID đơn/tác giả và payload rỗng",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/reviews/6ac76d86b0a5167040e770ce",
+          "status": 400,
+          "endpoint": "PATCH /api/reviews/:id",
+          "message": "Chỉ được sửa số sao và nhận xét."
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/reviews/6ac76d86b0a5167040e770ce",
+          "status": 400,
+          "endpoint": "PATCH /api/reviews/:id",
+          "message": "Chỉ được sửa số sao và nhận xét."
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/reviews/6ac76d86b0a5167040e770ce",
+          "status": 400,
+          "endpoint": "PATCH /api/reviews/:id",
+          "message": "Số sao phải là số nguyên từ 1 đến 5."
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/reviews/6ac76d86b0a5167040e770ce",
+          "status": 400,
+          "endpoint": "PATCH /api/reviews/:id",
+          "message": "Nhận xét cần từ 1 đến 2000 ký tự."
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/reviews/6ac76d86b0a5167040e770ce",
+          "status": 400,
+          "endpoint": "PATCH /api/reviews/:id",
+          "message": "Chỉ được sửa số sao và nhận xét."
+        }
+      ],
+      "durationMs": 311
+    },
+    {
+      "id": 238,
+      "name": "Đánh giá: chủ sửa sao/nhận xét, thống kê cập nhật",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/reviews/6ac76d86b0a5167040e770ce",
+          "status": 200,
+          "endpoint": "PATCH /api/reviews/:id",
+          "message": "Đã cập nhật đánh giá."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": null
+        }
+      ],
+      "durationMs": 424
+    },
+    {
+      "id": 239,
+      "name": "Đánh giá: 5 request đồng thời cùng đơn chỉ tạo một review",
+      "kind": "concurrency",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 409,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Đơn này đã được đánh giá. Bạn có thể sửa đánh giá đã gửi."
+        },
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 409,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Đơn này đã được đánh giá. Bạn có thể sửa đánh giá đã gửi."
+        },
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 409,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Đơn này đã được đánh giá. Bạn có thể sửa đánh giá đã gửi."
+        },
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 409,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Đơn này đã được đánh giá. Bạn có thể sửa đánh giá đã gửi."
+        },
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 201,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Đã gửi đánh giá."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": null
+        }
+      ],
+      "durationMs": 514
+    },
+    {
+      "id": 240,
+      "name": "Đánh giá: khách khác đánh giá đơn riêng, phân trang không trùng",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 201,
+          "endpoint": "POST /api/tours/:id/reviews",
+          "message": "Đã gửi đánh giá."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews?page=1&limit=1",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews?page=2&limit=1",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": null
+        }
+      ],
+      "durationMs": 650
+    },
+    {
+      "id": 241,
+      "name": "Đánh giá: tour draft không lộ đánh giá ra công khai",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 404,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": "Tour không tồn tại."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": null
+        }
+      ],
+      "durationMs": 415
+    },
+    {
+      "id": 242,
+      "name": "Đánh giá: xóa cần đăng nhập, người khác không xóa được",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "DELETE",
+          "path": "/api/reviews/6ac76d86b0a5167040e770ce",
+          "status": 401,
+          "endpoint": "DELETE /api/reviews/:id",
+          "message": "Bạn cần đăng nhập để tiếp tục."
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/reviews/6ac76d86b0a5167040e770ce",
+          "status": 404,
+          "endpoint": "DELETE /api/reviews/:id",
+          "message": "Không tìm thấy đánh giá hoặc bạn không có quyền xóa."
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/reviews/bad-id",
+          "status": 400,
+          "endpoint": "PATCH /api/reviews/:id",
+          "message": "ID đánh giá không hợp lệ."
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/reviews/6ac76d8ab0a5167040e770d6",
+          "status": 404,
+          "endpoint": "DELETE /api/reviews/:id",
+          "message": "Không tìm thấy đánh giá hoặc bạn không có quyền xóa."
+        }
+      ],
+      "durationMs": 279
+    },
+    {
+      "id": 243,
+      "name": "Đánh giá: chủ xóa và admin kiểm duyệt xóa, thống kê trở về null/0",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "DELETE",
+          "path": "/api/reviews/6ac76d86b0a5167040e770ce",
+          "status": 200,
+          "endpoint": "DELETE /api/reviews/:id",
+          "message": "Đã xóa đánh giá."
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/reviews/6ac76d89b0a5167040e770d0",
+          "status": 200,
+          "endpoint": "DELETE /api/reviews/:id",
+          "message": "Đã xóa đánh giá."
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/reviews/6ac76d89b0a5167040e770d5",
+          "status": 200,
+          "endpoint": "DELETE /api/reviews/:id",
+          "message": "Đã xóa đánh giá."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id/reviews",
+          "message": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id",
+          "message": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/reviews/eligibility",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id/reviews/eligibility",
+          "message": null
+        }
+      ],
+      "durationMs": 759
+    },
+    {
+      "id": 244,
+      "name": "Thông báo công khai chỉ có bài viết đã xuất bản",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/notifications",
+          "status": 200,
+          "endpoint": "GET /api/notifications",
+          "message": null
+        }
+      ],
+      "durationMs": 76
+    },
+    {
+      "id": 245,
+      "name": "Đọc thông báo qua server thật lưu trạng thái cho tài khoản",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/notifications?type=article",
+          "status": 200,
+          "endpoint": "GET /api/notifications",
+          "message": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/notifications/article%3A6ac76d3ab0a5167040e77079/read",
+          "status": 200,
+          "endpoint": "PATCH /api/notifications/:id/read",
+          "message": "Đã đọc thông báo."
+        },
+        {
+          "method": "GET",
+          "path": "/api/notifications?type=article",
+          "status": 200,
+          "endpoint": "GET /api/notifications",
+          "message": null
+        }
+      ],
+      "durationMs": 571
+    },
+    {
+      "id": 246,
+      "name": "Đọc tất cả thông báo yêu cầu đăng nhập và xóa số chưa đọc",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/notifications/read-all",
+          "status": 401,
+          "endpoint": "PATCH /api/notifications/read-all",
+          "message": "Bạn cần đăng nhập để tiếp tục."
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/notifications/read-all",
+          "status": 200,
+          "endpoint": "PATCH /api/notifications/read-all",
+          "message": "Đã đọc tất cả thông báo hiện có."
+        },
+        {
+          "method": "GET",
+          "path": "/api/notifications",
+          "status": 200,
+          "endpoint": "GET /api/notifications",
+          "message": null
+        }
+      ],
+      "durationMs": 318
+    },
+    {
+      "id": 247,
       "name": "Khách được hủy booking A đã confirmed",
       "kind": "contract",
       "status": "PASS",
       "requests": [
         {
           "method": "PATCH",
-          "path": "/api/bookings/6ac71c99888a0e02336bdac2/cancel",
+          "path": "/api/bookings/6ac76d45b0a5167040e77089/cancel",
           "status": 200,
           "endpoint": "PATCH /api/bookings/:id/cancel",
           "message": null
         }
       ],
-      "durationMs": 360
+      "durationMs": 382
     },
     {
-      "id": 215,
+      "id": 248,
       "name": "Admin DELETE Coupon xóa document",
       "kind": "contract",
       "status": "PASS",
       "requests": [
         {
           "method": "DELETE",
-          "path": "/api/coupons/6ac71c8f888a0e02336bdab5",
+          "path": "/api/coupons/6ac76d3bb0a5167040e7707c",
           "status": 200,
           "endpoint": "DELETE /api/coupons/:id",
           "message": "Đã xóa mã giảm giá."
         }
       ],
-      "durationMs": 176
+      "durationMs": 183
     },
     {
-      "id": 216,
+      "id": 249,
       "name": "Admin DELETE Departure là đóng nhận đặt",
       "kind": "contract",
       "status": "PASS",
       "requests": [
         {
           "method": "DELETE",
-          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "path": "/api/departures/6ac76d3bb0a5167040e7707b",
           "status": 200,
           "endpoint": "DELETE /api/departures/:id",
           "message": "Đã đóng nhận yêu cầu cho chuyến."
         },
         {
           "method": "GET",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3/departures",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a/departures",
           "status": 200,
           "endpoint": "GET /api/tours/:id/departures",
           "message": null
         }
       ],
-      "durationMs": 377
+      "durationMs": 365
     },
     {
-      "id": 217,
+      "id": 250,
       "name": "Admin DELETE tours archive, khách không thấy",
       "kind": "contract",
       "status": "PASS",
       "requests": [
         {
           "method": "DELETE",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a",
           "status": 200,
           "endpoint": "DELETE /api/tours/:id",
           "message": "Đã lưu trữ tour."
         },
         {
           "method": "GET",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a",
           "status": 404,
           "endpoint": "GET /api/tours/:id",
           "message": "Tour không tồn tại."
         },
         {
           "method": "GET",
-          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "path": "/api/tours/6ac76d3bb0a5167040e7707a",
           "status": 200,
           "endpoint": "GET /api/tours/:id",
           "message": null
         }
       ],
-      "durationMs": 393
+      "durationMs": 466
     },
     {
-      "id": 218,
+      "id": 251,
       "name": "Admin DELETE articles archive, khách không thấy",
       "kind": "contract",
       "status": "PASS",
       "requests": [
         {
           "method": "DELETE",
-          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "path": "/api/articles/6ac76d3ab0a5167040e77079",
           "status": 200,
           "endpoint": "DELETE /api/articles/:id",
           "message": "Đã lưu trữ bài viết."
         },
         {
           "method": "GET",
-          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "path": "/api/articles/6ac76d3ab0a5167040e77079",
           "status": 404,
           "endpoint": "GET /api/articles/:id",
           "message": "Bài viết không tồn tại."
         },
         {
           "method": "GET",
-          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "path": "/api/articles/6ac76d3ab0a5167040e77079",
           "status": 200,
           "endpoint": "GET /api/articles/:id",
           "message": null
         }
       ],
-      "durationMs": 359
+      "durationMs": 361
     },
     {
-      "id": 219,
+      "id": 252,
       "name": "Admin DELETE destinations archive, khách không thấy",
       "kind": "contract",
       "status": "PASS",
       "requests": [
         {
           "method": "DELETE",
-          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "path": "/api/destinations/6ac76d3ab0a5167040e77078",
           "status": 200,
           "endpoint": "DELETE /api/destinations/:id",
           "message": "Đã lưu trữ điểm đến."
         },
         {
           "method": "GET",
-          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "path": "/api/destinations/6ac76d3ab0a5167040e77078",
           "status": 404,
           "endpoint": "GET /api/destinations/:id",
           "message": "Điểm đến không tồn tại."
         },
         {
           "method": "GET",
-          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "path": "/api/destinations/6ac76d3ab0a5167040e77078",
           "status": 200,
           "endpoint": "GET /api/destinations/:id",
           "message": null
         }
       ],
-      "durationMs": 351
+      "durationMs": 367
     },
     {
-      "id": 220,
+      "id": 253,
       "name": "Đã gọi đủ mọi endpoint đang mount",
       "kind": "coverage",
       "status": "PASS",
       "requests": [],
       "durationMs": 0,
       "evidence": {
-        "apiEndpoints": 49,
-        "coveredApiEndpoints": 49
+        "apiEndpoints": 57,
+        "coveredApiEndpoints": 57
       }
     }
   ],
@@ -5671,7 +6548,7 @@
   "snapshot": [
     {
       "file": "backend/controllers/articleController.js",
-      "sha256": "1cd8f54c5b1783189e35866ce8fb03c6586ed58994510167d8c970cd91002bf5"
+      "sha256": "d105c308240fb1cbf5a0c6eeacf7b2f7b613e65b27c35d22ee3f41783c98758b"
     },
     {
       "file": "backend/controllers/authController.js",
@@ -5694,12 +6571,20 @@
       "sha256": "ce7bc7a48d3fb4992b34fb306c5f602eb28845a30d06b53f75b4eccacc8f164e"
     },
     {
+      "file": "backend/controllers/notificationController.js",
+      "sha256": "d265e9e11a5c189ca74fe63743372f00666d37a0bdd7b6e78bb019b0d7e1e2e6"
+    },
+    {
       "file": "backend/controllers/paymentController.js",
       "sha256": "a875cfc346bd5d6163f63207217e54f21f72104939d8ce4ccf763405d1e7bcad"
     },
     {
+      "file": "backend/controllers/reviewController.js",
+      "sha256": "49510953996170aed80e219796fae4e8f8bc946414a9268d4b30a94751551116"
+    },
+    {
       "file": "backend/controllers/tourController.js",
-      "sha256": "208fb6b834a5cdf9b1e5106f1e96937c9f2577bd2cfdc3a7fc1ba1bbcb5e2535"
+      "sha256": "8d865bcc0dd33d99cda988f3fbed779f12f908648a7a5ab6a6542c5d69a2e572"
     }
   ]
 }

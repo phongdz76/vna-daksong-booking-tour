@@ -25,16 +25,17 @@ import Departure from "../models/Departure.js";
 import Booking from "../models/Booking.js";
 import Coupon from "../models/Coupon.js";
 import PaymentTransaction from "../models/PaymentTransaction.js";
+import Review from "../models/Review.js";
+import NotificationRead from "../models/NotificationRead.js";
 
 const backendDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const rootDir = path.dirname(backendDir);
 const localEnv = dotenv.parse(fs.readFileSync(path.join(backendDir, ".env")));
 const runId = Date.now() + "-" + randomBytes(4).toString("hex");
 const databaseName = "vna_api_test_" + runId.replaceAll("-", "_");
 const outJson = path.join(backendDir, "test-results", "all-api-results.json");
-const outMd = path.join(rootDir, "KET_QUA_TEST_TOAN_BO_API.md");
+const outMd = path.join(backendDir, "test-results", "KET_QUA_TEST_TOAN_BO_API.md");
 const startedAt = new Date();
-const models = [User, Destination, Article, Tour, Departure, Booking, Coupon, PaymentTransaction];
+const models = [User, Destination, Article, Tour, Departure, Booking, Coupon, PaymentTransaction, Review, NotificationRead];
 const nativeFetch = globalThis.fetch;
 const originalAxiosPost = axios.post;
 const originalUpload = cloudinary.uploader.upload;
@@ -266,8 +267,8 @@ function writeReport() {
     "Database test: "+databaseName+". Kết nối: "+(ready?"thành công":"chưa thành công")+
       ". Dọn database test: "+(dbDropped?"đã xóa database do lượt test tạo":"chưa xác nhận")+".","",
     "Chạy lại từ thư mục backend: §npm.cmd run test:api§. File test: "+
-      "[all-api.test.mjs](<backend/tests/all-api.test.mjs>). JSON đầy đủ: "+
-      "[all-api-results.json](<backend/test-results/all-api-results.json>).",""];
+      "[all-api.test.mjs](<../tests/all-api.test.mjs>). JSON đầy đủ: "+
+      "[all-api-results.json](<all-api-results.json>).",""];
   if(fatalError)lines.push("**Lỗi hạ tầng:** "+escape(safeError(fatalError)),"");
   lines.push("**Các ca thất bại**","","| STT | Ca | Chi tiết |","| --- | --- | --- |");
   for(const r of results.filter(r=>r.status==="FAIL"))lines.push("| "+r.id+" | "+escape(r.name)+" | "+escape(r.error)+" |");
@@ -660,6 +661,129 @@ async function runPaymentRecoveryTests() {
   },"fault-injection");
 }
 
+async function runReviewTests() {
+  const reviewPath = "/api/tours/" + state.tour + "/reviews";
+  let ownBooking, secondBooking, otherBooking, reviewId, secondReviewId, otherReviewId;
+  await test("Đánh giá: tour chưa có đánh giá trả trung bình null, số lượng 0", async () => {
+    const body = status(await http("GET", reviewPath), 200);
+    assert.equal(body.summary.averageRating, null); assert.equal(body.summary.reviewCount, 0);
+    assert.deepEqual(body.summary.distribution, {1:0,2:0,3:0,4:0,5:0}); assert.deepEqual(body.data, []);
+  });
+  await test("Đánh giá: chuẩn bị đơn hoàn thành trong database test riêng", async () => {
+    ownBooking = await Booking.findOne({ userId: state.userId, tourId: state.tour, status: "completed" });
+    assert.ok(ownBooking, "Cần đơn hoàn thành từ kiểm thử booking");
+    const template = ownBooking.toObject(); delete template._id; delete template.__v;
+    secondBooking = await Booking.create({...template, code:"VNA-REVIEW-"+randomUUID(), idempotencyKey:randomUUID(), requestHash:"review-fixture"});
+    otherBooking = await Booking.create({...template, userId:state.otherId, code:"VNA-REVIEW-OTHER-"+randomUUID(), idempotencyKey:randomUUID(), requestHash:"review-fixture"});
+  });
+  await test("Đánh giá: cần đăng nhập khi tạo và xem quyền đánh giá", async () => {
+    status(await http("POST", reviewPath, {body:{}}), 401);
+    status(await http("GET", reviewPath + "/eligibility"), 401);
+  });
+  await test("Đánh giá: token sai không được bỏ qua trên API công khai", async () => status(await http("GET", reviewPath, {token:"bad-token"}), 401));
+  await test("Đánh giá: ID tour sai, không tồn tại và phân trang sai", async () => {
+    status(await http("GET", "/api/tours/bad-id/reviews"), 400);
+    status(await http("GET", "/api/tours/"+newId()+"/reviews"), 404);
+    for (const query of ["page=0", "page=NaN", "limit=Infinity", "limit=1.5", "limit=bad", "page=1&page=2"]) status(await http("GET", reviewPath+"?"+query), 400);
+  });
+  await test("Đánh giá: quyền đánh giá chỉ có đơn hoàn thành của chính mình", async () => {
+    const body = status(await http("GET", reviewPath+"/eligibility", {token:customer()}), 200);
+    assert.ok(body.eligibleBookings.some(b=>b._id===String(ownBooking._id)));
+    assert.ok(!body.eligibleBookings.some(b=>b._id===String(otherBooking._id)));
+    assert.deepEqual(body.myReviews, []);
+  });
+  await test("Đánh giá: chặn đơn chưa hoàn thành và đơn của người khác", async () => {
+    for (const bookingId of [state.bookingA.booking._id, state.bookingB.booking._id, String(otherBooking._id), newId()]) {
+      status(await http("POST", reviewPath, {token:customer(),body:{bookingId,rating:5,comment:"Tour tốt"}}), 403);
+    }
+  });
+  await test("Đánh giá: đơn hoàn thành phải thuộc đúng tour", async () => {
+    const anotherTour = await Tour.create(tourBody({slug:"review-other-tour-"+runId}));
+    status(await http("POST", "/api/tours/"+anotherTour._id+"/reviews", {token:customer(),body:{bookingId:String(ownBooking._id),rating:5,comment:"Tour tốt"}}), 403);
+  });
+  for (const rating of [0,6,2.5,"5",null]) await test("Đánh giá: chặn số sao sai "+JSON.stringify(rating), async () => {
+    status(await http("POST", reviewPath, {token:customer(),body:{bookingId:String(ownBooking._id),rating,comment:"Tour tốt"}}), 400);
+  });
+  for (const [label,comment] of [["trống","   "],["object",{x:1}],["quá 2000 ký tự","x".repeat(2001)]]) await test("Đánh giá: chặn nhận xét "+label, async () => {
+    status(await http("POST", reviewPath, {token:customer(),body:{bookingId:String(ownBooking._id),rating:5,comment}}), 400);
+  });
+  await test("Đánh giá: không nhận userId hoặc tên tác giả từ client", async () => {
+    status(await http("POST", reviewPath, {token:customer(),body:{bookingId:String(ownBooking._id),rating:5,comment:"Tour tốt",userId:state.otherId}}), 400);
+  });
+  await test("Đánh giá: tạo đánh giá thật từ đơn hoàn thành", async () => {
+    const body = status(await http("POST", reviewPath, {token:customer(),body:{bookingId:String(ownBooking._id),rating:5,comment:"  Hành trình rất tốt  "}}), 201);
+    reviewId=body.data._id; assert.equal(body.data.rating,5); assert.equal(body.data.comment,"Hành trình rất tốt");
+    assert.equal(body.data.verifiedBooking,true); assert.equal(body.data.author.name,(await User.findById(state.userId)).name);
+  });
+  await test("Đánh giá: cùng đơn gửi lần nữa trả 409", async () => {
+    status(await http("POST", reviewPath, {token:customer(),body:{bookingId:String(ownBooking._id),rating:1,comment:"Lần nữa"}}), 409);
+  });
+  await test("Đánh giá: đọc công khai, thống kê đúng, không lộ thông tin đơn/tài khoản", async () => {
+    const body = status(await http("GET", reviewPath),200);
+    assert.equal(body.summary.averageRating,5); assert.equal(body.summary.reviewCount,1); assert.equal(body.summary.distribution[5],1);
+    const item=body.data[0]; assert.equal(item._id,reviewId);
+    for(const key of ["bookingId","tourId","userId","contact","phone","email","zaloId"]) assert.ok(!(key in item));
+    assert.deepEqual(Object.keys(item.author).sort(),["avatar","name"]);
+  });
+  await test("Đánh giá: chi tiết và danh sách tour có số sao thật", async () => {
+    const detail=status(await http("GET","/api/tours/"+state.tour),200);
+    const listed=status(await http("GET","/api/tours?limit=100"),200).data.find(t=>t._id===state.tour);
+    assert.equal(detail.averageRating,5); assert.equal(detail.reviewCount,1);
+    assert.equal(listed.averageRating,5); assert.equal(listed.reviewCount,1);
+  });
+  await test("Đánh giá: sau khi gửi, chỉ chủ thấy đánh giá của mình và đơn không còn eligible", async () => {
+    const mine=status(await http("GET",reviewPath+"/eligibility",{token:customer()}),200);
+    assert.ok(!mine.eligibleBookings.some(b=>b._id===String(ownBooking._id)));
+    assert.equal(mine.myReviews[0]._id,reviewId);
+    const other=status(await http("GET",reviewPath+"/eligibility",{token:stranger()}),200);
+    assert.deepEqual(other.myReviews,[]);
+  });
+  await test("Đánh giá: người khác và admin không sửa số sao của tác giả", async () => {
+    for (const token of [stranger(),admin()]) status(await http("PATCH","/api/reviews/"+reviewId,{token,body:{rating:1}}),404);
+  });
+  await test("Đánh giá: chặn sửa ID đơn/tác giả và payload rỗng", async () => {
+    for (const body of [{bookingId:String(secondBooking._id)},{userId:state.otherId},{rating:0},{comment:" "},{}]) status(await http("PATCH","/api/reviews/"+reviewId,{token:customer(),body}),400);
+  });
+  await test("Đánh giá: chủ sửa sao/nhận xét, thống kê cập nhật", async () => {
+    const body=status(await http("PATCH","/api/reviews/"+reviewId,{token:customer(),body:{rating:3,comment:"Đã cập nhật nhận xét"}}),200);
+    assert.equal(body.data.rating,3);
+    const list=status(await http("GET",reviewPath),200); assert.equal(list.summary.averageRating,3); assert.equal(list.summary.distribution[5],0); assert.equal(list.summary.distribution[3],1);
+  });
+  await test("Đánh giá: 5 request đồng thời cùng đơn chỉ tạo một review", async () => {
+    const responses=await Promise.all(Array.from({length:5},()=>http("POST",reviewPath,{token:customer(),body:{bookingId:String(secondBooking._id),rating:5,comment:"Đánh giá đồng thời"}})));
+    assert.equal(responses.filter(r=>r.status===201).length,1); assert.equal(responses.filter(r=>r.status===409).length,4);
+    assert.equal(await Review.countDocuments({bookingId:secondBooking._id}),1);
+    secondReviewId=responses.find(r=>r.status===201).body.data._id;
+    const list=status(await http("GET",reviewPath),200); assert.equal(list.summary.reviewCount,2); assert.equal(list.summary.averageRating,4);
+  },"concurrency");
+  await test("Đánh giá: khách khác đánh giá đơn riêng, phân trang không trùng", async () => {
+    otherReviewId=status(await http("POST",reviewPath,{token:stranger(),body:{bookingId:String(otherBooking._id),rating:1,comment:"Trải nghiệm cần cải thiện"}}),201).data._id;
+    const first=status(await http("GET",reviewPath+"?page=1&limit=1"),200);
+    const second=status(await http("GET",reviewPath+"?page=2&limit=1"),200);
+    assert.equal(first.pagination.total,3); assert.equal(first.pagination.pages,3); assert.equal(first.summary.averageRating,3);
+    assert.notEqual(first.data[0]._id,second.data[0]._id);
+  });
+  await test("Đánh giá: tour draft không lộ đánh giá ra công khai", async () => {
+    await Tour.findByIdAndUpdate(state.tour,{status:"draft"});
+    try { status(await http("GET",reviewPath),404); status(await http("GET",reviewPath,{token:admin()}),200); }
+    finally { await Tour.findByIdAndUpdate(state.tour,{status:"published"}); }
+  });
+  await test("Đánh giá: xóa cần đăng nhập, người khác không xóa được", async () => {
+    status(await http("DELETE","/api/reviews/"+reviewId),401);
+    status(await http("DELETE","/api/reviews/"+reviewId,{token:stranger()}),404);
+    status(await http("PATCH","/api/reviews/bad-id",{token:customer(),body:{rating:5}}),400);
+    status(await http("DELETE","/api/reviews/"+newId(),{token:customer()}),404);
+  });
+  await test("Đánh giá: chủ xóa và admin kiểm duyệt xóa, thống kê trở về null/0", async () => {
+    status(await http("DELETE","/api/reviews/"+reviewId,{token:customer()}),200);
+    status(await http("DELETE","/api/reviews/"+secondReviewId,{token:customer()}),200);
+    status(await http("DELETE","/api/reviews/"+otherReviewId,{token:admin()}),200);
+    const list=status(await http("GET",reviewPath),200); assert.equal(list.summary.reviewCount,0); assert.equal(list.summary.averageRating,null);
+    const detail=status(await http("GET","/api/tours/"+state.tour),200); assert.equal(detail.reviewCount,0); assert.equal(detail.averageRating,null);
+    assert.ok(status(await http("GET",reviewPath+"/eligibility",{token:customer()}),200).eligibleBookings.some(b=>b._id===String(ownBooking._id)));
+  });
+}
+
 async function runDeleteTests() {
   await test("Khách được hủy booking A đã confirmed",async()=>{
     const b=status(await cancel(state.bookingA.booking._id),200);assert.equal(b.data.status,"cancelled");
@@ -970,6 +1094,24 @@ async function runTests() {
   await runUploadTests();
   await runRegressionTests();
   await runPaymentRecoveryTests();
+  await runReviewTests();
+  await test("Thông báo công khai chỉ có bài viết đã xuất bản",async()=>{
+    const body=status(await http("GET","/api/notifications"),200);
+    assert.ok(body.data.length>0);
+    assert.ok(body.data.every(item=>item.type==="article"&&item.href.startsWith("/articles/")));
+  });
+  await test("Đọc thông báo qua server thật lưu trạng thái cho tài khoản",async()=>{
+    const body=status(await http("GET","/api/notifications?type=article",{token:customer()}),200);
+    const item=body.data[0];assert.ok(item);
+    status(await http("PATCH","/api/notifications/"+encodeURIComponent(item.id)+"/read",{token:customer()}),200);
+    const refreshed=status(await http("GET","/api/notifications?type=article",{token:customer()}),200);
+    assert.ok(refreshed.data.find(entry=>entry.id===item.id)?.readAt);
+  });
+  await test("Đọc tất cả thông báo yêu cầu đăng nhập và xóa số chưa đọc",async()=>{
+    status(await http("PATCH","/api/notifications/read-all"),401);
+    status(await http("PATCH","/api/notifications/read-all",{token:customer()}),200);
+    assert.equal(status(await http("GET","/api/notifications",{token:customer()}),200).unreadCount,0);
+  });
   await runDeleteTests();
   await test("Đã gọi đủ mọi endpoint đang mount",async()=>{
     const seen=new Set(requests.map(r=>r.endpoint));const missing=endpoints.filter(e=>!seen.has(e.method+" "+e.path));assert.deepEqual(missing,[]);

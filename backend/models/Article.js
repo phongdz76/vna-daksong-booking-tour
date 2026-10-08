@@ -28,6 +28,7 @@ const articleSchema = new mongoose.Schema({
   images: { type: [imageSchema], default: [] },
   sources: { type: [sourceSchema], default: [] },
   status: { type: String, enum: ["draft", "published", "archived"], default: "draft", index: true },
+  publishedAt: { type: Date, default: null },
 }, { timestamps: true, optimisticConcurrency: true });
 
 // Text index cho tìm kiếm $text
