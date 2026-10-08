@@ -6,14 +6,20 @@ import {
   createTour,
   updateTour,
   deleteTour,
+  getSavedTours,
+  toggleSavedTour,
 } from "../controllers/tourController.js";
 import { getTourDepartures } from "../controllers/departureController.js";
 
 const router = express.Router();
 
+router.get("/saved", protect, getSavedTours); // ⬆ Note: Specific route MUST be placed before /:id route
+
 router.get("/", optionalProtect, getTours);
 router.get("/:id/departures", optionalProtect, getTourDepartures);
 router.get("/:id", optionalProtect, getTourById);
+router.post("/:id/save", protect, toggleSavedTour);
+
 router.post("/", protect, adminOnly, createTour);
 router.put("/:id", protect, adminOnly, updateTour);
 router.patch("/:id", protect, adminOnly, updateTour);

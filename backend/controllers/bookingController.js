@@ -5,6 +5,8 @@ import Booking, { bookingStatuses } from "../models/Booking.js";
 import Departure from "../models/Departure.js";
 import Tour from "../models/Tour.js";
 import Destination from "../models/Destination.js";
+import Coupon from "../models/Coupon.js";
+import User from "../models/User.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -26,7 +28,19 @@ function verifyToken(token, audience = "session") {
   }
 }
 
-const fingerprint = value => createHash("sha256").update(JSON.stringify(value)).digest("hex");
+// Chuẩn hóa object trước khi hash — sort keys để thứ tự không ảnh hưởng
+function canonicalize(obj) {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map(canonicalize);
+  const sorted = {};
+  for (const key of Object.keys(obj).sort()) {
+    sorted[key] = canonicalize(obj[key]);
+  }
+  return sorted;
+}
+
+const fingerprint = value => createHash("sha256").update(JSON.stringify(canonicalize(value))).digest("hex");
 
 function publicBooking(booking) {
   const value = booking.toObject ? booking.toObject() : { ...booking };
@@ -38,15 +52,15 @@ function publicBooking(booking) {
 // @desc   Get a quote
 // @route  POST /api/bookings/quote
 // @access Public/Private
-export const getBookingQuote = async (req, res) => {
+  export const getBookingQuote = async (req, res) => {
   try {
-    const { departureId, adults, children } = req.body;
+    const { departureId, adults, children, couponCode } = req.body;
     
-    if (!departureId || !isValidObjectId(departureId)) return res.status(400).json({ message: "Invalid departureId" });
+    if (!departureId || !isValidObjectId(departureId)) return res.status(400).json({ message: "departureId không hợp lệ." });
     
-    if (!Number.isSafeInteger(adults) || adults < 1 || adults > 100) return res.status(400).json({ message: "Invalid adults count" });
+    if (!Number.isSafeInteger(adults) || adults < 1 || adults > 100) return res.status(400).json({ message: "Số lượng người lớn không hợp lệ." });
     const c = children ?? 0;
-    if (!Number.isSafeInteger(c) || c < 0 || c > 100) return res.status(400).json({ message: "Invalid children count" });
+    if (!Number.isSafeInteger(c) || c < 0 || c > 100) return res.status(400).json({ message: "Số lượng trẻ em không hợp lệ." });
     
     const departure = await Departure.findById(departureId);
     if (!departure) return res.status(404).json({ message: "Chuyến không tồn tại." });
@@ -67,7 +81,23 @@ export const getBookingQuote = async (req, res) => {
       return res.status(400).json({ message: "Chuyến chưa có chính sách/giá trẻ em. Vui lòng liên hệ VNA." });
     }
     
-    const total = departure.adultPrice * adults + (departure.childPrice ?? 0) * c;
+    let total = departure.adultPrice * adults + (departure.childPrice ?? 0) * c;
+    let appliedCoupon = null;
+    let discountAmount = 0;
+    
+    if (couponCode) {
+      if (typeof couponCode !== "string") return res.status(400).json({ message: "Mã giảm giá không hợp lệ." });
+      const coupon = await Coupon.findOne({ code: couponCode.trim().toUpperCase() });
+      if (!coupon) return res.status(400).json({ message: "Mã giảm giá không tồn tại." });
+      if (!coupon.isValid()) return res.status(400).json({ message: "Mã giảm giá đã hết hạn hoặc hết lượt sử dụng." });
+      discountAmount = coupon.calculateDiscount(total);
+      if (discountAmount > 0) {
+        total -= discountAmount;
+        appliedCoupon = coupon.code;
+      } else {
+        return res.status(400).json({ message: "Đơn hàng chưa đạt điều kiện áp dụng mã giảm giá này." });
+      }
+    }
     
     const snapshot = {
       tourName: tour.name,
@@ -77,8 +107,12 @@ export const getBookingQuote = async (req, res) => {
       cancellationPolicy: tour.cancellationPolicy,
       adultPrice: departure.adultPrice,
       childPrice: departure.childPrice ?? null,
+      subTotal: departure.adultPrice * adults + (departure.childPrice ?? 0) * c,
+      discountAmount,
+      appliedCoupon,
       total,
       currency: "VND",
+      durationHours: tour.durationHours,
     };
     
     const hash = fingerprint({ departureId: String(departure._id), adults, children: c, ...snapshot });
@@ -93,7 +127,7 @@ export const getBookingQuote = async (req, res) => {
       message: "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau.",
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
 
@@ -102,19 +136,28 @@ export const getBookingQuote = async (req, res) => {
 // @access Private
 export const createBooking = async (req, res) => {
   try {
-    const { quoteToken, contact, note } = req.body;
+    const { quoteToken, contact, note, couponCode, paymentMethod } = req.body;
     
-    if (!quoteToken || typeof quoteToken !== "string") return res.status(400).json({ message: "quoteToken is required" });
-    if (!contact || typeof contact.name !== "string" || !contact.name.trim() || typeof contact.phone !== "string" || !contact.phone.trim()) {
-       return res.status(400).json({ message: "Contact info (name, phone) is required" });
+    if (!quoteToken || typeof quoteToken !== "string") return res.status(400).json({ message: "quoteToken là bắt buộc." });
+    if (!contact || typeof contact !== "object" || contact === null) {
+      return res.status(400).json({ message: "Thông tin liên hệ là bắt buộc." });
+    }
+    if (typeof contact.name !== "string" || !contact.name.trim()) {
+      return res.status(400).json({ message: "Tên liên hệ là bắt buộc." });
+    }
+    if (typeof contact.phone !== "string" || !contact.phone.trim()) {
+      return res.status(400).json({ message: "Số điện thoại liên hệ là bắt buộc." });
     }
     
     const idempotencyKey = req.get("Idempotency-Key");
     if (!idempotencyKey || typeof idempotencyKey !== "string" || idempotencyKey.length < 8) {
-       return res.status(400).json({ message: "Idempotency-Key is required" });
+       return res.status(400).json({ message: "Header Idempotency-Key là bắt buộc (ít nhất 8 ký tự)." });
     }
     
-    const requestHash = fingerprint({ quoteToken, contact, note });
+    // Chuẩn hóa contact trước khi hash — thứ tự key không ảnh hưởng
+    const normalizedContact = { name: contact.name.trim(), phone: contact.phone.trim() };
+    const normalizedNote = typeof note === "string" ? note.trim() : "";
+    const requestHash = fingerprint({ quoteToken, contact: normalizedContact, note: normalizedNote, couponCode: couponCode || "", paymentMethod: paymentMethod || "" });
     const key = { userId: req.user._id, idempotencyKey };
     
     const existing = await Booking.findOne(key).select("+requestHash");
@@ -146,7 +189,31 @@ export const createBooking = async (req, res) => {
         }, { $inc: { bookingRevision: 1, __v: 1 } }, { returnDocument: "after", session });
         if (!departure) throw new Error("DEPARTURE_UNAVAILABLE");
         
-        const total = departure.adultPrice * claims.adults + (departure.childPrice ?? 0) * claims.children;
+        // Kiểm tra maxGuestsPerBooking — đảm bảo giới hạn chưa thay đổi
+        if (claims.adults + claims.children > departure.maxGuestsPerBooking) {
+          throw new Error("MAX_GUESTS_EXCEEDED");
+        }
+        
+        let total = departure.adultPrice * claims.adults + (departure.childPrice ?? 0) * claims.children;
+        let appliedCoupon = null;
+        let discountAmount = 0;
+        
+        if (couponCode) {
+          if (typeof couponCode !== "string") throw new Error("INVALID_COUPON");
+          const coupon = await Coupon.findOne({ code: couponCode.trim().toUpperCase() }).session(session);
+          if (!coupon) throw new Error("COUPON_NOT_FOUND");
+          if (!coupon.isValid()) throw new Error("COUPON_EXPIRED");
+          discountAmount = coupon.calculateDiscount(total);
+          if (discountAmount > 0) {
+            total -= discountAmount;
+            appliedCoupon = coupon.code;
+            coupon.usedCount += 1;
+            await coupon.save({ session });
+          } else {
+            throw new Error("COUPON_NOT_APPLICABLE");
+          }
+        }
+
         const snapshot = {
           tourName: tour.name,
           departureAt: new Date(departure.departureAt).toISOString(),
@@ -155,19 +222,29 @@ export const createBooking = async (req, res) => {
           cancellationPolicy: tour.cancellationPolicy,
           adultPrice: departure.adultPrice,
           childPrice: departure.childPrice ?? null,
+          subTotal: departure.adultPrice * claims.adults + (departure.childPrice ?? 0) * claims.children,
+          discountAmount,
+          appliedCoupon,
           total,
           currency: "VND",
+          durationHours: tour.durationHours,
         };
         const currentHash = fingerprint({ departureId: String(departure._id), adults: claims.adults, children: claims.children, ...snapshot });
         if (currentHash !== claims.hash) throw new Error("QUOTE_CHANGED");
         
+        const validPaymentMethods = ["qr_transfer", "cash_on_arrival", "zalopay"];
+        const pMethod = validPaymentMethods.includes(paymentMethod) ? paymentMethod : "cash_on_arrival";
+
         const [created] = await Booking.create([{
           code: `VNA-${randomBytes(6).toString("hex").toUpperCase()}`,
           ...key, requestHash,
           tourId: tour._id, departureId: departure._id,
           adults: claims.adults, children: claims.children,
-          contact: { name: contact.name.trim(), phone: contact.phone.trim() },
-          note: typeof note === "string" ? note.trim() : "",
+          contact: normalizedContact,
+          note: normalizedNote,
+          couponCode: appliedCoupon || "",
+          paymentMethod: pMethod,
+          paymentStatus: "unpaid",
           snapshot,
           status: "pending_confirmation",
           history: [{ status: "pending_confirmation", actorId: req.user._id, at: now }],
@@ -178,7 +255,7 @@ export const createBooking = async (req, res) => {
       if (error.code === 11000) {
         const duplicate = await Booking.findOne(key).select("+requestHash");
         if (duplicate) {
-           if (duplicate.requestHash !== requestHash) return res.status(409).json({ message: "Idempotency-Key conflict" });
+           if (duplicate.requestHash !== requestHash) return res.status(409).json({ message: "Idempotency-Key xung đột." });
            return res.status(200).json({ data: publicBooking(duplicate), replayed: true });
         }
       }
@@ -188,11 +265,26 @@ export const createBooking = async (req, res) => {
       if (error.message === "QUOTE_CHANGED") {
           return res.status(409).json({ message: "Giá hoặc điều kiện chuyến đã thay đổi. Vui lòng kiểm tra báo giá mới." });
       }
+      if (error.message === "MAX_GUESTS_EXCEEDED") {
+          return res.status(400).json({ message: "Số khách vượt quá giới hạn cho phép của chuyến. Vui lòng lấy báo giá mới." });
+      }
+      if (error.message === "COUPON_NOT_FOUND") {
+          return res.status(400).json({ message: "Mã giảm giá không tồn tại." });
+      }
+      if (error.message === "COUPON_EXPIRED") {
+          return res.status(400).json({ message: "Mã giảm giá đã hết hạn hoặc hết lượt sử dụng." });
+      }
+      if (error.message === "COUPON_NOT_APPLICABLE") {
+          return res.status(400).json({ message: "Đơn hàng chưa đạt điều kiện áp dụng mã giảm giá này." });
+      }
+      if (error.message === "INVALID_COUPON") {
+          return res.status(400).json({ message: "Mã giảm giá không hợp lệ." });
+      }
       throw error;
     }
     res.status(201).json({ data: publicBooking(booking), replayed: false });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
 
@@ -203,7 +295,7 @@ export const getMyBookings = async (req, res) => {
   try {
     let filter = { userId: req.user._id };
     if (req.query.status) {
-       if (!bookingStatuses.includes(req.query.status)) return res.status(400).json({ message: "Invalid status" });
+       if (!bookingStatuses.includes(req.query.status)) return res.status(400).json({ message: "Trạng thái không hợp lệ." });
        filter.status = req.query.status;
     }
     
@@ -224,7 +316,7 @@ export const getMyBookings = async (req, res) => {
       pagination: { page, limit, total, pages: Math.ceil(total / limit) }
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
 
@@ -233,16 +325,16 @@ export const getMyBookings = async (req, res) => {
 // @access Private
 export const getBookingById = async (req, res) => {
   try {
-    if (!isValidObjectId(req.params.id)) return res.status(400).json({ message: "Invalid ID" });
+    if (!isValidObjectId(req.params.id)) return res.status(400).json({ message: "ID không hợp lệ." });
     const filter = { _id: req.params.id };
     if (req.user.role !== "admin") filter.userId = req.user._id;
     
     const booking = await Booking.findOne(filter);
-    if (!booking) return res.status(404).json({ message: "Đơn không tồn tại" });
+    if (!booking) return res.status(404).json({ message: "Đơn không tồn tại." });
     
     res.json({ data: booking });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
 
@@ -251,19 +343,19 @@ async function changeStatus(req, res, admin) {
   const newStatus = admin ? status : "cancelled";
   
   if (admin && !bookingStatuses.includes(newStatus)) {
-      return res.status(400).json({ message: "Invalid status" });
+      return res.status(400).json({ message: "Trạng thái không hợp lệ." });
   }
   
   const filter = { _id: req.params.id, ...(!admin ? { userId: req.user._id } : {}) };
-  if (!isValidObjectId(req.params.id)) return res.status(400).json({ message: "Invalid ID" });
+  if (!isValidObjectId(req.params.id)) return res.status(400).json({ message: "ID không hợp lệ." });
   
   const current = await Booking.findOne(filter);
-  if (!current) return res.status(404).json({ message: "Đơn không tồn tại" });
+  if (!current) return res.status(404).json({ message: "Đơn không tồn tại." });
   
   const transitions = admin ? {
     pending_confirmation: ["confirmed", "cancelled", "rejected"],
     confirmed: ["completed", "cancelled"],
-  } : { pending_confirmation: ["cancelled"] };
+  } : { pending_confirmation: ["cancelled"], confirmed: ["cancelled"] };
   
   if (!transitions[current.status]?.includes(newStatus)) {
       return res.status(409).json({ message: "Không thể chuyển trạng thái đơn theo yêu cầu." });
@@ -273,18 +365,68 @@ async function changeStatus(req, res, admin) {
       return res.status(400).json({ message: "Cần lý do hủy/từ chối đơn." });
   }
   
-  if (newStatus === "completed" && new Date(current.snapshot.departureAt) > new Date()) {
-      return res.status(409).json({ message: "Chuyến chưa khởi hành nên chưa thể hoàn thành." });
+  // Kiểm tra giờ kết thúc tour (departureAt + durationHours) thay vì chỉ giờ khởi hành
+  if (newStatus === "completed") {
+    const departureAt = new Date(current.snapshot.departureAt);
+    const durationHours = current.snapshot.durationHours || 0;
+    const tourEndTime = new Date(departureAt.getTime() + durationHours * 60 * 60 * 1000);
+    if (tourEndTime > new Date()) {
+      return res.status(409).json({ message: "Tour chưa kết thúc nên chưa thể hoàn thành." });
+    }
   }
   
-  const updated = await Booking.findOneAndUpdate({ ...filter, status: current.status }, {
+  // Hoàn lượt voucher nếu hủy/từ chối
+  if ((newStatus === "cancelled" || newStatus === "rejected") && current.couponCode) {
+      await Coupon.findOneAndUpdate({ code: current.couponCode }, { $inc: { usedCount: -1 } });
+  }
+
+  // Chuẩn bị cập nhật — nếu completed, cộng điểm trong cùng thao tác
+  const updateOps = {
     $set: { status: newStatus },
     $push: { history: { status: newStatus, actorId: req.user._id, reason: reason ? reason.trim() : "", at: new Date() } },
     $inc: { __v: 1 },
-  }, { returnDocument: "after", runValidators: true });
+  };
+
+  // Nếu hủy/từ chối đơn đã trả tiền → đánh dấu cần hoàn tiền
+  if (["cancelled", "rejected"].includes(newStatus) && current.paymentStatus === "paid") {
+    updateOps.$set.paymentStatus = "refund_pending";
+  }
+
+  const updated = await Booking.findOneAndUpdate({ ...filter, status: current.status }, updateOps,
+    { returnDocument: "after", runValidators: true });
   
   if (!updated) return res.status(409).json({ message: "Đơn vừa được cập nhật. Vui lòng tải lại." });
   
+  // Post-update actions
+  if (newStatus === "confirmed") {
+     await Tour.findByIdAndUpdate(updated.tourId, { $inc: { soldCount: updated.adults + updated.children } });
+  } else if (current.status === "confirmed" && newStatus === "cancelled") {
+     await Tour.findByIdAndUpdate(updated.tourId, { $inc: { soldCount: -(updated.adults + updated.children) } });
+  } else if (newStatus === "completed") {
+     // Cộng điểm — retry logic: nếu save lỗi sẽ thử lại 1 lần
+     const pointsEarned = Math.floor(updated.snapshot.total / 10000);
+     if (pointsEarned > 0) {
+       for (let attempt = 0; attempt < 2; attempt++) {
+         try {
+           const user = await User.findById(updated.userId);
+           if (user) {
+             user.loyaltyPoints += pointsEarned;
+             if (user.loyaltyPoints >= 5000) user.membershipTier = "Kim Cương";
+             else if (user.loyaltyPoints >= 1000) user.membershipTier = "Vàng";
+             else user.membershipTier = "Bạc";
+             await user.save();
+           }
+           break;
+         } catch (retryError) {
+           if (attempt === 1) {
+             // Ghi log — đơn đã completed nhưng chưa cộng điểm
+             console.error(`[CRITICAL] Không thể cộng điểm cho user ${updated.userId}, booking ${updated._id}:`, retryError.message);
+           }
+         }
+       }
+     }
+  }
+
   res.json({ data: updated });
 }
 
@@ -295,7 +437,7 @@ export const cancelBooking = async (req, res) => {
   try {
     return await changeStatus(req, res, false);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
 
@@ -306,7 +448,7 @@ export const updateBookingStatus = async (req, res) => {
   try {
     return await changeStatus(req, res, true);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
 
@@ -317,11 +459,11 @@ export const getBookings = async (req, res) => {
   try {
     const filter = req.user.role === "admin" ? {} : { userId: req.user._id };
     if (req.query.status) {
-        if (!bookingStatuses.includes(req.query.status)) return res.status(400).json({ message: "Invalid status" });
+        if (!bookingStatuses.includes(req.query.status)) return res.status(400).json({ message: "Trạng thái không hợp lệ." });
         filter.status = req.query.status;
     }
     if (req.query.departureId) {
-        if (!isValidObjectId(req.query.departureId)) return res.status(400).json({ message: "Invalid departureId" });
+        if (!isValidObjectId(req.query.departureId)) return res.status(400).json({ message: "departureId không hợp lệ." });
         filter.departureId = req.query.departureId;
     }
     if (req.query.code && typeof req.query.code === "string") {
@@ -345,7 +487,7 @@ export const getBookings = async (req, res) => {
       pagination: { page, limit, total, pages: Math.ceil(total / limit) }
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
 
@@ -354,13 +496,17 @@ export const getBookings = async (req, res) => {
 // @access Private (Admin)
 export const getDashboardData = async (req, res) => {
   try {
-    if (req.user.role !== "admin") return res.status(403).json({ message: "Access denied" });
+    if (req.user.role !== "admin") return res.status(403).json({ message: "Không có quyền truy cập." });
     
-    const [bookings, tours, destinations, openDepartures] = await Promise.all([
+    const [bookings, tours, destinations, openDepartures, revenueAgg] = await Promise.all([
       Booking.aggregate([{ $group: { _id: "$status", count: { $sum: 1 } } }]),
       Tour.countDocuments({ status: "published" }),
       Destination.countDocuments({ status: "published" }),
       Departure.countDocuments({ status: "open", bookingDeadline: { $gt: new Date() } }),
+      Booking.aggregate([
+        { $match: { status: { $in: ["confirmed", "completed"] } } },
+        { $group: { _id: null, totalRevenue: { $sum: "$snapshot.total" } } }
+      ])
     ]);
     
     const bookingsData = {};
@@ -368,8 +514,10 @@ export const getDashboardData = async (req, res) => {
        bookingsData[item._id] = item.count;
     }
     
-    res.json({ bookings: bookingsData, tours, destinations, openDepartures });
+    const totalRevenue = revenueAgg[0]?.totalRevenue || 0;
+    
+    res.json({ bookings: bookingsData, tours, destinations, openDepartures, totalRevenue });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };

@@ -115,19 +115,19 @@ export const createArticle = async (req, res) => {
     const { title, slug, summary, content, category, destinationIds, images, sources, status } = req.body;
 
     if (!title || typeof title !== "string" || title.trim().length === 0) {
-      return res.status(400).json({ message: "Title is required" });
+      return res.status(400).json({ message: "Tiêu đề là bắt buộc." });
     }
     if (!slug || typeof slug !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
-      return res.status(400).json({ message: "Invalid slug format" });
+      return res.status(400).json({ message: "Định dạng slug không hợp lệ." });
     }
-    if (!summary || typeof summary !== "string") {
-      return res.status(400).json({ message: "Summary is required" });
+    if (!summary || typeof summary !== "string" || !summary.trim()) {
+      return res.status(400).json({ message: "Tóm tắt là bắt buộc." });
     }
-    if (!content || typeof content !== "string") {
-      return res.status(400).json({ message: "Content is required" });
+    if (!content || typeof content !== "string" || !content.trim()) {
+      return res.status(400).json({ message: "Nội dung là bắt buộc." });
     }
     if (!category || !ALLOWED_CATEGORIES.includes(category)) {
-      return res.status(400).json({ message: `Category must be one of: ${ALLOWED_CATEGORIES.join(", ")}` });
+      return res.status(400).json({ message: `Danh mục phải là một trong: ${ALLOWED_CATEGORIES.join(", ")}` });
     }
     
     if (destinationIds && !(await ensureDestinationsExist(destinationIds))) {
@@ -136,10 +136,10 @@ export const createArticle = async (req, res) => {
     
     const finalStatus = status || "draft";
     if (!ALLOWED_STATUSES.includes(finalStatus)) {
-      return res.status(400).json({ message: "Invalid status" });
+      return res.status(400).json({ message: "Trạng thái không hợp lệ." });
     }
 
-    if (finalStatus === "published" && (!sources || sources.length === 0)) {
+    if (finalStatus === "published" && (!Array.isArray(sources) || sources.length === 0)) {
       return res.status(400).json({ message: "Nội dung xuất bản cần có ít nhất một nguồn." });
     }
 
@@ -181,17 +181,23 @@ export const updateArticle = async (req, res) => {
     const { title, slug, summary, content, category, destinationIds, images, sources, status } = req.body;
 
     if (title !== undefined) {
-      if (typeof title !== "string" || title.trim().length === 0) return res.status(400).json({ message: "Title is invalid" });
+      if (typeof title !== "string" || title.trim().length === 0) return res.status(400).json({ message: "Tiêu đề không hợp lệ." });
       article.title = title.trim();
     }
     if (slug !== undefined) {
-      if (typeof slug !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return res.status(400).json({ message: "Invalid slug format" });
+      if (typeof slug !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return res.status(400).json({ message: "Định dạng slug không hợp lệ." });
       article.slug = slug.trim();
     }
-    if (summary !== undefined) article.summary = summary.trim();
-    if (content !== undefined) article.content = content.trim();
+    if (summary !== undefined) {
+      if (typeof summary !== "string") return res.status(400).json({ message: "Tóm tắt không hợp lệ." });
+      article.summary = summary.trim();
+    }
+    if (content !== undefined) {
+      if (typeof content !== "string") return res.status(400).json({ message: "Nội dung không hợp lệ." });
+      article.content = content.trim();
+    }
     if (category !== undefined) {
-      if (!ALLOWED_CATEGORIES.includes(category)) return res.status(400).json({ message: "Invalid category" });
+      if (!ALLOWED_CATEGORIES.includes(category)) return res.status(400).json({ message: "Danh mục không hợp lệ." });
       article.category = category;
     }
     if (destinationIds !== undefined) {
@@ -204,11 +210,11 @@ export const updateArticle = async (req, res) => {
     if (sources !== undefined) article.sources = Array.isArray(sources) ? sources : [];
     
     if (status !== undefined) {
-      if (!ALLOWED_STATUSES.includes(status)) return res.status(400).json({ message: "Invalid status" });
+      if (!ALLOWED_STATUSES.includes(status)) return res.status(400).json({ message: "Trạng thái không hợp lệ." });
       article.status = status;
     }
 
-    if (article.status === "published" && (!article.sources || article.sources.length === 0)) {
+    if (article.status === "published" && (!Array.isArray(article.sources) || article.sources.length === 0)) {
       return res.status(400).json({ message: "Nội dung xuất bản cần có ít nhất một nguồn." });
     }
 
