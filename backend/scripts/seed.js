@@ -7,10 +7,16 @@ import Tour from "../models/Tour.js";
 import Departure from "../models/Departure.js";
 
 async function seedData() {
+  if (process.env.NODE_ENV === "production") {
+    console.error("LỖI: Không được chạy script seed trên môi trường production!");
+    process.exit(1);
+  }
+
   try {
-    if (!await connectDB()) {
-      throw new Error("Configure MONGO_URI before seeding data.");
+    if (!process.env.MONGO_URI) {
+      throw new Error("Vui lòng cấu hình MONGO_URI trong file .env trước khi chạy seed.");
     }
+    await connectDB();
 
     console.log("Xóa dữ liệu cũ...");
     await Departure.deleteMany({});
@@ -170,8 +176,11 @@ async function seedData() {
     console.error("Lỗi:", error.message);
     process.exitCode = 1;
   } finally {
-    await disconnectDB();
+    if (mongoose.connection.readyState !== 0) {
+      await disconnectDB();
+    }
   }
 }
 
 seedData();
+

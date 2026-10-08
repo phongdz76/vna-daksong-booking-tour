@@ -16,6 +16,17 @@ const createAdmin = async () => {
       process.exit(1);
     }
     
+    // bcrypt chỉ xử lý tối đa 72 byte — kiểm tra trước khi hash
+    if (Buffer.byteLength(password) > 72) {
+      console.error("LỖI: Mật khẩu vượt quá 72 byte. bcrypt sẽ cắt bớt, gây lỗi đăng nhập.");
+      process.exit(1);
+    }
+
+    if (password.length < 8) {
+      console.error("LỖI: Mật khẩu cần ít nhất 8 ký tự.");
+      process.exit(1);
+    }
+    
     const userExists = await User.findOne({ email });
     if (userExists) {
       console.error(`LỖI: Tài khoản admin với email ${email} đã tồn tại trong hệ thống!`);
