@@ -34,9 +34,14 @@ const tourSchema = new mongoose.Schema({
   childPolicy: { type: String, maxlength: 3000, default: "" },
   cancellationPolicy: { type: String, required: true, maxlength: 3000 },
   status: { type: String, enum: ["draft", "published", "archived"], default: "draft", index: true },
+  soldCount: { type: Number, default: 0, min: 0 },
   bookingRevision: { type: Number, default: 0, select: false },
 }, { timestamps: true, optimisticConcurrency: true });
+
+// Text index cho tìm kiếm $text
+tourSchema.index({ name: "text", summary: "text", description: "text" });
 
 const Tour = mongoose.model("Tour", tourSchema);
 
 export default Tour;
+

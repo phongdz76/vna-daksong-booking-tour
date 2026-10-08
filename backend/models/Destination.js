@@ -31,6 +31,10 @@ const destinationSchema = new mongoose.Schema({
   status: { type: String, enum: ["draft", "published", "archived"], default: "draft", index: true },
 }, { timestamps: true, optimisticConcurrency: true });
 
+// Text index cho tìm kiếm $text
+destinationSchema.index({ name: "text", summary: "text", description: "text" });
+
 const Destination = mongoose.model("Destination", destinationSchema);
 
 export default Destination;
+

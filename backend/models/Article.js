@@ -30,6 +30,10 @@ const articleSchema = new mongoose.Schema({
   status: { type: String, enum: ["draft", "published", "archived"], default: "draft", index: true },
 }, { timestamps: true, optimisticConcurrency: true });
 
+// Text index cho tìm kiếm $text
+articleSchema.index({ title: "text", summary: "text", content: "text" });
+
 const Article = mongoose.model("Article", articleSchema);
 
 export default Article;
+

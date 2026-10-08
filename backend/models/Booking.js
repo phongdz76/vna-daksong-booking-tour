@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 
 export const bookingStatuses = ["pending_confirmation", "confirmed", "completed", "cancelled", "rejected"];
+export const paymentStatuses = ["unpaid", "paid", "refund_pending", "refunded"];
+
 const bookingSchema = new mongoose.Schema({
   code: { type: String, required: true, unique: true },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true, immutable: true },
@@ -21,13 +23,20 @@ const bookingSchema = new mongoose.Schema({
     cancellationPolicy: { type: String, required: true },
     adultPrice: { type: Number, required: true },
     childPrice: { type: Number, default: null },
+    subTotal: { type: Number },
+    discountAmount: { type: Number, default: 0 },
+    appliedCoupon: { type: String, default: null },
     total: { type: Number, required: true },
     currency: { type: String, enum: ["VND"], default: "VND" },
+    durationHours: { type: Number, default: null },
   },
   status: { type: String, enum: bookingStatuses, default: "pending_confirmation", index: true },
+  paymentStatus: { type: String, enum: paymentStatuses, default: "unpaid", index: true },
+  paymentMethod: { type: String, enum: ["qr_transfer", "cash_on_arrival", "zalopay"], default: "cash_on_arrival" },
+  couponCode: { type: String, maxlength: 50, default: "" },
   history: [{
     _id: false,
-    status: { type: String, enum: bookingStatuses, required: true },
+    status: { type: String, required: true },
     actorId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     reason: { type: String, maxlength: 1000, default: "" },
     at: { type: Date, default: Date.now },
