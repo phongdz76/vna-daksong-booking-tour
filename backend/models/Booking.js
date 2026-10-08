@@ -33,7 +33,9 @@ const bookingSchema = new mongoose.Schema({
   status: { type: String, enum: bookingStatuses, default: "pending_confirmation", index: true },
   paymentStatus: { type: String, enum: paymentStatuses, default: "unpaid", index: true },
   paymentMethod: { type: String, enum: ["qr_transfer", "cash_on_arrival", "zalopay"], default: "cash_on_arrival" },
+  paidTransactionId: { type: mongoose.Schema.Types.ObjectId, ref: "PaymentTransaction", default: null },
   couponCode: { type: String, maxlength: 50, default: "" },
+  couponId: { type: mongoose.Schema.Types.ObjectId, ref: "Coupon", default: null, immutable: true },
   history: [{
     _id: false,
     status: { type: String, required: true },

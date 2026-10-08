@@ -7,6 +7,7 @@ import Tour from "../models/Tour.js";
 import Destination from "../models/Destination.js";
 import Coupon from "../models/Coupon.js";
 import User from "../models/User.js";
+import PaymentTransaction from "../models/PaymentTransaction.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -196,6 +197,7 @@ export const createBooking = async (req, res) => {
         
         let total = departure.adultPrice * claims.adults + (departure.childPrice ?? 0) * claims.children;
         let appliedCoupon = null;
+        let appliedCouponId = null;
         let discountAmount = 0;
         
         if (couponCode) {
@@ -207,6 +209,7 @@ export const createBooking = async (req, res) => {
           if (discountAmount > 0) {
             total -= discountAmount;
             appliedCoupon = coupon.code;
+            appliedCouponId = coupon._id;
             coupon.usedCount += 1;
             await coupon.save({ session });
           } else {
@@ -243,6 +246,7 @@ export const createBooking = async (req, res) => {
           contact: normalizedContact,
           note: normalizedNote,
           couponCode: appliedCoupon || "",
+          couponId: appliedCouponId,
           paymentMethod: pMethod,
           paymentStatus: "unpaid",
           snapshot,
@@ -331,124 +335,214 @@ export const getBookingById = async (req, res) => {
     
     const booking = await Booking.findOne(filter);
     if (!booking) return res.status(404).json({ message: "Đơn không tồn tại." });
-    
-    res.json({ data: booking });
+    const payments = await PaymentTransaction.find({ bookingId: booking._id })
+      .select("appTransId amount status paidAt refundRequestId providerRefundId refundState refundedAt createdAt")
+      .sort({ createdAt: -1 }).lean();
+    res.json({ data: booking, payments });
   } catch (error) {
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
 
+// Dùng chung cho khách hủy đơn và admin cập nhật trạng thái.
 async function changeStatus(req, res, admin) {
   const { status, reason } = req.body;
-  const newStatus = admin ? status : "cancelled";
-  
+  let newStatus = "cancelled";
+  if (admin) {
+    newStatus = status;
+  }
+
+  // 1. Kiểm tra đầu vào trước khi mở transaction.
   if (admin && !bookingStatuses.includes(newStatus)) {
-      return res.status(400).json({ message: "Trạng thái không hợp lệ." });
+    return res.status(400).json({ message: "Trạng thái không hợp lệ." });
   }
-  
-  const filter = { _id: req.params.id, ...(!admin ? { userId: req.user._id } : {}) };
-  if (!isValidObjectId(req.params.id)) return res.status(400).json({ message: "ID không hợp lệ." });
-  
-  const current = await Booking.findOne(filter);
-  if (!current) return res.status(404).json({ message: "Đơn không tồn tại." });
-  
-  const transitions = admin ? {
-    pending_confirmation: ["confirmed", "cancelled", "rejected"],
-    confirmed: ["completed", "cancelled"],
-  } : { pending_confirmation: ["cancelled"], confirmed: ["cancelled"] };
-  
-  if (!transitions[current.status]?.includes(newStatus)) {
-      return res.status(409).json({ message: "Không thể chuyển trạng thái đơn theo yêu cầu." });
+  if (!isValidObjectId(req.params.id)) {
+    return res.status(400).json({ message: "ID không hợp lệ." });
   }
-  
-  if (["cancelled", "rejected"].includes(newStatus) && (!reason || typeof reason !== "string" || !reason.trim())) {
-      return res.status(400).json({ message: "Cần lý do hủy/từ chối đơn." });
-  }
-  
-  // Kiểm tra giờ kết thúc tour (departureAt + durationHours) thay vì chỉ giờ khởi hành
-  if (newStatus === "completed") {
-    const departureAt = new Date(current.snapshot.departureAt);
-    const durationHours = current.snapshot.durationHours || 0;
-    const tourEndTime = new Date(departureAt.getTime() + durationHours * 60 * 60 * 1000);
-    if (tourEndTime > new Date()) {
-      return res.status(409).json({ message: "Tour chưa kết thúc nên chưa thể hoàn thành." });
-    }
-  }
-  
-  // Hoàn lượt voucher nếu hủy/từ chối
-  if ((newStatus === "cancelled" || newStatus === "rejected") && current.couponCode) {
-      await Coupon.findOneAndUpdate({ code: current.couponCode }, { $inc: { usedCount: -1 } });
+  if (reason !== undefined && (typeof reason !== "string" || reason.trim().length > 1000)) {
+    return res.status(400).json({ message: "Lý do phải là chuỗi tối đa 1000 ký tự." });
   }
 
-  // Chuẩn bị cập nhật — nếu completed, cộng điểm trong cùng thao tác
-  const updateOps = {
-    $set: { status: newStatus },
-    $push: { history: { status: newStatus, actorId: req.user._id, reason: reason ? reason.trim() : "", at: new Date() } },
-    $inc: { __v: 1 },
+  let normalizedReason = "";
+  if (typeof reason === "string") {
+    normalizedReason = reason.trim();
+  }
+
+  const isClosingBooking = ["cancelled", "rejected"].includes(newStatus);
+  if (isClosingBooking && !normalizedReason) {
+    return res.status(400).json({ message: "Cần lý do hủy/từ chối đơn." });
+  }
+
+  const filter = { _id: req.params.id };
+  if (!admin) {
+    filter.userId = req.user._id;
+  }
+
+  let transitions = {
+    pending_confirmation: ["cancelled"],
+    confirmed: ["cancelled"],
   };
-
-  // Nếu hủy/từ chối đơn đã trả tiền → đánh dấu cần hoàn tiền
-  if (["cancelled", "rejected"].includes(newStatus) && current.paymentStatus === "paid") {
-    updateOps.$set.paymentStatus = "refund_pending";
+  if (admin) {
+    transitions = {
+      pending_confirmation: ["confirmed", "cancelled", "rejected"],
+      confirmed: ["completed", "cancelled"],
+    };
   }
 
-  const updated = await Booking.findOneAndUpdate({ ...filter, status: current.status }, updateOps,
-    { returnDocument: "after", runValidators: true });
-  
-  if (!updated) return res.status(409).json({ message: "Đơn vừa được cập nhật. Vui lòng tải lại." });
-  
-  // Post-update actions
-  if (newStatus === "confirmed") {
-     await Tour.findByIdAndUpdate(updated.tourId, { $inc: { soldCount: updated.adults + updated.children } });
-  } else if (current.status === "confirmed" && newStatus === "cancelled") {
-     await Tour.findByIdAndUpdate(updated.tourId, { $inc: { soldCount: -(updated.adults + updated.children) } });
-  } else if (newStatus === "completed") {
-     // Cộng điểm — retry logic: nếu save lỗi sẽ thử lại 1 lần
-     const pointsEarned = Math.floor(updated.snapshot.total / 10000);
-     if (pointsEarned > 0) {
-       for (let attempt = 0; attempt < 2; attempt++) {
-         try {
-           const user = await User.findById(updated.userId);
-           if (user) {
-             user.loyaltyPoints += pointsEarned;
-             if (user.loyaltyPoints >= 5000) user.membershipTier = "Kim Cương";
-             else if (user.loyaltyPoints >= 1000) user.membershipTier = "Vàng";
-             else user.membershipTier = "Bạc";
-             await user.save();
-           }
-           break;
-         } catch (retryError) {
-           if (attempt === 1) {
-             // Ghi log — đơn đã completed nhưng chưa cộng điểm
-             console.error(`[CRITICAL] Không thể cộng điểm cho user ${updated.userId}, booking ${updated._id}:`, retryError.message);
-           }
-         }
-       }
-     }
-  }
+  // Mọi cập nhật trạng thái, voucher, khách và điểm cùng commit hoặc cùng rollback.
+  const updatedBooking = await mongoose.connection.transaction(async session => {
+    // 2. Kiểm tra trạng thái hiện tại và giờ kết thúc tour.
+    const currentBooking = await Booking.findOne(filter).session(session);
+    if (!currentBooking) {
+      throw new Error("BOOKING_NOT_FOUND");
+    }
+    if (!transitions[currentBooking.status]?.includes(newStatus)) {
+      throw new Error("BOOKING_STATUS_CONFLICT");
+    }
 
-  res.json({ data: updated });
+    if (newStatus === "completed") {
+      const departureAt = new Date(currentBooking.snapshot.departureAt);
+      const durationHours = currentBooking.snapshot.durationHours || 0;
+      const tourEndTime = new Date(departureAt.getTime() + durationHours * 60 * 60 * 1000);
+      if (tourEndTime > new Date()) {
+        throw new Error("TOUR_NOT_FINISHED");
+      }
+    }
+
+    // 3. Ghi đơn trước để request cạnh tranh không cùng hoàn quota hoặc cộng điểm.
+    const previousStatus = currentBooking.status;
+    currentBooking.status = newStatus;
+    currentBooking.history.push({
+      status: newStatus,
+      actorId: req.user._id,
+      reason: normalizedReason,
+      at: new Date(),
+    });
+    if (isClosingBooking && currentBooking.paymentStatus === "paid") {
+      currentBooking.paymentStatus = "refund_pending";
+    }
+    await currentBooking.save({ session });
+
+    // 4. Hoàn lượt đúng voucher đã dùng và đồng bộ giao dịch cần hoàn tiền.
+    if (isClosingBooking && currentBooking.couponCode) {
+      const couponFilter = { usedCount: { $gt: 0 } };
+      if (currentBooking.couponId) {
+        couponFilter._id = currentBooking.couponId;
+      } else {
+        // Đơn cũ chưa lưu couponId: không trừ coupon mới được tạo lại cùng code.
+        couponFilter.code = currentBooking.couponCode;
+        couponFilter.createdAt = { $lte: currentBooking.createdAt };
+      }
+
+      await Coupon.findOneAndUpdate(
+        couponFilter,
+        { $inc: { usedCount: -1, __v: 1 } },
+        { session, runValidators: true }
+      );
+    }
+    if (isClosingBooking) {
+      await PaymentTransaction.updateMany(
+        { bookingId: currentBooking._id, status: "success" },
+        {
+          $set: { status: "refund_pending" },
+          $inc: { __v: 1 },
+        },
+        { session }
+      );
+    }
+
+    // 5. soldCount chỉ đếm khách confirmed/completed, không đếm callback thanh toán.
+    const totalGuests = currentBooking.adults + currentBooking.children;
+    if (newStatus === "confirmed") {
+      const tour = await Tour.findByIdAndUpdate(
+        currentBooking.tourId,
+        { $inc: { soldCount: totalGuests, __v: 1 } },
+        { session }
+      );
+      if (!tour) {
+        throw new Error("BOOKING_TOUR_NOT_FOUND");
+      }
+    } else if (previousStatus === "confirmed" && newStatus === "cancelled") {
+      await Tour.findByIdAndUpdate(
+        currentBooking.tourId,
+        [{
+          $set: {
+            soldCount: { $max: [0, { $subtract: ["$soldCount", totalGuests] }] },
+            __v: { $add: ["$__v", 1] },
+          },
+        }],
+        { session, updatePipeline: true }
+      );
+    }
+
+    // 6. Hoàn thành đơn và cộng điểm trong cùng transaction.
+    if (newStatus === "completed") {
+      const pointsEarned = Math.floor(currentBooking.snapshot.total / 10000);
+      if (pointsEarned > 0) {
+        const user = await User.findById(currentBooking.userId).session(session);
+        if (!user) {
+          throw new Error("BOOKING_USER_NOT_FOUND");
+        }
+
+        user.loyaltyPoints += pointsEarned;
+        if (user.loyaltyPoints >= 5000) {
+          user.membershipTier = "Kim Cương";
+        } else if (user.loyaltyPoints >= 1000) {
+          user.membershipTier = "Vàng";
+        } else {
+          user.membershipTier = "Bạc";
+        }
+
+        await user.save({ session });
+      }
+    }
+
+    return currentBooking;
+  });
+
+  res.json({ data: updatedBooking });
 }
 
 // @desc   Cancel booking (user)
 // @route  PATCH /api/bookings/:id/cancel
 // @access Private
-export const cancelBooking = async (req, res) => {
+export const cancelBooking = async (req, res, next) => {
   try {
     return await changeStatus(req, res, false);
   } catch (error) {
-    res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
+    if (error.message === "BOOKING_NOT_FOUND") {
+      return res.status(404).json({ message: "Đơn không tồn tại." });
+    }
+    if (error.message === "BOOKING_STATUS_CONFLICT") {
+      return res.status(409).json({ message: "Không thể chuyển trạng thái đơn theo yêu cầu." });
+    }
+    return next(error);
   }
 };
 
 // @desc   Update booking status (Admin)
 // @route  PATCH /api/bookings/:id/status
 // @access Private (Admin)
-export const updateBookingStatus = async (req, res) => {
+export const updateBookingStatus = async (req, res, next) => {
   try {
     return await changeStatus(req, res, true);
   } catch (error) {
-    res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
+    if (error.message === "BOOKING_NOT_FOUND") {
+      return res.status(404).json({ message: "Đơn không tồn tại." });
+    }
+    if (error.message === "BOOKING_STATUS_CONFLICT") {
+      return res.status(409).json({ message: "Không thể chuyển trạng thái đơn theo yêu cầu." });
+    }
+    if (error.message === "TOUR_NOT_FINISHED") {
+      return res.status(409).json({ message: "Tour chưa kết thúc nên chưa thể hoàn thành." });
+    }
+    if (error.message === "BOOKING_TOUR_NOT_FOUND") {
+      return res.status(409).json({ message: "Tour của đơn không còn tồn tại." });
+    }
+    if (error.message === "BOOKING_USER_NOT_FOUND") {
+      return res.status(409).json({ message: "Tài khoản của đơn không còn tồn tại." });
+    }
+    return next(error);
   }
 };
 

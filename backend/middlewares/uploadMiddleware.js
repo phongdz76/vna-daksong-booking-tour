@@ -7,7 +7,11 @@ const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image/')) {
     cb(null, true);
   } else {
-    cb(new Error('INVALID_FILE_TYPE'), false);
+    const error = new Error('Chỉ chấp nhận tập tin ảnh.');
+    error.status = 400;
+    error.code = 'INVALID_FILE_TYPE';
+    error.expose = true;
+    cb(error, false);
   }
 };
 

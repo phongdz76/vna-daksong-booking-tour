@@ -97,6 +97,9 @@ export const createDestination = async (req, res) => {
   try {
     const { name, slug, summary, description, category, address, images, sources, visitNotes, status } = req.body;
 
+    if (address !== undefined && typeof address !== "string") return res.status(400).json({ message: "Địa chỉ không hợp lệ." });
+    if (visitNotes !== undefined && typeof visitNotes !== "string") return res.status(400).json({ message: "Ghi chú không hợp lệ." });
+
     if (!name || typeof name !== "string" || name.trim().length === 0) {
       return res.status(400).json({ message: "Tên là bắt buộc." });
     }

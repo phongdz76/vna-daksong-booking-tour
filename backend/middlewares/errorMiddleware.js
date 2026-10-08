@@ -5,6 +5,12 @@ export function notFound(_request, response) {
 // Express recognizes this as an error handler by its four arguments.
 export function errorHandler(error, _request, response, next) {
   if (response.headersSent) return next(error);
+  if (error.name === "MulterError") {
+    if (error.code === "LIMIT_FILE_SIZE") {
+      return response.status(413).json({ message: "Ảnh vượt quá giới hạn 5MB.", code: error.code });
+    }
+    return response.status(400).json({ message: "Tập tin hoặc tên trường upload không hợp lệ.", code: error.code });
+  }
   if (error.expose === true && Number.isInteger(error.status) && error.status >= 400 && error.status <= 599) {
     return response.status(error.status).json({ message: error.message, code: error.code });
   }

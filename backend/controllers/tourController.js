@@ -166,6 +166,8 @@ export const createTour = async (req, res) => {
   try {
     const { name, slug, summary, description, durationHours, themes, destinationIds, itinerary, images, meetingPoint, includes, excludes, childPolicy, cancellationPolicy, status } = req.body;
 
+    if (childPolicy !== undefined && typeof childPolicy !== "string") return res.status(400).json({ message: "Chính sách trẻ em không hợp lệ." });
+
     if (!name || typeof name !== "string") return res.status(400).json({ message: "Tên là bắt buộc." });
     if (!slug || typeof slug !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return res.status(400).json({ message: "Định dạng slug không hợp lệ." });
     if (!summary || typeof summary !== "string") return res.status(400).json({ message: "Tóm tắt là bắt buộc." });

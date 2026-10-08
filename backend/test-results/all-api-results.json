@@ -1,0 +1,5705 @@
+{
+  "startedAt": "2026-10-08T04:31:06.969Z",
+  "finishedAt": "2026-10-08T04:32:24.023Z",
+  "runId": "1791433866969-7e525611",
+  "mode": "Actual server.js, real local HTTP, isolated MongoDB database, simulated external providers",
+  "databaseName": "vna_api_test_1791433866969_7e525611",
+  "dbConnected": true,
+  "temporaryDatabaseDropped": true,
+  "summary": {
+    "total": 220,
+    "passed": 220,
+    "failed": 0,
+    "coveredEndpoints": 50,
+    "totalEndpoints": 50,
+    "coveredApiEndpoints": 49,
+    "totalApiEndpoints": 49,
+    "httpRequests": 358
+  },
+  "infrastructureError": null,
+  "notVerified": [
+    "Zalo thật với access token người dùng",
+    "Thanh toán/callback ZaloPay sandbox thật",
+    "Upload vào Cloudinary thật",
+    "Mọi tổ hợp dữ liệu và mọi lịch thực thi đồng thời; endpoint coverage không phải exhaustive path coverage"
+  ],
+  "coverage": [
+    {
+      "method": "GET",
+      "path": "/",
+      "requests": 1,
+      "successResponses": 1,
+      "passCases": 1,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/zalo",
+      "requests": 7,
+      "successResponses": 1,
+      "passCases": 7,
+      "failCases": 0,
+      "externalMocked": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/admin/login",
+      "requests": 5,
+      "successResponses": 1,
+      "passCases": 5,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/mock",
+      "requests": 5,
+      "successResponses": 2,
+      "passCases": 5,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/me",
+      "requests": 6,
+      "successResponses": 1,
+      "passCases": 6,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/destinations",
+      "requests": 3,
+      "successResponses": 3,
+      "passCases": 3,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/destinations/:id",
+      "requests": 9,
+      "successResponses": 5,
+      "passCases": 7,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/destinations",
+      "requests": 5,
+      "successResponses": 2,
+      "passCases": 5,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "PUT",
+      "path": "/api/destinations/:id",
+      "requests": 2,
+      "successResponses": 1,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/destinations/:id",
+      "requests": 2,
+      "successResponses": 1,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/destinations/:id",
+      "requests": 2,
+      "successResponses": 1,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/articles",
+      "requests": 2,
+      "successResponses": 2,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/articles/:id",
+      "requests": 7,
+      "successResponses": 4,
+      "passCases": 6,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/articles",
+      "requests": 3,
+      "successResponses": 1,
+      "passCases": 3,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "PUT",
+      "path": "/api/articles/:id",
+      "requests": 2,
+      "successResponses": 1,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/articles/:id",
+      "requests": 2,
+      "successResponses": 1,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/articles/:id",
+      "requests": 2,
+      "successResponses": 1,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/tours/saved",
+      "requests": 3,
+      "successResponses": 2,
+      "passCases": 3,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/tours",
+      "requests": 13,
+      "successResponses": 7,
+      "passCases": 13,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/tours/:id/departures",
+      "requests": 2,
+      "successResponses": 2,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/tours/:id",
+      "requests": 7,
+      "successResponses": 4,
+      "passCases": 6,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/tours/:id/save",
+      "requests": 2,
+      "successResponses": 2,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/tours",
+      "requests": 5,
+      "successResponses": 1,
+      "passCases": 5,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "PUT",
+      "path": "/api/tours/:id",
+      "requests": 2,
+      "successResponses": 1,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tours/:id",
+      "requests": 2,
+      "successResponses": 1,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/tours/:id",
+      "requests": 2,
+      "successResponses": 1,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/departures",
+      "requests": 2,
+      "successResponses": 1,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/departures/:id",
+      "requests": 5,
+      "successResponses": 3,
+      "passCases": 5,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/departures",
+      "requests": 4,
+      "successResponses": 1,
+      "passCases": 4,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "PUT",
+      "path": "/api/departures/:id",
+      "requests": 2,
+      "successResponses": 1,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/departures/:id",
+      "requests": 4,
+      "successResponses": 2,
+      "passCases": 4,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/departures/:id",
+      "requests": 2,
+      "successResponses": 1,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/bookings/quote",
+      "requests": 45,
+      "successResponses": 32,
+      "passCases": 45,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/bookings/dashboard-data",
+      "requests": 2,
+      "successResponses": 1,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/bookings/mine",
+      "requests": 1,
+      "successResponses": 1,
+      "passCases": 1,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/bookings",
+      "requests": 2,
+      "successResponses": 2,
+      "passCases": 2,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/bookings/:id",
+      "requests": 4,
+      "successResponses": 3,
+      "passCases": 4,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/bookings",
+      "requests": 44,
+      "successResponses": 33,
+      "passCases": 40,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/bookings/:id/cancel",
+      "requests": 13,
+      "successResponses": 9,
+      "passCases": 11,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/bookings/:id/status",
+      "requests": 14,
+      "successResponses": 5,
+      "passCases": 10,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/payments/zalopay/create",
+      "requests": 34,
+      "successResponses": 18,
+      "passCases": 26,
+      "failCases": 0,
+      "externalMocked": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/payments/zalopay/webhook",
+      "requests": 25,
+      "successResponses": 25,
+      "passCases": 18,
+      "failCases": 0,
+      "externalMocked": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/payments/zalopay/:appTransId/query",
+      "requests": 8,
+      "successResponses": 4,
+      "passCases": 6,
+      "failCases": 0,
+      "externalMocked": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/payments/zalopay/:appTransId/refund",
+      "requests": 10,
+      "successResponses": 3,
+      "passCases": 5,
+      "failCases": 0,
+      "externalMocked": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/payments/zalopay/:appTransId/refund/query",
+      "requests": 9,
+      "successResponses": 6,
+      "passCases": 6,
+      "failCases": 0,
+      "externalMocked": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/upload",
+      "requests": 8,
+      "successResponses": 1,
+      "passCases": 8,
+      "failCases": 0,
+      "externalMocked": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/coupons",
+      "requests": 3,
+      "successResponses": 1,
+      "passCases": 3,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/coupons",
+      "requests": 7,
+      "successResponses": 3,
+      "passCases": 6,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "PUT",
+      "path": "/api/coupons/:id",
+      "requests": 3,
+      "successResponses": 1,
+      "passCases": 3,
+      "failCases": 0,
+      "externalMocked": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/coupons/:id",
+      "requests": 3,
+      "successResponses": 2,
+      "passCases": 3,
+      "failCases": 0,
+      "externalMocked": false
+    }
+  ],
+  "results": [
+    {
+      "id": 1,
+      "name": "Server phản hồi đúng tên service",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/",
+          "status": 200,
+          "endpoint": "GET /",
+          "message": null
+        }
+      ],
+      "durationMs": 21
+    },
+    {
+      "id": 2,
+      "name": "API không tồn tại trả 404",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/not-found",
+          "status": 404,
+          "endpoint": null,
+          "message": "Không tìm thấy API."
+        }
+      ],
+      "durationMs": 5,
+      "evidence": {
+        "message": "Không tìm thấy API.",
+        "code": "NOT_FOUND"
+      }
+    },
+    {
+      "id": 3,
+      "name": "JSON lỗi cú pháp trả 400",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/admin/login",
+          "status": 400,
+          "endpoint": "POST /api/auth/admin/login",
+          "message": "Unexpected end of JSON input"
+        }
+      ],
+      "durationMs": 16,
+      "evidence": {
+        "message": "Unexpected end of JSON input"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Admin đăng nhập thành công, không lộ password",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/admin/login",
+          "status": 200,
+          "endpoint": "POST /api/auth/admin/login",
+          "message": null
+        }
+      ],
+      "durationMs": 150
+    },
+    {
+      "id": 5,
+      "name": "Admin sai mật khẩu trả 401",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/admin/login",
+          "status": 401,
+          "endpoint": "POST /api/auth/admin/login",
+          "message": "Email hoặc mật khẩu không đúng."
+        }
+      ],
+      "durationMs": 128,
+      "evidence": {
+        "message": "Email hoặc mật khẩu không đúng."
+      }
+    },
+    {
+      "id": 6,
+      "name": "Admin thiếu email trả 400",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/admin/login",
+          "status": 400,
+          "endpoint": "POST /api/auth/admin/login",
+          "message": "Email is required"
+        }
+      ],
+      "durationMs": 4,
+      "evidence": {
+        "message": "Email is required"
+      }
+    },
+    {
+      "id": 7,
+      "name": "Admin password quá 72 byte trả 400",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/admin/login",
+          "status": 400,
+          "endpoint": "POST /api/auth/admin/login",
+          "message": "Mật khẩu không hợp lệ."
+        }
+      ],
+      "durationMs": 3,
+      "evidence": {
+        "message": "Mật khẩu không hợp lệ."
+      }
+    },
+    {
+      "id": 8,
+      "name": "Mock login bị chặn khi chưa bật",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/mock",
+          "status": 403,
+          "endpoint": "POST /api/auth/mock",
+          "message": "Mock login không được phép. Cần cấu hình ALLOW_MOCK_LOGIN=true trong .env."
+        }
+      ],
+      "durationMs": 2
+    },
+    {
+      "id": 9,
+      "name": "Mock login bị chặn ở production",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/mock",
+          "status": 403,
+          "endpoint": "POST /api/auth/mock",
+          "message": "Mock login không được phép. Cần cấu hình ALLOW_MOCK_LOGIN=true trong .env."
+        }
+      ],
+      "durationMs": 3
+    },
+    {
+      "id": 10,
+      "name": "Mock đăng nhập khách A",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/mock",
+          "status": 200,
+          "endpoint": "POST /api/auth/mock",
+          "message": null
+        }
+      ],
+      "durationMs": 68
+    },
+    {
+      "id": 11,
+      "name": "Mock đăng nhập khách B",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/mock",
+          "status": 200,
+          "endpoint": "POST /api/auth/mock",
+          "message": null
+        }
+      ],
+      "durationMs": 64
+    },
+    {
+      "id": 12,
+      "name": "Mock thiếu số điện thoại trả 400",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/mock",
+          "status": 400,
+          "endpoint": "POST /api/auth/mock",
+          "message": "Số điện thoại không hợp lệ."
+        }
+      ],
+      "durationMs": 2,
+      "evidence": {
+        "message": "Số điện thoại không hợp lệ."
+      }
+    },
+    {
+      "id": 13,
+      "name": "GET me đúng khách và không trả password",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/me",
+          "status": 200,
+          "endpoint": "GET /api/auth/me",
+          "message": null
+        }
+      ],
+      "durationMs": 60
+    },
+    {
+      "id": 14,
+      "name": "GET me không token trả 401",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/me",
+          "status": 401,
+          "endpoint": "GET /api/auth/me",
+          "message": "Bạn cần đăng nhập để tiếp tục."
+        }
+      ],
+      "durationMs": 1,
+      "evidence": {
+        "message": "Bạn cần đăng nhập để tiếp tục.",
+        "code": "AUTH_REQUIRED"
+      }
+    },
+    {
+      "id": 15,
+      "name": "GET me token sai trả 401",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/me",
+          "status": 401,
+          "endpoint": "GET /api/auth/me",
+          "message": "Token không hợp lệ hoặc đã hết hạn."
+        }
+      ],
+      "durationMs": 1,
+      "evidence": {
+        "message": "Token không hợp lệ hoặc đã hết hạn.",
+        "code": "INVALID_TOKEN"
+      }
+    },
+    {
+      "id": 16,
+      "name": "Token hết hạn trả 401",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/me",
+          "status": 401,
+          "endpoint": "GET /api/auth/me",
+          "message": "Token không hợp lệ hoặc đã hết hạn."
+        }
+      ],
+      "durationMs": 4
+    },
+    {
+      "id": 17,
+      "name": "Token sai audience trả 401",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/me",
+          "status": 401,
+          "endpoint": "GET /api/auth/me",
+          "message": "Token không hợp lệ hoặc đã hết hạn."
+        }
+      ],
+      "durationMs": 2
+    },
+    {
+      "id": 18,
+      "name": "Khóa user có hiệu lực với token đang còn hạn",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/auth/me",
+          "status": 401,
+          "endpoint": "GET /api/auth/me",
+          "message": "Tài khoản không còn hoạt động."
+        }
+      ],
+      "durationMs": 181
+    },
+    {
+      "id": 19,
+      "name": "Quyền admin lấy từ DB, không tin role tự chèn vào JWT",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/coupons",
+          "status": 403,
+          "endpoint": "GET /api/coupons",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 67
+    },
+    {
+      "id": 20,
+      "name": "Zalo đăng nhập thành công qua provider giả lập",
+      "kind": "external-mocked",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/zalo",
+          "status": 200,
+          "endpoint": "POST /api/auth/zalo",
+          "message": null
+        }
+      ],
+      "durationMs": 63
+    },
+    {
+      "id": 21,
+      "name": "Zalo thiếu accessToken trả 400",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/zalo",
+          "status": 400,
+          "endpoint": "POST /api/auth/zalo",
+          "message": "accessToken is required"
+        }
+      ],
+      "durationMs": 2,
+      "evidence": {
+        "message": "accessToken is required"
+      }
+    },
+    {
+      "id": 22,
+      "name": "Zalo token có xuống dòng trả 400",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/zalo",
+          "status": 400,
+          "endpoint": "POST /api/auth/zalo",
+          "message": "accessToken không hợp lệ."
+        }
+      ],
+      "durationMs": 2,
+      "evidence": {
+        "message": "accessToken không hợp lệ."
+      }
+    },
+    {
+      "id": 23,
+      "name": "Zalo provider invalid trả 401",
+      "kind": "external-mocked",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/zalo",
+          "status": 401,
+          "endpoint": "POST /api/auth/zalo",
+          "message": "Zalo không xác nhận được phiên đăng nhập."
+        }
+      ],
+      "durationMs": 1
+    },
+    {
+      "id": 24,
+      "name": "Zalo provider bad-id trả 401",
+      "kind": "external-mocked",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/zalo",
+          "status": 401,
+          "endpoint": "POST /api/auth/zalo",
+          "message": "Zalo không xác nhận được phiên đăng nhập."
+        }
+      ],
+      "durationMs": 2
+    },
+    {
+      "id": 25,
+      "name": "Zalo provider network-error trả 502",
+      "kind": "external-mocked",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/zalo",
+          "status": 502,
+          "endpoint": "POST /api/auth/zalo",
+          "message": "Chưa liên lạc được với Zalo. Vui lòng thử lại."
+        }
+      ],
+      "durationMs": 2
+    },
+    {
+      "id": 26,
+      "name": "Zalo thiếu cấu hình trả 503",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/auth/zalo",
+          "status": 503,
+          "endpoint": "POST /api/auth/zalo",
+          "message": "Chưa cấu hình ZALO_APP_SECRET."
+        }
+      ],
+      "durationMs": 1
+    },
+    {
+      "id": 27,
+      "name": "Admin CREATE Destination",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/destinations",
+          "status": 201,
+          "endpoint": "POST /api/destinations",
+          "message": null
+        }
+      ],
+      "durationMs": 130
+    },
+    {
+      "id": 28,
+      "name": "Admin CREATE Article",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/articles",
+          "status": 201,
+          "endpoint": "POST /api/articles",
+          "message": null
+        }
+      ],
+      "durationMs": 184
+    },
+    {
+      "id": 29,
+      "name": "Admin CREATE Tour",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours",
+          "status": 201,
+          "endpoint": "POST /api/tours",
+          "message": null
+        }
+      ],
+      "durationMs": 182
+    },
+    {
+      "id": 30,
+      "name": "Admin CREATE Departure",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/departures",
+          "status": 201,
+          "endpoint": "POST /api/departures",
+          "message": null
+        }
+      ],
+      "durationMs": 180
+    },
+    {
+      "id": 31,
+      "name": "Admin CREATE Coupon",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/coupons",
+          "status": 201,
+          "endpoint": "POST /api/coupons",
+          "message": null
+        }
+      ],
+      "durationMs": 121
+    },
+    {
+      "id": 32,
+      "name": "READ list destinations",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/destinations",
+          "status": 200,
+          "endpoint": "GET /api/destinations",
+          "message": null
+        }
+      ],
+      "durationMs": 119
+    },
+    {
+      "id": 33,
+      "name": "READ detail destinations",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "status": 200,
+          "endpoint": "GET /api/destinations/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 60
+    },
+    {
+      "id": 34,
+      "name": "Admin PUT destinations rồi đọc lại",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PUT",
+          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "status": 200,
+          "endpoint": "PUT /api/destinations/:id",
+          "message": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "status": 200,
+          "endpoint": "GET /api/destinations/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 298
+    },
+    {
+      "id": 35,
+      "name": "Admin PATCH destinations rồi đọc lại",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "status": 200,
+          "endpoint": "PATCH /api/destinations/:id",
+          "message": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "status": 200,
+          "endpoint": "GET /api/destinations/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 293
+    },
+    {
+      "id": 36,
+      "name": "Khách không CREATE destinations",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/destinations",
+          "status": 403,
+          "endpoint": "POST /api/destinations",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 61,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 37,
+      "name": "Khách không PUT destinations",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PUT",
+          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "status": 403,
+          "endpoint": "PUT /api/destinations/:id",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 59,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 38,
+      "name": "Khách không PATCH destinations",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "status": 403,
+          "endpoint": "PATCH /api/destinations/:id",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 59,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 39,
+      "name": "Khách không DELETE destinations",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "DELETE",
+          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "status": 403,
+          "endpoint": "DELETE /api/destinations/:id",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 59,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 40,
+      "name": "ID không hợp lệ khi đọc destinations",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/destinations/bad-id",
+          "status": 400,
+          "endpoint": "GET /api/destinations/:id",
+          "message": "Invalid destination ID"
+        }
+      ],
+      "durationMs": 58,
+      "evidence": {
+        "message": "Invalid destination ID"
+      }
+    },
+    {
+      "id": 41,
+      "name": "ID không tồn tại khi đọc destinations",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/destinations/6ac71c90888a0e02336bdab6",
+          "status": 404,
+          "endpoint": "GET /api/destinations/:id",
+          "message": "Điểm đến không tồn tại."
+        }
+      ],
+      "durationMs": 119,
+      "evidence": {
+        "message": "Điểm đến không tồn tại."
+      }
+    },
+    {
+      "id": 42,
+      "name": "READ list articles",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/articles",
+          "status": 200,
+          "endpoint": "GET /api/articles",
+          "message": null
+        }
+      ],
+      "durationMs": 125
+    },
+    {
+      "id": 43,
+      "name": "READ detail articles",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "status": 200,
+          "endpoint": "GET /api/articles/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 59
+    },
+    {
+      "id": 44,
+      "name": "Admin PUT articles rồi đọc lại",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PUT",
+          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "status": 200,
+          "endpoint": "PUT /api/articles/:id",
+          "message": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "status": 200,
+          "endpoint": "GET /api/articles/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 295
+    },
+    {
+      "id": 45,
+      "name": "Admin PATCH articles rồi đọc lại",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "status": 200,
+          "endpoint": "PATCH /api/articles/:id",
+          "message": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "status": 200,
+          "endpoint": "GET /api/articles/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 297
+    },
+    {
+      "id": 46,
+      "name": "Khách không CREATE articles",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/articles",
+          "status": 403,
+          "endpoint": "POST /api/articles",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 60,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 47,
+      "name": "Khách không PUT articles",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PUT",
+          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "status": 403,
+          "endpoint": "PUT /api/articles/:id",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 59,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 48,
+      "name": "Khách không PATCH articles",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "status": 403,
+          "endpoint": "PATCH /api/articles/:id",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 57,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 49,
+      "name": "Khách không DELETE articles",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "DELETE",
+          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "status": 403,
+          "endpoint": "DELETE /api/articles/:id",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 59,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 50,
+      "name": "ID không hợp lệ khi đọc articles",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/articles/bad-id",
+          "status": 400,
+          "endpoint": "GET /api/articles/:id",
+          "message": "Invalid article ID"
+        }
+      ],
+      "durationMs": 61,
+      "evidence": {
+        "message": "Invalid article ID"
+      }
+    },
+    {
+      "id": 51,
+      "name": "ID không tồn tại khi đọc articles",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/articles/6ac71c91888a0e02336bdab7",
+          "status": 404,
+          "endpoint": "GET /api/articles/:id",
+          "message": "Bài viết không tồn tại."
+        }
+      ],
+      "durationMs": 119,
+      "evidence": {
+        "message": "Bài viết không tồn tại."
+      }
+    },
+    {
+      "id": 52,
+      "name": "READ list tours",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours",
+          "status": 200,
+          "endpoint": "GET /api/tours",
+          "message": null
+        }
+      ],
+      "durationMs": 62
+    },
+    {
+      "id": 53,
+      "name": "READ detail tours",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 60
+    },
+    {
+      "id": 54,
+      "name": "Admin PUT tours rồi đọc lại",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PUT",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "status": 200,
+          "endpoint": "PUT /api/tours/:id",
+          "message": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 291
+    },
+    {
+      "id": 55,
+      "name": "Admin PATCH tours rồi đọc lại",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "status": 200,
+          "endpoint": "PATCH /api/tours/:id",
+          "message": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 292
+    },
+    {
+      "id": 56,
+      "name": "Khách không CREATE tours",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours",
+          "status": 403,
+          "endpoint": "POST /api/tours",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 59,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 57,
+      "name": "Khách không PUT tours",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PUT",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "status": 403,
+          "endpoint": "PUT /api/tours/:id",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 58,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 58,
+      "name": "Khách không PATCH tours",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "status": 403,
+          "endpoint": "PATCH /api/tours/:id",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 62,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 59,
+      "name": "Khách không DELETE tours",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "DELETE",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "status": 403,
+          "endpoint": "DELETE /api/tours/:id",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 60,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 60,
+      "name": "ID không hợp lệ khi đọc tours",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours/bad-id",
+          "status": 400,
+          "endpoint": "GET /api/tours/:id",
+          "message": "ID tour không hợp lệ."
+        }
+      ],
+      "durationMs": 58,
+      "evidence": {
+        "message": "ID tour không hợp lệ."
+      }
+    },
+    {
+      "id": 61,
+      "name": "ID không tồn tại khi đọc tours",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac71c92888a0e02336bdab8",
+          "status": 404,
+          "endpoint": "GET /api/tours/:id",
+          "message": "Tour không tồn tại."
+        }
+      ],
+      "durationMs": 151,
+      "evidence": {
+        "message": "Tour không tồn tại."
+      }
+    },
+    {
+      "id": 62,
+      "name": "READ list departures",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/departures",
+          "status": 200,
+          "endpoint": "GET /api/departures",
+          "message": null
+        }
+      ],
+      "durationMs": 177
+    },
+    {
+      "id": 63,
+      "name": "READ detail departures",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "status": 200,
+          "endpoint": "GET /api/departures/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 120
+    },
+    {
+      "id": 64,
+      "name": "Admin PUT departures rồi đọc lại",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PUT",
+          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "status": 200,
+          "endpoint": "PUT /api/departures/:id",
+          "message": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "status": 200,
+          "endpoint": "GET /api/departures/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 289
+    },
+    {
+      "id": 65,
+      "name": "Admin PATCH departures rồi đọc lại",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "status": 200,
+          "endpoint": "PATCH /api/departures/:id",
+          "message": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "status": 200,
+          "endpoint": "GET /api/departures/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 290
+    },
+    {
+      "id": 66,
+      "name": "Khách không CREATE departures",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/departures",
+          "status": 403,
+          "endpoint": "POST /api/departures",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 60,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 67,
+      "name": "Khách không PUT departures",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PUT",
+          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "status": 403,
+          "endpoint": "PUT /api/departures/:id",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 62,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 68,
+      "name": "Khách không PATCH departures",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "status": 403,
+          "endpoint": "PATCH /api/departures/:id",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 64,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 69,
+      "name": "Khách không DELETE departures",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "DELETE",
+          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "status": 403,
+          "endpoint": "DELETE /api/departures/:id",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 59,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 70,
+      "name": "ID không hợp lệ khi đọc departures",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/departures/bad-id",
+          "status": 400,
+          "endpoint": "GET /api/departures/:id",
+          "message": "Invalid ID"
+        }
+      ],
+      "durationMs": 59,
+      "evidence": {
+        "message": "Invalid ID"
+      }
+    },
+    {
+      "id": 71,
+      "name": "ID không tồn tại khi đọc departures",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/departures/6ac71c93888a0e02336bdab9",
+          "status": 404,
+          "endpoint": "GET /api/departures/:id",
+          "message": "Chuyến không tồn tại"
+        }
+      ],
+      "durationMs": 131,
+      "evidence": {
+        "message": "Chuyến không tồn tại"
+      }
+    },
+    {
+      "id": 72,
+      "name": "Admin READ và lọc Coupon",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/coupons?isActive=true&sort=oldest&page=1&limit=100",
+          "status": 200,
+          "endpoint": "GET /api/coupons",
+          "message": null
+        }
+      ],
+      "durationMs": 174
+    },
+    {
+      "id": 73,
+      "name": "Admin UPDATE Coupon",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PUT",
+          "path": "/api/coupons/6ac71c8f888a0e02336bdab5",
+          "status": 200,
+          "endpoint": "PUT /api/coupons/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 181
+    },
+    {
+      "id": 74,
+      "name": "Coupon trùng code trả 400",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/coupons",
+          "status": 400,
+          "endpoint": "POST /api/coupons",
+          "message": "Mã giảm giá đã tồn tại."
+        }
+      ],
+      "durationMs": 118,
+      "evidence": {
+        "message": "Mã giảm giá đã tồn tại."
+      }
+    },
+    {
+      "id": 75,
+      "name": "Coupon percentage quá 100 trả 400",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/coupons",
+          "status": 400,
+          "endpoint": "POST /api/coupons",
+          "message": "Phần trăm giảm không được vượt quá 100%."
+        }
+      ],
+      "durationMs": 61,
+      "evidence": {
+        "message": "Phần trăm giảm không được vượt quá 100%."
+      }
+    },
+    {
+      "id": 76,
+      "name": "Khách bị chặn Coupon GET",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/coupons",
+          "status": 403,
+          "endpoint": "GET /api/coupons",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 63,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 77,
+      "name": "Khách bị chặn Coupon POST",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/coupons",
+          "status": 403,
+          "endpoint": "POST /api/coupons",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 58,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 78,
+      "name": "Khách bị chặn Coupon PUT",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PUT",
+          "path": "/api/coupons/6ac71c8f888a0e02336bdab5",
+          "status": 403,
+          "endpoint": "PUT /api/coupons/:id",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 59,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 79,
+      "name": "Khách bị chặn Coupon DELETE",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "DELETE",
+          "path": "/api/coupons/6ac71c8f888a0e02336bdab5",
+          "status": 403,
+          "endpoint": "DELETE /api/coupons/:id",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 59,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 80,
+      "name": "Danh sách phân trang giới hạn tối đa 100",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/destinations?page=0&limit=1000",
+          "status": 200,
+          "endpoint": "GET /api/destinations",
+          "message": null
+        }
+      ],
+      "durationMs": 116
+    },
+    {
+      "id": 81,
+      "name": "Text search có index: destinations",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/destinations?q=API",
+          "status": 200,
+          "endpoint": "GET /api/destinations",
+          "message": null
+        }
+      ],
+      "durationMs": 117
+    },
+    {
+      "id": 82,
+      "name": "Text search có index: articles",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/articles?q=API",
+          "status": 200,
+          "endpoint": "GET /api/articles",
+          "message": null
+        }
+      ],
+      "durationMs": 115
+    },
+    {
+      "id": 83,
+      "name": "Text search có index: tours",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours?q=API",
+          "status": 200,
+          "endpoint": "GET /api/tours",
+          "message": null
+        }
+      ],
+      "durationMs": 60
+    },
+    {
+      "id": 84,
+      "name": "Tour lọc giá/ngày/chủ đề/thời lượng/điểm đến",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours?destinationId=6ac71c8e888a0e02336bdab1&theme=nature&maxDurationHours=4&minPrice=400000&maxPrice=600000&dateFrom=2026-10-13T04%3A31%3A17.198Z&dateTo=2026-10-16T04%3A31%3A17.198Z&sort=price_asc",
+          "status": 200,
+          "endpoint": "GET /api/tours",
+          "message": null
+        }
+      ],
+      "durationMs": 67
+    },
+    {
+      "id": 85,
+      "name": "Tour sort newest",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours?sort=newest",
+          "status": 200,
+          "endpoint": "GET /api/tours",
+          "message": null
+        }
+      ],
+      "durationMs": 60,
+      "evidence": {
+        "data": [
+          {
+            "_id": "6ac71c8e888a0e02336bdab3",
+            "name": "API TEST TOUR 1791433866969-7e525611",
+            "slug": "api-test-tour-1791433866969-7e525611",
+            "summary": "Tóm tắt tour đã sửa",
+            "durationHours": 4,
+            "themes": [
+              "nature"
+            ],
+            "destinationIds": [
+              "6ac71c8e888a0e02336bdab1"
+            ],
+            "itinerary": [
+              {
+                "title": "Điểm dừng demo",
+                "description": "Hoạt động giả lập.",
+                "destinationId": "6ac71c8e888a0e02336bdab1"
+              }
+            ],
+            "images": [],
+            "meetingPoint": "Điểm hẹn demo",
+            "includes": [
+              "Dịch vụ demo"
+            ],
+            "excludes": [],
+            "childPolicy": "Giá trẻ em theo chuyến demo.",
+            "cancellationPolicy": "Chính sách demo.",
+            "status": "published",
+            "soldCount": 0,
+            "createdAt": "2026-10-08T04:31:10.810Z",
+            "updatedAt": "2026-10-08T04:31:14.080Z",
+            "__v": 2,
+            "priceFrom": 500000,
+            "hasUpcomingDeparture": true
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "limit": 10,
+          "total": 1,
+          "pages": 1
+        }
+      }
+    },
+    {
+      "id": 86,
+      "name": "Tour sort duration",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours?sort=duration",
+          "status": 200,
+          "endpoint": "GET /api/tours",
+          "message": null
+        }
+      ],
+      "durationMs": 60,
+      "evidence": {
+        "data": [
+          {
+            "_id": "6ac71c8e888a0e02336bdab3",
+            "name": "API TEST TOUR 1791433866969-7e525611",
+            "slug": "api-test-tour-1791433866969-7e525611",
+            "summary": "Tóm tắt tour đã sửa",
+            "durationHours": 4,
+            "themes": [
+              "nature"
+            ],
+            "destinationIds": [
+              "6ac71c8e888a0e02336bdab1"
+            ],
+            "itinerary": [
+              {
+                "title": "Điểm dừng demo",
+                "description": "Hoạt động giả lập.",
+                "destinationId": "6ac71c8e888a0e02336bdab1"
+              }
+            ],
+            "images": [],
+            "meetingPoint": "Điểm hẹn demo",
+            "includes": [
+              "Dịch vụ demo"
+            ],
+            "excludes": [],
+            "childPolicy": "Giá trẻ em theo chuyến demo.",
+            "cancellationPolicy": "Chính sách demo.",
+            "status": "published",
+            "soldCount": 0,
+            "createdAt": "2026-10-08T04:31:10.810Z",
+            "updatedAt": "2026-10-08T04:31:14.080Z",
+            "__v": 2,
+            "priceFrom": 500000,
+            "hasUpcomingDeparture": true
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "limit": 10,
+          "total": 1,
+          "pages": 1
+        }
+      }
+    },
+    {
+      "id": 87,
+      "name": "Tour sort price_desc",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours?sort=price_desc",
+          "status": 200,
+          "endpoint": "GET /api/tours",
+          "message": null
+        }
+      ],
+      "durationMs": 58,
+      "evidence": {
+        "data": [
+          {
+            "_id": "6ac71c8e888a0e02336bdab3",
+            "name": "API TEST TOUR 1791433866969-7e525611",
+            "slug": "api-test-tour-1791433866969-7e525611",
+            "summary": "Tóm tắt tour đã sửa",
+            "durationHours": 4,
+            "themes": [
+              "nature"
+            ],
+            "destinationIds": [
+              "6ac71c8e888a0e02336bdab1"
+            ],
+            "itinerary": [
+              {
+                "title": "Điểm dừng demo",
+                "description": "Hoạt động giả lập.",
+                "destinationId": "6ac71c8e888a0e02336bdab1"
+              }
+            ],
+            "images": [],
+            "meetingPoint": "Điểm hẹn demo",
+            "includes": [
+              "Dịch vụ demo"
+            ],
+            "excludes": [],
+            "childPolicy": "Giá trẻ em theo chuyến demo.",
+            "cancellationPolicy": "Chính sách demo.",
+            "status": "published",
+            "soldCount": 0,
+            "createdAt": "2026-10-08T04:31:10.810Z",
+            "updatedAt": "2026-10-08T04:31:14.080Z",
+            "__v": 2,
+            "priceFrom": 500000,
+            "hasUpcomingDeparture": true
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "limit": 10,
+          "total": 1,
+          "pages": 1
+        }
+      }
+    },
+    {
+      "id": 88,
+      "name": "Tour sort most_bought",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours?sort=most_bought",
+          "status": 200,
+          "endpoint": "GET /api/tours",
+          "message": null
+        }
+      ],
+      "durationMs": 60,
+      "evidence": {
+        "data": [
+          {
+            "_id": "6ac71c8e888a0e02336bdab3",
+            "name": "API TEST TOUR 1791433866969-7e525611",
+            "slug": "api-test-tour-1791433866969-7e525611",
+            "summary": "Tóm tắt tour đã sửa",
+            "durationHours": 4,
+            "themes": [
+              "nature"
+            ],
+            "destinationIds": [
+              "6ac71c8e888a0e02336bdab1"
+            ],
+            "itinerary": [
+              {
+                "title": "Điểm dừng demo",
+                "description": "Hoạt động giả lập.",
+                "destinationId": "6ac71c8e888a0e02336bdab1"
+              }
+            ],
+            "images": [],
+            "meetingPoint": "Điểm hẹn demo",
+            "includes": [
+              "Dịch vụ demo"
+            ],
+            "excludes": [],
+            "childPolicy": "Giá trẻ em theo chuyến demo.",
+            "cancellationPolicy": "Chính sách demo.",
+            "status": "published",
+            "soldCount": 0,
+            "createdAt": "2026-10-08T04:31:10.810Z",
+            "updatedAt": "2026-10-08T04:31:14.080Z",
+            "__v": 2,
+            "priceFrom": 500000,
+            "hasUpcomingDeparture": true
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "limit": 10,
+          "total": 1,
+          "pages": 1
+        }
+      }
+    },
+    {
+      "id": 89,
+      "name": "Tour query sai: theme=bad",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours?theme=bad",
+          "status": 400,
+          "endpoint": "GET /api/tours",
+          "message": "Chủ đề không hợp lệ."
+        }
+      ],
+      "durationMs": 1,
+      "evidence": {
+        "message": "Chủ đề không hợp lệ."
+      }
+    },
+    {
+      "id": 90,
+      "name": "Tour query sai: sort=bad",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours?sort=bad",
+          "status": 400,
+          "endpoint": "GET /api/tours",
+          "message": "Tùy chọn sắp xếp không hợp lệ."
+        }
+      ],
+      "durationMs": 1,
+      "evidence": {
+        "message": "Tùy chọn sắp xếp không hợp lệ."
+      }
+    },
+    {
+      "id": 91,
+      "name": "Tour query sai: minPrice=999&maxPrice=1",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours?minPrice=999&maxPrice=1",
+          "status": 400,
+          "endpoint": "GET /api/tours",
+          "message": "minPrice phải nhỏ hơn hoặc bằng maxPrice."
+        }
+      ],
+      "durationMs": 2,
+      "evidence": {
+        "message": "minPrice phải nhỏ hơn hoặc bằng maxPrice."
+      }
+    },
+    {
+      "id": 92,
+      "name": "Tour query sai: maxDurationHours=0",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours?maxDurationHours=0",
+          "status": 400,
+          "endpoint": "GET /api/tours",
+          "message": "maxDurationHours không hợp lệ."
+        }
+      ],
+      "durationMs": 1,
+      "evidence": {
+        "message": "maxDurationHours không hợp lệ."
+      }
+    },
+    {
+      "id": 93,
+      "name": "Tour query sai: dateFrom=bad-date",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours?dateFrom=bad-date",
+          "status": 400,
+          "endpoint": "GET /api/tours",
+          "message": "dateFrom không hợp lệ."
+        }
+      ],
+      "durationMs": 1,
+      "evidence": {
+        "message": "dateFrom không hợp lệ."
+      }
+    },
+    {
+      "id": 94,
+      "name": "Chuyến công khai nằm dưới /tours/:id/departures",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3/departures",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id/departures",
+          "message": null
+        }
+      ],
+      "durationMs": 179
+    },
+    {
+      "id": 95,
+      "name": "Danh sách chuyến quản trị chặn user",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/departures",
+          "status": 403,
+          "endpoint": "GET /api/departures",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 58,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 96,
+      "name": "Nội dung draft chỉ admin thấy",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/destinations",
+          "status": 201,
+          "endpoint": "POST /api/destinations",
+          "message": null
+        },
+        {
+          "method": "GET",
+          "path": "/api/destinations/6ac71c95888a0e02336bdabb",
+          "status": 404,
+          "endpoint": "GET /api/destinations/:id",
+          "message": "Điểm đến không tồn tại."
+        },
+        {
+          "method": "GET",
+          "path": "/api/destinations/6ac71c95888a0e02336bdabb",
+          "status": 200,
+          "endpoint": "GET /api/destinations/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 298
+    },
+    {
+      "id": 97,
+      "name": "Catalog token sai không được bỏ qua",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours",
+          "status": 401,
+          "endpoint": "GET /api/tours",
+          "message": "Token không hợp lệ hoặc đã hết hạn."
+        }
+      ],
+      "durationMs": 1,
+      "evidence": {
+        "message": "Token không hợp lệ hoặc đã hết hạn.",
+        "code": "INVALID_TOKEN"
+      }
+    },
+    {
+      "id": 98,
+      "name": "Published Destination thiếu nguồn trả 400",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/destinations",
+          "status": 400,
+          "endpoint": "POST /api/destinations",
+          "message": "Nội dung xuất bản cần có ít nhất một nguồn."
+        }
+      ],
+      "durationMs": 60,
+      "evidence": {
+        "message": "Nội dung xuất bản cần có ít nhất một nguồn."
+      }
+    },
+    {
+      "id": 99,
+      "name": "Published Article thiếu nguồn trả 400",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/articles",
+          "status": 400,
+          "endpoint": "POST /api/articles",
+          "message": "Nội dung xuất bản cần có ít nhất một nguồn."
+        }
+      ],
+      "durationMs": 116,
+      "evidence": {
+        "message": "Nội dung xuất bản cần có ít nhất một nguồn."
+      }
+    },
+    {
+      "id": 100,
+      "name": "Published Tour thiếu itinerary trả 400",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours",
+          "status": 400,
+          "endpoint": "POST /api/tours",
+          "message": "Tour xuất bản cần có lịch trình."
+        }
+      ],
+      "durationMs": 117,
+      "evidence": {
+        "message": "Tour xuất bản cần có lịch trình."
+      }
+    },
+    {
+      "id": 101,
+      "name": "Điểm dừng ngoài destinationIds bị chặn",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours",
+          "status": 400,
+          "endpoint": "POST /api/tours",
+          "message": "Điểm dừng phải thuộc destinationIds của tour."
+        }
+      ],
+      "durationMs": 116,
+      "evidence": {
+        "message": "Điểm dừng phải thuộc destinationIds của tour."
+      }
+    },
+    {
+      "id": 102,
+      "name": "Hạn đặt sau khởi hành trả 400",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/departures",
+          "status": 400,
+          "endpoint": "POST /api/departures",
+          "message": "Hạn đặt phải trước thời điểm khởi hành."
+        }
+      ],
+      "durationMs": 119,
+      "evidence": {
+        "message": "Hạn đặt phải trước thời điểm khởi hành."
+      }
+    },
+    {
+      "id": 103,
+      "name": "Giá chuyến dạng chuỗi bị chặn",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/departures",
+          "status": 400,
+          "endpoint": "POST /api/departures",
+          "message": "Invalid adultPrice"
+        }
+      ],
+      "durationMs": 61,
+      "evidence": {
+        "message": "Invalid adultPrice"
+      }
+    },
+    {
+      "id": 104,
+      "name": "Lưu tour và đọc danh sách saved",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3/save",
+          "status": 200,
+          "endpoint": "POST /api/tours/:id/save",
+          "message": "Đã lưu tour."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/saved",
+          "status": 200,
+          "endpoint": "GET /api/tours/saved",
+          "message": null
+        }
+      ],
+      "durationMs": 415
+    },
+    {
+      "id": 105,
+      "name": "Bỏ lưu tour bằng toggle",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3/save",
+          "status": 200,
+          "endpoint": "POST /api/tours/:id/save",
+          "message": "Đã bỏ lưu tour."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/saved",
+          "status": 200,
+          "endpoint": "GET /api/tours/saved",
+          "message": null
+        }
+      ],
+      "durationMs": 354
+    },
+    {
+      "id": 106,
+      "name": "Saved tour không token trả 401",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/tours/saved",
+          "status": 401,
+          "endpoint": "GET /api/tours/saved",
+          "message": "Bạn cần đăng nhập để tiếp tục."
+        }
+      ],
+      "durationMs": 1,
+      "evidence": {
+        "message": "Bạn cần đăng nhập để tiếp tục.",
+        "code": "AUTH_REQUIRED"
+      }
+    },
+    {
+      "id": 107,
+      "name": "Quote tính đúng 2 người lớn + 1 trẻ em",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        }
+      ],
+      "durationMs": 226
+    },
+    {
+      "id": 108,
+      "name": "Quote chặn adults bằng 0",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 400,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Số lượng người lớn không hợp lệ."
+        }
+      ],
+      "durationMs": 2,
+      "evidence": {
+        "message": "Số lượng người lớn không hợp lệ."
+      }
+    },
+    {
+      "id": 109,
+      "name": "Quote chặn adults dạng chuỗi",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 400,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Số lượng người lớn không hợp lệ."
+        }
+      ],
+      "durationMs": 2,
+      "evidence": {
+        "message": "Số lượng người lớn không hợp lệ."
+      }
+    },
+    {
+      "id": 110,
+      "name": "Quote chặn adults số lẻ",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 400,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Số lượng người lớn không hợp lệ."
+        }
+      ],
+      "durationMs": 1,
+      "evidence": {
+        "message": "Số lượng người lớn không hợp lệ."
+      }
+    },
+    {
+      "id": 111,
+      "name": "Quote chặn children âm",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 400,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Số lượng trẻ em không hợp lệ."
+        }
+      ],
+      "durationMs": 2,
+      "evidence": {
+        "message": "Số lượng trẻ em không hợp lệ."
+      }
+    },
+    {
+      "id": 112,
+      "name": "Quote chặn vượt 10 khách",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 400,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Mỗi yêu cầu nhận tối đa 10 khách."
+        }
+      ],
+      "durationMs": 124,
+      "evidence": {
+        "message": "Mỗi yêu cầu nhận tối đa 10 khách."
+      }
+    },
+    {
+      "id": 113,
+      "name": "Quote chặn ID sai",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 400,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "departureId không hợp lệ."
+        }
+      ],
+      "durationMs": 2,
+      "evidence": {
+        "message": "departureId không hợp lệ."
+      }
+    },
+    {
+      "id": 114,
+      "name": "Quote chặn chuyến không tồn tại",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 404,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Chuyến không tồn tại."
+        }
+      ],
+      "durationMs": 58,
+      "evidence": {
+        "message": "Chuyến không tồn tại."
+      }
+    },
+    {
+      "id": 115,
+      "name": "Quote chặn coupon không tồn tại",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 400,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Mã giảm giá không tồn tại."
+        }
+      ],
+      "durationMs": 173,
+      "evidence": {
+        "message": "Mã giảm giá không tồn tại."
+      }
+    },
+    {
+      "id": 116,
+      "name": "Quote trẻ em yêu cầu childPolicy",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 400,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Chuyến chưa có chính sách/giá trẻ em. Vui lòng liên hệ VNA."
+        }
+      ],
+      "durationMs": 294
+    },
+    {
+      "id": 117,
+      "name": "Quote coupon đúng, chưa trừ quota",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        }
+      ],
+      "durationMs": 233
+    },
+    {
+      "id": 118,
+      "name": "Quote chặn coupon inactive",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 400,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Mã giảm giá đã hết hạn hoặc hết lượt sử dụng."
+        }
+      ],
+      "durationMs": 239
+    },
+    {
+      "id": 119,
+      "name": "Quote chặn coupon expired",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 400,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Mã giảm giá đã hết hạn hoặc hết lượt sử dụng."
+        }
+      ],
+      "durationMs": 232
+    },
+    {
+      "id": 120,
+      "name": "Quote chặn coupon quota exhausted",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 400,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Mã giảm giá đã hết hạn hoặc hết lượt sử dụng."
+        }
+      ],
+      "durationMs": 235
+    },
+    {
+      "id": 121,
+      "name": "Quote chặn coupon minimum order",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 400,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Đơn hàng chưa đạt điều kiện áp dụng mã giảm giá này."
+        }
+      ],
+      "durationMs": 234
+    },
+    {
+      "id": 122,
+      "name": "Tạo booking A pending_confirmation/unpaid",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        }
+      ],
+      "durationMs": 557
+    },
+    {
+      "id": 123,
+      "name": "Replay cùng payload/key trả đúng đơn cũ",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 200,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        }
+      ],
+      "durationMs": 177
+    },
+    {
+      "id": 124,
+      "name": "Cùng key đổi payload trả 409",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 409,
+          "endpoint": "POST /api/bookings",
+          "message": "Idempotency-Key đã dùng cho một yêu cầu khác."
+        }
+      ],
+      "durationMs": 122
+    },
+    {
+      "id": 125,
+      "name": "Thứ tự khóa contact không gây conflict",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 200,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        }
+      ],
+      "durationMs": 114
+    },
+    {
+      "id": 126,
+      "name": "5 request đồng thời cùng key chỉ tạo một booking",
+      "kind": "concurrency",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 200,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 200,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 200,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 200,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        }
+      ],
+      "durationMs": 1602,
+      "evidence": {
+        "statuses": [
+          200,
+          201,
+          200,
+          200,
+          200
+        ],
+        "documents": 1
+      }
+    },
+    {
+      "id": 127,
+      "name": "Tạo booking chặn thiếu quoteToken",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 400,
+          "endpoint": "POST /api/bookings",
+          "message": "quoteToken là bắt buộc."
+        }
+      ],
+      "durationMs": 63,
+      "evidence": {
+        "message": "quoteToken là bắt buộc."
+      }
+    },
+    {
+      "id": 128,
+      "name": "Tạo booking chặn thiếu contact",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 400,
+          "endpoint": "POST /api/bookings",
+          "message": "Thông tin liên hệ là bắt buộc."
+        }
+      ],
+      "durationMs": 59,
+      "evidence": {
+        "message": "Thông tin liên hệ là bắt buộc."
+      }
+    },
+    {
+      "id": 129,
+      "name": "Tạo booking chặn contact thiếu phone",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 400,
+          "endpoint": "POST /api/bookings",
+          "message": "Số điện thoại liên hệ là bắt buộc."
+        }
+      ],
+      "durationMs": 59,
+      "evidence": {
+        "message": "Số điện thoại liên hệ là bắt buộc."
+      }
+    },
+    {
+      "id": 130,
+      "name": "Tạo booking chặn thiếu header",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 400,
+          "endpoint": "POST /api/bookings",
+          "message": "Header Idempotency-Key là bắt buộc (ít nhất 8 ký tự)."
+        }
+      ],
+      "durationMs": 60,
+      "evidence": {
+        "message": "Header Idempotency-Key là bắt buộc (ít nhất 8 ký tự)."
+      }
+    },
+    {
+      "id": 131,
+      "name": "Tạo booking chặn key quá ngắn",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 400,
+          "endpoint": "POST /api/bookings",
+          "message": "Header Idempotency-Key là bắt buộc (ít nhất 8 ký tự)."
+        }
+      ],
+      "durationMs": 60,
+      "evidence": {
+        "message": "Header Idempotency-Key là bắt buộc (ít nhất 8 ký tự)."
+      }
+    },
+    {
+      "id": 132,
+      "name": "QuoteToken bị sửa trả 409",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 409,
+          "endpoint": "POST /api/bookings",
+          "message": "Báo giá không hợp lệ hoặc đã hết hạn. Vui lòng lấy báo giá mới."
+        }
+      ],
+      "durationMs": 117
+    },
+    {
+      "id": 133,
+      "name": "QuoteToken hết hạn trả 409",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 409,
+          "endpoint": "POST /api/bookings",
+          "message": "Báo giá không hợp lệ hoặc đã hết hạn. Vui lòng lấy báo giá mới."
+        }
+      ],
+      "durationMs": 119
+    },
+    {
+      "id": 134,
+      "name": "Thay giá sau quote: 409, rollback quota coupon",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "status": 200,
+          "endpoint": "PATCH /api/departures/:id",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 409,
+          "endpoint": "POST /api/bookings",
+          "message": "Giá hoặc điều kiện chuyến đã thay đổi. Vui lòng kiểm tra báo giá mới."
+        }
+      ],
+      "durationMs": 985
+    },
+    {
+      "id": 135,
+      "name": "Hạ maxGuests sau quote được kiểm tra lúc tạo",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 400,
+          "endpoint": "POST /api/bookings",
+          "message": "Số khách vượt quá giới hạn cho phép của chuyến. Vui lòng lấy báo giá mới."
+        }
+      ],
+      "durationMs": 583
+    },
+    {
+      "id": 136,
+      "name": "Đóng chuyến sau quote chặn tạo booking",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 409,
+          "endpoint": "POST /api/bookings",
+          "message": "Chuyến không còn nhận yêu cầu."
+        }
+      ],
+      "durationMs": 587
+    },
+    {
+      "id": 137,
+      "name": "Khách xem mine chỉ có đơn của mình",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/bookings/mine?status=pending_confirmation",
+          "status": 200,
+          "endpoint": "GET /api/bookings/mine",
+          "message": null
+        }
+      ],
+      "durationMs": 172
+    },
+    {
+      "id": 138,
+      "name": "Khách B GET bookings không thấy đơn A",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/bookings",
+          "status": 200,
+          "endpoint": "GET /api/bookings",
+          "message": null
+        }
+      ],
+      "durationMs": 172
+    },
+    {
+      "id": 139,
+      "name": "Khách A đọc detail của mình",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/bookings/6ac71c99888a0e02336bdac2",
+          "status": 200,
+          "endpoint": "GET /api/bookings/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 175
+    },
+    {
+      "id": 140,
+      "name": "Khách B không đọc detail A",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/bookings/6ac71c99888a0e02336bdac2",
+          "status": 404,
+          "endpoint": "GET /api/bookings/:id",
+          "message": "Đơn không tồn tại."
+        }
+      ],
+      "durationMs": 116,
+      "evidence": {
+        "message": "Đơn không tồn tại."
+      }
+    },
+    {
+      "id": 141,
+      "name": "Admin list booking theo code/departure",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/bookings?code=VNA-4C6D130CE4EE&departureId=6ac71c8e888a0e02336bdab4",
+          "status": 200,
+          "endpoint": "GET /api/bookings",
+          "message": null
+        }
+      ],
+      "durationMs": 175
+    },
+    {
+      "id": 142,
+      "name": "Khách không gọi admin status",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71c99888a0e02336bdac2/status",
+          "status": 403,
+          "endpoint": "PATCH /api/bookings/:id/status",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 59,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 143,
+      "name": "Admin confirmed A, paymentStatus vẫn unpaid",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71c99888a0e02336bdac2/status",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/status",
+          "message": null
+        }
+      ],
+      "durationMs": 320
+    },
+    {
+      "id": 144,
+      "name": "Không confirmed A hai lần",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71c99888a0e02336bdac2/status",
+          "status": 409,
+          "endpoint": "PATCH /api/bookings/:id/status",
+          "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
+        }
+      ],
+      "durationMs": 174,
+      "evidence": {
+        "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
+      }
+    },
+    {
+      "id": 145,
+      "name": "Không completed A trước khi tour kết thúc",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71c99888a0e02336bdac2/status",
+          "status": 409,
+          "endpoint": "PATCH /api/bookings/:id/status",
+          "message": "Tour chưa kết thúc nên chưa thể hoàn thành."
+        }
+      ],
+      "durationMs": 173,
+      "evidence": {
+        "message": "Tour chưa kết thúc nên chưa thể hoàn thành."
+      }
+    },
+    {
+      "id": 146,
+      "name": "Không đổi lịch chuyến đã có booking",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "status": 409,
+          "endpoint": "PATCH /api/departures/:id",
+          "message": "Chuyến đã có yêu cầu đặt. Hãy tạo chuyến mới và xử lý với khách trước khi đổi lịch."
+        }
+      ],
+      "durationMs": 173,
+      "evidence": {
+        "message": "Chuyến đã có yêu cầu đặt. Hãy tạo chuyến mới và xử lý với khách trước khi đổi lịch."
+      }
+    },
+    {
+      "id": 147,
+      "name": "Admin dashboard có trạng thái và tổng giá trị đơn",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/bookings/dashboard-data",
+          "status": 200,
+          "endpoint": "GET /api/bookings/dashboard-data",
+          "message": null
+        }
+      ],
+      "durationMs": 118
+    },
+    {
+      "id": 148,
+      "name": "Dashboard chặn khách",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/bookings/dashboard-data",
+          "status": 403,
+          "endpoint": "GET /api/bookings/dashboard-data",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 59,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 149,
+      "name": "Tạo B và hủy bắt buộc lý do",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71ca1888a0e02336bdac8/cancel",
+          "status": 400,
+          "endpoint": "PATCH /api/bookings/:id/cancel",
+          "message": "Cần lý do hủy/từ chối đơn."
+        }
+      ],
+      "durationMs": 597
+    },
+    {
+      "id": 150,
+      "name": "Sai chủ không hủy B",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71ca1888a0e02336bdac8/cancel",
+          "status": 404,
+          "endpoint": "PATCH /api/bookings/:id/cancel",
+          "message": "Đơn không tồn tại."
+        }
+      ],
+      "durationMs": 174,
+      "evidence": {
+        "message": "Đơn không tồn tại."
+      }
+    },
+    {
+      "id": 151,
+      "name": "Chủ đơn hủy B và không hủy lần hai",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71ca1888a0e02336bdac8/cancel",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/cancel",
+          "message": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71ca1888a0e02336bdac8/cancel",
+          "status": 409,
+          "endpoint": "PATCH /api/bookings/:id/cancel",
+          "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
+        }
+      ],
+      "durationMs": 508
+    },
+    {
+      "id": 152,
+      "name": "Không mở lại đơn đã hủy",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71ca1888a0e02336bdac8/status",
+          "status": 409,
+          "endpoint": "PATCH /api/bookings/:id/status",
+          "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
+        }
+      ],
+      "durationMs": 176,
+      "evidence": {
+        "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
+      }
+    },
+    {
+      "id": 153,
+      "name": "Coupon tạo C tăng quota, hủy hoàn quota",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71ca2888a0e02336bdac9/cancel",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/cancel",
+          "message": null
+        }
+      ],
+      "durationMs": 1166
+    },
+    {
+      "id": 154,
+      "name": "Admin rejected cần lý do và không mở lại",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71ca3888a0e02336bdaca/status",
+          "status": 400,
+          "endpoint": "PATCH /api/bookings/:id/status",
+          "message": "Cần lý do hủy/từ chối đơn."
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71ca3888a0e02336bdaca/status",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/status",
+          "message": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71ca3888a0e02336bdaca/status",
+          "status": 409,
+          "endpoint": "PATCH /api/bookings/:id/status",
+          "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
+        }
+      ],
+      "durationMs": 1083
+    },
+    {
+      "id": 155,
+      "name": "Completed sau giờ kết thúc cộng điểm đúng một lần (fixture quá khứ)",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71ca4888a0e02336bdacb/status",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/status",
+          "message": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71ca4888a0e02336bdacb/status",
+          "status": 409,
+          "endpoint": "PATCH /api/bookings/:id/status",
+          "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
+        }
+      ],
+      "durationMs": 824,
+      "evidence": {
+        "fixture": "Chỉ database test; departureAt quá khứ",
+        "pointsAdded": 135
+      }
+    },
+    {
+      "id": 156,
+      "name": "ZaloPay chặn khách thanh toán đơn người khác",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 403,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Không có quyền thanh toán đơn này."
+        }
+      ],
+      "durationMs": 120,
+      "evidence": {
+        "message": "Không có quyền thanh toán đơn này."
+      }
+    },
+    {
+      "id": 157,
+      "name": "ZaloPay chặn đơn đã cancelled",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 400,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Đơn hàng không thể thanh toán ở trạng thái hiện tại."
+        }
+      ],
+      "durationMs": 120,
+      "evidence": {
+        "message": "Đơn hàng không thể thanh toán ở trạng thái hiện tại."
+      }
+    },
+    {
+      "id": 158,
+      "name": "ZaloPay booking không tồn tại trả 404",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 404,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Không tìm thấy đơn hàng."
+        }
+      ],
+      "durationMs": 117,
+      "evidence": {
+        "message": "Không tìm thấy đơn hàng."
+      }
+    },
+    {
+      "id": 159,
+      "name": "ZaloPay thiếu cấu hình trả 503",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 503,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Chưa cấu hình ZaloPay. Vui lòng liên hệ quản trị viên."
+        }
+      ],
+      "durationMs": 61
+    },
+    {
+      "id": 160,
+      "name": "ZaloPay tạo giao dịch, xác minh MAC gửi provider",
+      "kind": "external-mocked",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        }
+      ],
+      "durationMs": 1223
+    },
+    {
+      "id": 161,
+      "name": "ZaloPay chặn tạo tiếp khi đã pending",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 409,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Đã có giao dịch đang chờ. Hãy truy vấn trạng thái giao dịch."
+        }
+      ],
+      "durationMs": 538,
+      "evidence": {
+        "message": "Đã có giao dịch đang chờ. Hãy truy vấn trạng thái giao dịch.",
+        "code": "PAYMENT_PENDING",
+        "appTransId": "261008_0982fcfe2db2711150a98b41"
+      }
+    },
+    {
+      "id": 162,
+      "name": "Webhook sai MAC trả return_code -1",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "Invalid callback"
+        }
+      ],
+      "durationMs": 2
+    },
+    {
+      "id": 163,
+      "name": "Webhook đúng MAC nhưng sai app_id bị chặn",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "Invalid app_id/app_trans_id"
+        }
+      ],
+      "durationMs": 2
+    },
+    {
+      "id": 164,
+      "name": "Webhook transaction không tồn tại bị chặn",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "Transaction/amount mismatch"
+        }
+      ],
+      "durationMs": 120
+    },
+    {
+      "id": 165,
+      "name": "Webhook đúng chữ ký: paid, không tự confirmed",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        },
+        {
+          "method": "GET",
+          "path": "/api/bookings/6ac71ca5888a0e02336bdacd",
+          "status": 200,
+          "endpoint": "GET /api/bookings/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 532
+    },
+    {
+      "id": 166,
+      "name": "Webhook success replay không lặp payment_received",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        }
+      ],
+      "durationMs": 235
+    },
+    {
+      "id": 167,
+      "name": "Không tạo giao dịch cho đơn đã paid",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 400,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Đơn hàng đã được thanh toán hoặc đang hoàn tiền."
+        }
+      ],
+      "durationMs": 116,
+      "evidence": {
+        "message": "Đơn hàng đã được thanh toán hoặc đang hoàn tiền."
+      }
+    },
+    {
+      "id": 168,
+      "name": "Hủy đơn paid chuyển Booking refund_pending",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71ca5888a0e02336bdacd/cancel",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/cancel",
+          "message": null
+        }
+      ],
+      "durationMs": 316
+    },
+    {
+      "id": 169,
+      "name": "Tiền về sau khi hủy: không mở lại booking",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71ca9888a0e02336bdacf/cancel",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/cancel",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        }
+      ],
+      "durationMs": 1936
+    },
+    {
+      "id": 170,
+      "name": "Webhook sai amount bị từ chối",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "Transaction/amount mismatch"
+        }
+      ],
+      "durationMs": 1475
+    },
+    {
+      "id": 171,
+      "name": "Provider từ chối: API 400 và transaction failed",
+      "kind": "external-mocked",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 400,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Lỗi tạo giao dịch ZaloPay."
+        }
+      ],
+      "durationMs": 1250
+    },
+    {
+      "id": 172,
+      "name": "Admin upload ảnh thành công qua Cloudinary giả lập",
+      "kind": "external-mocked",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/upload",
+          "status": 200,
+          "endpoint": "POST /api/upload",
+          "message": "Upload thành công"
+        }
+      ],
+      "durationMs": 66
+    },
+    {
+      "id": 173,
+      "name": "Upload không file trả 400",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/upload",
+          "status": 400,
+          "endpoint": "POST /api/upload",
+          "message": "Vui lòng chọn ảnh để upload."
+        }
+      ],
+      "durationMs": 60,
+      "evidence": {
+        "message": "Vui lòng chọn ảnh để upload.",
+        "code": "NO_FILE_PROVIDED"
+      }
+    },
+    {
+      "id": 174,
+      "name": "Upload chặn khách",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/upload",
+          "status": 403,
+          "endpoint": "POST /api/upload",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        }
+      ],
+      "durationMs": 60,
+      "evidence": {
+        "message": "Chỉ nhân viên quản trị được thực hiện thao tác này.",
+        "code": "ADMIN_REQUIRED"
+      }
+    },
+    {
+      "id": 175,
+      "name": "Upload không đăng nhập trả 401",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/upload",
+          "status": 401,
+          "endpoint": "POST /api/upload",
+          "message": "Bạn cần đăng nhập để tiếp tục."
+        }
+      ],
+      "durationMs": 1,
+      "evidence": {
+        "message": "Bạn cần đăng nhập để tiếp tục.",
+        "code": "AUTH_REQUIRED"
+      }
+    },
+    {
+      "id": 176,
+      "name": "Cloudinary lỗi trả 500 có kiểm soát",
+      "kind": "external-mocked",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/upload",
+          "status": 500,
+          "endpoint": "POST /api/upload",
+          "message": "Không xử lý được yêu cầu."
+        }
+      ],
+      "durationMs": 60
+    },
+    {
+      "id": 177,
+      "name": "Đầu vào sai: Destination.address object phải trả 400",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/destinations",
+          "status": 400,
+          "endpoint": "POST /api/destinations",
+          "message": "Địa chỉ không hợp lệ."
+        }
+      ],
+      "durationMs": 59
+    },
+    {
+      "id": 178,
+      "name": "Đầu vào sai: Tour.childPolicy object phải trả 400",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/tours",
+          "status": 400,
+          "endpoint": "POST /api/tours",
+          "message": "Chính sách trẻ em không hợp lệ."
+        }
+      ],
+      "durationMs": 60
+    },
+    {
+      "id": 179,
+      "name": "Đầu vào sai: bookingId ZaloPay phải trả 400",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 400,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "bookingId không hợp lệ."
+        }
+      ],
+      "durationMs": 60
+    },
+    {
+      "id": 180,
+      "name": "File không phải ảnh phải trả 400",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/upload",
+          "status": 400,
+          "endpoint": "POST /api/upload",
+          "message": "Chỉ chấp nhận tập tin ảnh."
+        }
+      ],
+      "durationMs": 60
+    },
+    {
+      "id": 181,
+      "name": "File lớn hơn 5MB phải trả 413",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/upload",
+          "status": 413,
+          "endpoint": "POST /api/upload",
+          "message": "Ảnh vượt quá giới hạn 5MB."
+        }
+      ],
+      "durationMs": 77
+    },
+    {
+      "id": 182,
+      "name": "Sai field upload phải trả 400",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/upload",
+          "status": 400,
+          "endpoint": "POST /api/upload",
+          "message": "Tập tin hoặc tên trường upload không hợp lệ."
+        }
+      ],
+      "durationMs": 64
+    },
+    {
+      "id": 183,
+      "name": "Coupon validUntil trước validFrom phải bị từ chối",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/coupons",
+          "status": 400,
+          "endpoint": "POST /api/coupons",
+          "message": "Dữ liệu không hợp lệ."
+        }
+      ],
+      "durationMs": 64
+    },
+    {
+      "id": 184,
+      "name": "Coupon isActive chuỗi false không được bật mã",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PUT",
+          "path": "/api/coupons/6ac71cae888a0e02336bdad6",
+          "status": 400,
+          "endpoint": "PUT /api/coupons/:id",
+          "message": "isActive phải là boolean."
+        }
+      ],
+      "durationMs": 121
+    },
+    {
+      "id": 185,
+      "name": "Reason sai kiểu ở confirmed phải trả 400",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71cae888a0e02336bdad7/status",
+          "status": 400,
+          "endpoint": "PATCH /api/bookings/:id/status",
+          "message": "Lý do phải là chuỗi tối đa 1000 ký tự."
+        }
+      ],
+      "durationMs": 591
+    },
+    {
+      "id": 186,
+      "name": "Thanh toán + confirm chỉ tăng soldCount một lần",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71caf888a0e02336bdad8/status",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/status",
+          "message": null
+        }
+      ],
+      "durationMs": 1878
+    },
+    {
+      "id": 187,
+      "name": "Hủy booking paid đồng bộ PaymentTransaction refund_pending",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [],
+      "durationMs": 57
+    },
+    {
+      "id": 188,
+      "name": "Callback refund_pending gửi lại không thêm lịch sử trùng",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        }
+      ],
+      "durationMs": 235
+    },
+    {
+      "id": 189,
+      "name": "Webhook retry khôi phục booking nếu save lỗi lần đầu",
+      "kind": "fault-injection",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "Chưa ghi nhận được thanh toán. Vui lòng thử lại."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        }
+      ],
+      "durationMs": 1751
+    },
+    {
+      "id": 190,
+      "name": "Mất mạng giữ claim; đối soát được tiền đã thu mà không tạo giao dịch mới",
+      "kind": "fault-injection",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 502,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Chưa xác định được kết quả ZaloPay. Vui lòng truy vấn trạng thái trước khi thử lại."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 409,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Đã có giao dịch đang chờ. Hãy truy vấn trạng thái giao dịch."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_17128cb59712b0851072a7ae/query",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/query",
+          "message": null
+        }
+      ],
+      "durationMs": 2379
+    },
+    {
+      "id": 191,
+      "name": "Hai request hủy đồng thời không làm quota coupon âm",
+      "kind": "concurrency",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71cb5888a0e02336bdade/cancel",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/cancel",
+          "message": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71cb5888a0e02336bdade/cancel",
+          "status": 409,
+          "endpoint": "PATCH /api/bookings/:id/cancel",
+          "message": "Không thể chuyển trạng thái đơn theo yêu cầu."
+        }
+      ],
+      "durationMs": 1321
+    },
+    {
+      "id": 192,
+      "name": "Xóa rồi tạo lại cùng mã coupon: hủy đơn cũ không trừ quota mã mới",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/coupons",
+          "status": 201,
+          "endpoint": "POST /api/coupons",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/coupons/6ac71cb6888a0e02336bdadf",
+          "status": 200,
+          "endpoint": "DELETE /api/coupons/:id",
+          "message": "Đã xóa mã giảm giá."
+        },
+        {
+          "method": "POST",
+          "path": "/api/coupons",
+          "status": 201,
+          "endpoint": "POST /api/coupons",
+          "message": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71cb7888a0e02336bdae0/cancel",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/cancel",
+          "message": null
+        }
+      ],
+      "durationMs": 1549
+    },
+    {
+      "id": 193,
+      "name": "Năm yêu cầu tạo thanh toán đồng thời chỉ tạo một giao dịch",
+      "kind": "concurrency",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 409,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Đã có giao dịch đang chờ. Hãy truy vấn trạng thái giao dịch."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 409,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Đã có giao dịch đang chờ. Hãy truy vấn trạng thái giao dịch."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 409,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Đã có giao dịch đang chờ. Hãy truy vấn trạng thái giao dịch."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 409,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Đã có giao dịch đang chờ. Hãy truy vấn trạng thái giao dịch."
+        }
+      ],
+      "durationMs": 1424
+    },
+    {
+      "id": 194,
+      "name": "Năm callback đồng thời chỉ ghi nhận tiền một lần",
+      "kind": "concurrency",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        }
+      ],
+      "durationMs": 1585
+    },
+    {
+      "id": 195,
+      "name": "Hủy và callback đồng thời đồng bộ trạng thái cần hoàn tiền",
+      "kind": "concurrency",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71cbb888a0e02336bdaea/cancel",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/cancel",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        }
+      ],
+      "durationMs": 1823
+    },
+    {
+      "id": 196,
+      "name": "Query chặn người không phải chủ đơn; admin được đối soát",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/query",
+          "status": 403,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/query",
+          "message": "Không có quyền xem giao dịch này."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/query",
+          "status": 401,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/query",
+          "message": "Bạn cần đăng nhập để tiếp tục."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/query",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/query",
+          "message": null
+        }
+      ],
+      "durationMs": 412
+    },
+    {
+      "id": 197,
+      "name": "Callback sai amount sau success không được hạ trạng thái",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "Transaction/amount mismatch"
+        }
+      ],
+      "durationMs": 1652
+    },
+    {
+      "id": 198,
+      "name": "Query sai amount không đánh dấu booking paid",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_c2fe6d383098fd6f0baf975b/query",
+          "status": 502,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/query",
+          "message": "Số tiền đối soát không khớp."
+        }
+      ],
+      "durationMs": 1567
+    },
+    {
+      "id": 199,
+      "name": "Giao dịch pending hết hạn được query rồi cho thanh toán lại",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_94fb3dc4ee1f496d730107e0/query",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/query",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        }
+      ],
+      "durationMs": 2145
+    },
+    {
+      "id": 200,
+      "name": "Query lỗi MAC/hệ thống không tự giải phóng giao dịch cũ",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_5ab1493b960b01d7010ce064/query",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/query",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 409,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Đã có giao dịch đang chờ. Hãy truy vấn trạng thái giao dịch."
+        }
+      ],
+      "durationMs": 2030
+    },
+    {
+      "id": 201,
+      "name": "Query mất mạng không thay đổi kết quả đã lưu",
+      "kind": "fault-injection",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/query",
+          "status": 502,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/query",
+          "message": "Chưa xác định được kết quả ZaloPay. Vui lòng truy vấn trạng thái trước khi thử lại."
+        }
+      ],
+      "durationMs": 232
+    },
+    {
+      "id": 202,
+      "name": "Legacy transaction success nhưng booking unpaid được callback sửa lại",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        }
+      ],
+      "durationMs": 1582
+    },
+    {
+      "id": 203,
+      "name": "Legacy success/unpaid không được tạo thêm giao dịch",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 400,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": "Đơn hàng đã được thanh toán hoặc đang hoàn tiền."
+        }
+      ],
+      "durationMs": 2043
+    },
+    {
+      "id": 204,
+      "name": "Admin đọc booking lấy được mã giao dịch để xử lý hoàn tiền",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/bookings/6ac71ca9888a0e02336bdacf",
+          "status": 200,
+          "endpoint": "GET /api/bookings/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 175
+    },
+    {
+      "id": 205,
+      "name": "Refund chỉ dành cho admin và đơn cần hoàn tiền",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund",
+          "status": 403,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund/query",
+          "status": 403,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
+          "message": "Chỉ nhân viên quản trị được thực hiện thao tác này."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund",
+          "status": 401,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
+          "message": "Bạn cần đăng nhập để tiếp tục."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_8a2b15d611943a5321ddaa9e/refund",
+          "status": 409,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
+          "message": "Giao dịch chưa ở trạng thái cần hoàn tiền."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_8a2b15d611943a5321ddaa9e/refund/query",
+          "status": 409,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
+          "message": "Chưa có yêu cầu hoàn tiền."
+        }
+      ],
+      "durationMs": 1741
+    },
+    {
+      "id": 206,
+      "name": "Admin gửi refund không báo refunded trước khi provider xác nhận",
+      "kind": "external-mocked",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund",
+          "status": 202,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund",
+          "status": 409,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
+          "message": "Đã gửi yêu cầu hoàn tiền. Hãy truy vấn kết quả."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund/query",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
+          "message": null
+        }
+      ],
+      "durationMs": 1108
+    },
+    {
+      "id": 207,
+      "name": "Query refund thành công đồng bộ hai model, replay không lặp lịch sử",
+      "kind": "external-mocked",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund/query",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_6f13b6c7611fe70619f0f6fc/refund/query",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        }
+      ],
+      "durationMs": 1205
+    },
+    {
+      "id": 208,
+      "name": "Refund mất mạng giữ cùng request ID, không gửi thêm lệnh hoàn tiền",
+      "kind": "fault-injection",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71ccd888a0e02336bdafb/cancel",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/cancel",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_149cdca2e30797acd71475bc/refund",
+          "status": 502,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
+          "message": "Chưa xác định được kết quả ZaloPay. Vui lòng truy vấn trạng thái trước khi thử lại."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_149cdca2e30797acd71475bc/refund",
+          "status": 409,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
+          "message": "Đã gửi yêu cầu hoàn tiền. Hãy truy vấn kết quả."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_149cdca2e30797acd71475bc/refund/query",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
+          "message": null
+        }
+      ],
+      "durationMs": 3090
+    },
+    {
+      "id": 209,
+      "name": "Hai request refund đồng thời chỉ gửi một lệnh tới provider",
+      "kind": "concurrency",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_0982fcfe2db2711150a98b41/refund",
+          "status": 202,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_0982fcfe2db2711150a98b41/refund",
+          "status": 409,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
+          "message": "Đã gửi yêu cầu hoàn tiền. Hãy truy vấn kết quả."
+        }
+      ],
+      "durationMs": 493
+    },
+    {
+      "id": 210,
+      "name": "Query refund lỗi lưu booking rollback cả transaction",
+      "kind": "fault-injection",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_0982fcfe2db2711150a98b41/refund/query",
+          "status": 500,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
+          "message": "Không xử lý được yêu cầu."
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/261008_0982fcfe2db2711150a98b41/refund/query",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
+          "message": null
+        }
+      ],
+      "durationMs": 1215
+    },
+    {
+      "id": 211,
+      "name": "Tiền mới về sau khi đã refund phải chuyển lại refund_pending",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        }
+      ],
+      "durationMs": 463
+    },
+    {
+      "id": 212,
+      "name": "Hai giao dịch nhận tiền: giao dịch thứ hai cần refund, đơn vẫn paid",
+      "kind": "regression",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/bookings/quote",
+          "status": 200,
+          "endpoint": "POST /api/bookings/quote",
+          "message": "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau."
+        },
+        {
+          "method": "POST",
+          "path": "/api/bookings",
+          "status": 201,
+          "endpoint": "POST /api/bookings",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/create",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/create",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/webhook",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/webhook",
+          "message": "success"
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/LEGACY-DUP-1791433866969-7e525611/refund",
+          "status": 202,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund",
+          "message": null
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/zalopay/LEGACY-DUP-1791433866969-7e525611/refund/query",
+          "status": 200,
+          "endpoint": "POST /api/payments/zalopay/:appTransId/refund/query",
+          "message": null
+        }
+      ],
+      "durationMs": 3044
+    },
+    {
+      "id": 213,
+      "name": "Lỗi lưu điểm rollback completed và retry cộng đúng một lần",
+      "kind": "fault-injection",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71cd4888a0e02336bdb01/status",
+          "status": 500,
+          "endpoint": "PATCH /api/bookings/:id/status",
+          "message": "Không xử lý được yêu cầu."
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71cd4888a0e02336bdb01/status",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/status",
+          "message": null
+        }
+      ],
+      "durationMs": 1013
+    },
+    {
+      "id": 214,
+      "name": "Khách được hủy booking A đã confirmed",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "PATCH",
+          "path": "/api/bookings/6ac71c99888a0e02336bdac2/cancel",
+          "status": 200,
+          "endpoint": "PATCH /api/bookings/:id/cancel",
+          "message": null
+        }
+      ],
+      "durationMs": 360
+    },
+    {
+      "id": 215,
+      "name": "Admin DELETE Coupon xóa document",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "DELETE",
+          "path": "/api/coupons/6ac71c8f888a0e02336bdab5",
+          "status": 200,
+          "endpoint": "DELETE /api/coupons/:id",
+          "message": "Đã xóa mã giảm giá."
+        }
+      ],
+      "durationMs": 176
+    },
+    {
+      "id": 216,
+      "name": "Admin DELETE Departure là đóng nhận đặt",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "DELETE",
+          "path": "/api/departures/6ac71c8e888a0e02336bdab4",
+          "status": 200,
+          "endpoint": "DELETE /api/departures/:id",
+          "message": "Đã đóng nhận yêu cầu cho chuyến."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3/departures",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id/departures",
+          "message": null
+        }
+      ],
+      "durationMs": 377
+    },
+    {
+      "id": 217,
+      "name": "Admin DELETE tours archive, khách không thấy",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "DELETE",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "status": 200,
+          "endpoint": "DELETE /api/tours/:id",
+          "message": "Đã lưu trữ tour."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "status": 404,
+          "endpoint": "GET /api/tours/:id",
+          "message": "Tour không tồn tại."
+        },
+        {
+          "method": "GET",
+          "path": "/api/tours/6ac71c8e888a0e02336bdab3",
+          "status": 200,
+          "endpoint": "GET /api/tours/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 393
+    },
+    {
+      "id": 218,
+      "name": "Admin DELETE articles archive, khách không thấy",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "DELETE",
+          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "status": 200,
+          "endpoint": "DELETE /api/articles/:id",
+          "message": "Đã lưu trữ bài viết."
+        },
+        {
+          "method": "GET",
+          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "status": 404,
+          "endpoint": "GET /api/articles/:id",
+          "message": "Bài viết không tồn tại."
+        },
+        {
+          "method": "GET",
+          "path": "/api/articles/6ac71c8e888a0e02336bdab2",
+          "status": 200,
+          "endpoint": "GET /api/articles/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 359
+    },
+    {
+      "id": 219,
+      "name": "Admin DELETE destinations archive, khách không thấy",
+      "kind": "contract",
+      "status": "PASS",
+      "requests": [
+        {
+          "method": "DELETE",
+          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "status": 200,
+          "endpoint": "DELETE /api/destinations/:id",
+          "message": "Đã lưu trữ điểm đến."
+        },
+        {
+          "method": "GET",
+          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "status": 404,
+          "endpoint": "GET /api/destinations/:id",
+          "message": "Điểm đến không tồn tại."
+        },
+        {
+          "method": "GET",
+          "path": "/api/destinations/6ac71c8e888a0e02336bdab1",
+          "status": 200,
+          "endpoint": "GET /api/destinations/:id",
+          "message": null
+        }
+      ],
+      "durationMs": 351
+    },
+    {
+      "id": 220,
+      "name": "Đã gọi đủ mọi endpoint đang mount",
+      "kind": "coverage",
+      "status": "PASS",
+      "requests": [],
+      "durationMs": 0,
+      "evidence": {
+        "apiEndpoints": 49,
+        "coveredApiEndpoints": 49
+      }
+    }
+  ],
+  "externalCalls": [
+    {
+      "provider": "Zalo",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "Zalo",
+      "mode": "invalid",
+      "mocked": true
+    },
+    {
+      "provider": "Zalo",
+      "mode": "bad-id",
+      "mocked": true
+    },
+    {
+      "provider": "Zalo",
+      "mode": "network-error",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "rejected",
+      "mocked": true
+    },
+    {
+      "provider": "Cloudinary",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "Cloudinary",
+      "mode": "error",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "network-error",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query",
+      "mode": "normal",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query",
+      "mode": "normal",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query",
+      "mode": "normal",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query",
+      "mode": "normal",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query",
+      "mode": "normal",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query",
+      "mode": "normal",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query",
+      "mode": "network-error",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query",
+      "mode": "normal",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Refund",
+      "mode": "processing",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query Refund",
+      "mode": "processing",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query Refund",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query Refund",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Refund",
+      "mode": "network-error",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query Refund",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Refund",
+      "mode": "processing",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query Refund",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query Refund",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay",
+      "mode": "success",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Refund",
+      "mode": "processing",
+      "mocked": true
+    },
+    {
+      "provider": "ZaloPay Query Refund",
+      "mode": "success",
+      "mocked": true
+    }
+  ],
+  "snapshot": [
+    {
+      "file": "backend/controllers/articleController.js",
+      "sha256": "1cd8f54c5b1783189e35866ce8fb03c6586ed58994510167d8c970cd91002bf5"
+    },
+    {
+      "file": "backend/controllers/authController.js",
+      "sha256": "bd0cf89db0d66a067dc35ed8346c4d733643870f96dfd5ea91a00f98cecce94a"
+    },
+    {
+      "file": "backend/controllers/bookingController.js",
+      "sha256": "236f84a2432932c7f0cfb4370427992d5833de082df14a81b6fdcc76f32f982d"
+    },
+    {
+      "file": "backend/controllers/couponController.js",
+      "sha256": "12ec5a6b9f0c7907ee46c7d28dc0ceab1a51abb333e4fb63b027b36961ddf208"
+    },
+    {
+      "file": "backend/controllers/departureController.js",
+      "sha256": "e786a5b6211c81d3345a1fc37529543e2fec0075e8634e60c49dfd5051ccdfa0"
+    },
+    {
+      "file": "backend/controllers/destinationController.js",
+      "sha256": "ce7bc7a48d3fb4992b34fb306c5f602eb28845a30d06b53f75b4eccacc8f164e"
+    },
+    {
+      "file": "backend/controllers/paymentController.js",
+      "sha256": "a875cfc346bd5d6163f63207217e54f21f72104939d8ce4ccf763405d1e7bcad"
+    },
+    {
+      "file": "backend/controllers/tourController.js",
+      "sha256": "208fb6b834a5cdf9b1e5106f1e96937c9f2577bd2cfdc3a7fc1ba1bbcb5e2535"
+    }
+  ]
+}

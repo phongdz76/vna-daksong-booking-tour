@@ -12,7 +12,16 @@ const couponSchema = new mongoose.Schema({
   usageLimit: { type: Number, default: null, validate: { validator: v => v === null || (Number.isSafeInteger(v) && v >= 0), message: "usageLimit phải là số nguyên >= 0 hoặc null." } },
   usedCount: { type: Number, default: 0, min: 0, validate: { validator: Number.isSafeInteger, message: "usedCount phải là số nguyên." } },
   isActive: { type: Boolean, default: true }
-}, { timestamps: true });
+}, { timestamps: true, optimisticConcurrency: true });
+
+couponSchema.pre("validate", function () {
+  if (this.validFrom && this.validUntil && this.validUntil < this.validFrom) {
+    this.invalidate("validUntil", "Ngày hết hạn phải từ ngày bắt đầu trở đi.");
+  }
+  if (this.discountType === "percentage" && this.discountValue > 100) {
+    this.invalidate("discountValue", "Phần trăm giảm không được vượt quá 100%.");
+  }
+});
 
 // Check if coupon is valid
 couponSchema.methods.isValid = function () {
