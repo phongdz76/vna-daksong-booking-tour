@@ -84,5 +84,15 @@ npm run dev
 
 ---
 
+## Vệ sinh thư mục
+
+`node_modules/`, `dist/`, `.browser-cache/`, `test-results/`, `tmp/` và cấu hình `.env` được Git bỏ qua. Giữ `package-lock.json`, `.env.example`, mã nguồn, bộ test và license tài nguyên trong dự án.
+
+Kết quả kiểm thử API nằm trong `backend/test-results/`; ảnh chụp và kết quả kiểm thử giao diện nằm trong `frontend/test-results/`. Các file này được tạo lại khi chạy test. Script chuẩn bị ảnh chỉ tải các ảnh local còn dùng trên giao diện.
+
+Tài liệu, bộ Postman, mẫu Stitch và skill dự án đang được giữ trên máy theo các quy tắc ignore hiện có.
+
+Hai script `backend/scripts/seed.js`, `backend/scripts/seedTestUsers.js` và các công cụ `frontend/scripts/prepare-*.mjs` chỉ giữ local, không commit. Dữ liệu seed đã được lưu trong database; ứng dụng đọc nội dung từ API. Các file `frontend/src/data/preview*.ts` và fixture trong bộ test vẫn thuộc mã nguồn vì giao diện xem mẫu và kiểm thử cần import chúng. Chế độ xem mẫu chỉ bật khi chạy dev với `?preview=1`.
+
 ## Giấy phép (License)
 Bản quyền thuộc về VNA Group. Nghiêm cấm sao chép dưới mọi hình thức nếu không được phép.

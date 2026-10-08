@@ -323,6 +323,15 @@ Tất cả cấu trúc API gốc (baseURL) đều xuất phát từ `/api`.
 
 ---
 
+### 5.9. Đánh giá tour
+- `GET /api/tours/:id/reviews`: công khai với tour published; phân trang và thống kê sao toàn tour. Admin có thể đọc cả tour chưa published.
+- `GET /api/tours/:id/reviews/eligibility`: đơn completed chưa đánh giá và nhận xét đã gửi của người đăng nhập.
+- `POST /api/tours/:id/reviews`: chỉ chủ đơn completed; rating nguyên 1–5, comment 1–2000 ký tự; unique bookingId ngăn gửi trùng, kể cả đồng thời.
+- `PATCH /api/reviews/:id`: tác giả sửa sao/nhận xét; không sửa userId, bookingId, tourId.
+- `DELETE /api/reviews/:id`: tác giả hoặc admin xóa; tính lại thống kê từ dữ liệu còn tồn tại.
+- `GET /api/tours` và `GET /api/tours/:id` thêm `averageRating`, `reviewCount`; chưa có đánh giá trả `null`, `0`.
+- Chi tiết: [DANH_GIA_TOUR_API.md](DANH_GIA_TOUR_API.md).
+
 ## 6. Script Quản Trị Hệ Thống (Scripts)
 1. **Tạo Admin** (`node backend/createAdmin.js`):
    - Đọc email/mật khẩu từ `.env`.
