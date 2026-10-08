@@ -1,0 +1,1471 @@
+@layer components {
+  :root {
+    font-family: Inter, sans-serif;
+  }
+
+  body {
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: normal;
+  }
+
+  .app-header {
+    min-height: 56px;
+    height: calc(56px + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) 12px 0;
+    gap: 6px;
+    background: #f3fcf5ed;
+    border: 0;
+    box-shadow: 0 1px 8px #0000000a;
+  }
+
+  .brand-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px #0b123826;
+  }
+
+  .header-title {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+
+  .header-title>span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .app-header>.icon-button {
+    margin-left: -8px;
+    width: 36px;
+  }
+
+  .app-header>.header-action {
+    margin-left: 0;
+    width: 36px;
+    color: #404944;
+  }
+
+  .avatar-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .header-message {
+    position: absolute;
+    top: 100%;
+    left: 12px;
+    right: 12px;
+    background: #2a322e;
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    border: 0;
+    font-size: 12px;
+    z-index: 40;
+  }
+
+  .bottom-nav {
+    height: calc(60px + env(safe-area-inset-bottom));
+    padding: 0 0 env(safe-area-inset-bottom);
+  }
+
+  .nav-item {
+    height: 60px;
+    min-height: 44px;
+    justify-content: center;
+    gap: 2px;
+    font-size: 11px;
+    line-height: 14px;
+  }
+
+  .nav-item svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .nav-item i {
+    width: 5px;
+    height: 5px;
+    margin-top: 0;
+  }
+
+  .nav-item.active {
+    color: #245b45;
+    font-weight: 500;
+  }
+
+  .page {
+    padding-bottom: 24px;
+  }
+
+  .page.has-action-bar {
+    padding-bottom: calc(152px + env(safe-area-inset-bottom));
+  }
+
+  .stitch-home .home-hero {
+    height: 250px;
+  }
+
+  .stitch-home .home-hero::before {
+    background: linear-gradient(to top, #0009, #0004, transparent);
+  }
+
+  .stitch-home .hero-content {
+    padding: 16px;
+  }
+
+  .stitch-home .hero-content .eyebrow {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    margin: 0 0 4px;
+  }
+
+  .stitch-home .hero-content h1 {
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0.36px;
+    margin: 0 0 12px;
+    font-weight: 700;
+  }
+
+  .stitch-home .hero-content .button {
+    position: relative;
+    min-height: 36px;
+    padding: 8px 16px;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    gap: 6px;
+  }
+
+  .stitch-home .hero-content .button::after {
+    content: "";
+    position: absolute;
+    inset: -4px 0;
+  }
+
+  .stitch-home .section {
+    padding: 24px 16px 0;
+  }
+
+  .stitch-home .section-heading {
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .stitch-home .section-heading h2 {
+    font-size: 18px;
+    line-height: 24px;
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .stitch-home .section-heading .text-link {
+    font-size: 14px;
+    line-height: 20px;
+    color: #707973;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .stitch-home .section-heading .muted {
+    font-size: 11px;
+    line-height: 14px;
+    color: #707973;
+  }
+
+  .stitch-home .destination-section {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .stitch-home .destination-section .section-heading {
+    padding: 0 16px;
+  }
+
+  .destination-rail {
+    gap: 12px;
+    padding: 0 16px 8px;
+    scroll-padding-left: 16px;
+  }
+
+  .destination-rail .destination-card {
+    flex: 0 0 140px;
+    width: 140px;
+    height: 180px;
+    aspect-ratio: auto;
+    border-radius: 12px;
+  }
+
+  .destination-overlay {
+    left: 8px;
+    bottom: 8px;
+    right: 8px;
+    padding: 0;
+  }
+
+  .destination-overlay h3 {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .destination-card::after {
+    inset: 0;
+    background: linear-gradient(to top, #000b, #0003, transparent);
+  }
+
+  .tour-list {
+    gap: 12px;
+  }
+
+  .tour-card {
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px #04432f0f;
+  }
+
+  .tour-card>.photo {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .tour-card-body {
+    padding: 14px;
+  }
+
+  .tour-card h3 {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+
+  .tour-card-tags {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-size: 11px;
+    line-height: 14px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #edf6ef;
+  }
+
+  .tour-card:not(.tour-card-compact) .meta {
+    padding-top: 12px;
+    border-top: 1px solid #e2eae4;
+    font-size: 13px;
+  }
+
+  .tour-card-price strong {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 700;
+  }
+
+  .tour-card-price>span {
+    font-size: 11px;
+  }
+
+  .tour-card-compact {
+    padding: 12px;
+    gap: 12px;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px #0000000d;
+    align-items: center;
+  }
+
+  .tour-card-compact>.photo {
+    width: 90px;
+    height: 90px;
+    aspect-ratio: auto;
+    border-radius: 8px;
+  }
+
+  .tour-card-compact .tour-card-body {
+    height: 90px;
+  }
+
+  .tour-card-compact h3 {
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 600;
+    letter-spacing: 0;
+    margin: 0 0 4px;
+    -webkit-line-clamp: 2;
+  }
+
+  .tour-card-compact .meta {
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .tour-card-compact .tour-card-price {
+    padding-top: 0;
+    gap: 4px;
+    line-height: 22px;
+  }
+
+  .tour-card-compact .tour-card-price strong {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+  }
+
+  .tour-card-compact .tour-card-price>span {
+    font-size: 13px;
+  }
+
+  .page-intro {
+    display: none;
+  }
+
+  .search-form {
+    margin-top: 8px;
+    background: #e7f0e9;
+    border: 0;
+    height: 44px;
+  }
+
+  .chip-rail {
+    padding-top: 12px;
+    padding-bottom: 4px;
+  }
+
+  .chip {
+    padding: 6px 14px;
+    min-height: 32px;
+    font-size: 12px;
+    line-height: 16px;
+    box-shadow: 0 1px 2px #0000000d;
+    border: 0;
+  }
+
+  .chip.selected {
+    background: #245b45;
+  }
+
+  .list-toolbar {
+    margin-top: 14px;
+  }
+
+  .list-section {
+    padding-top: 12px;
+  }
+
+  .stitch-detail {
+    background: #f3fcf5;
+    padding-bottom: 104px;
+  }
+
+  .stitch-detail .detail-cover {
+    height: 320px;
+  }
+
+  .gallery-float {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+
+  .gallery-float .icon-button {
+    pointer-events: auto;
+    background: #ffffffd9;
+    width: 40px;
+    height: 40px;
+    color: #151d19;
+    box-shadow: 0 2px 6px #0002;
+  }
+
+  .gallery-float .saved {
+    color: #914b2b;
+  }
+
+  .gallery-controls {
+    bottom: 24px;
+    right: 16px;
+    padding: 4px 10px;
+    gap: 4px;
+    border: 0;
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .detail-sheet {
+    position: relative;
+    background: #fff;
+    margin-top: -16px;
+    border-radius: 16px 16px 0 0;
+    padding: 8px 16px 24px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .stitch-detail .section {
+    padding: 0;
+  }
+
+  .stitch-detail .badge-row {
+    gap: 4px;
+  }
+
+  .stitch-detail .badge {
+    border-radius: 20px;
+    background: #b5efd2;
+    padding: 2px 8px;
+  }
+
+  .stitch-detail .badge-clay {
+    color: #360f00;
+    background: #ffdbcd;
+  }
+
+  .stitch-detail .detail-title {
+    font-size: 20px;
+    line-height: 27px;
+    font-weight: 600;
+    margin: 8px 0;
+  }
+
+  .rating-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    line-height: 18px;
+    padding-top: 4px;
+  }
+
+  .rating-stars {
+    display: flex;
+    color: #914b2b;
+    gap: 1px;
+  }
+
+  .rating-line strong {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .rating-line small {
+    color: #707973;
+    font-size: 13px;
+  }
+
+  .rating-line>span:last-child {
+    color: #04432f;
+    font-size: 12px;
+  }
+
+  .stitch-detail .tour-facts {
+    margin: 0;
+    border-radius: 8px;
+    padding: 12px;
+    background: #edf6ef;
+    gap: 8px;
+  }
+
+  .stitch-detail .tour-facts>div {
+    border: 0;
+    flex: 1;
+    padding: 0;
+    gap: 4px;
+    overflow: hidden;
+  }
+
+  .stitch-detail .tour-facts svg {
+    background: #fff;
+    padding: 6px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px #0000000d;
+  }
+
+  .stitch-detail .tour-facts small {
+    font-size: 11px;
+    line-height: 14px;
+    color: #404944;
+  }
+
+  .stitch-detail .tour-facts strong {
+    font-size: 12px;
+    line-height: 16px;
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-weight: 600;
+    color: #151d19;
+  }
+
+  .detail-section>h2,
+  .tour-location-heading h2,
+  .detail-section-heading h2 {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .stitch-detail .prose {
+    font-size: 14px;
+    line-height: 22px;
+    color: #404944;
+  }
+
+  .overview-collapsed {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .overview-toggle {
+    font-size: 12px;
+    line-height: 16px;
+    margin-top: 8px;
+  }
+
+  .detail-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .detail-section-heading h2 {
+    margin: 0;
+  }
+
+  .detail-section-heading>span {
+    background: #e7f0e9;
+    color: #404944;
+    font-size: 11px;
+    line-height: 14px;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .stitch-detail .itinerary li {
+    gap: 8px;
+    padding-bottom: 28px;
+  }
+
+  .stitch-detail .itinerary li:last-child {
+    padding-bottom: 0;
+  }
+
+  .stitch-detail .itinerary li:not(:last-child)::before {
+    left: 11px;
+    width: 2px;
+    background: #dce5de;
+    top: 20px;
+  }
+
+  .stitch-detail .itinerary-number {
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+  }
+
+  .stitch-detail .itinerary h3 {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+    padding: 0;
+    margin-bottom: 4px;
+  }
+
+  .stitch-detail .itinerary h3 time {
+    font-size: 12px;
+    color: #914b2b;
+    font-weight: 600;
+    margin-right: 8px;
+  }
+
+  .stitch-detail .itinerary p {
+    font-size: 13px;
+    line-height: 18px;
+    color: #404944;
+  }
+
+  .stitch-detail .policy {
+    padding: 12px;
+    border-radius: 12px;
+    background: #edf6ef;
+    margin-bottom: 8px;
+  }
+
+  .stitch-detail .policy summary {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+  }
+
+  .stitch-detail .policy summary>span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .location-preview {
+    background: #e7f0e9;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 13px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .tour-location-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    margin-bottom: 12px;
+  }
+
+  .tour-location-heading h2 {
+    margin-bottom: 0;
+  }
+
+  .tour-location-heading>span {
+    color: #707973;
+    font-size: 11px;
+    line-height: 16px;
+    overflow-wrap: anywhere;
+  }
+
+  .tour-location-map {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #d7f2e2;
+  }
+
+  .tour-location-map>img,
+  .tour-location-map>iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .tour-location-route {
+    position: absolute;
+    left: 8px;
+    bottom: 28px;
+    max-width: calc(100% - 16px);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 9px;
+    background: #fffffff2;
+    color: #404944;
+    box-shadow: 0 2px 6px #04432f14;
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 600;
+  }
+
+  .tour-location-route>svg {
+    flex-shrink: 0;
+    color: #245b45;
+  }
+
+  .tour-location-route.is-preview {
+    bottom: 8px;
+  }
+
+  .reference-map {
+    height: 176px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    padding: 8px;
+    border-radius: 12px;
+  }
+
+  .reference-map>span {
+    background: #ffffffe6;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .detail-action {
+    padding: 12px 16px max(12px, env(safe-area-inset-bottom));
+  }
+
+  .detail-action small {
+    font-size: 11px;
+    line-height: 14px;
+    color: #404944;
+  }
+
+  .detail-action strong {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .detail-action>div>span {
+    display: inline;
+    font-size: 13px;
+    color: #707973;
+    margin-left: 4px;
+  }
+
+  .detail-action .button {
+    font-size: 16px;
+    line-height: 22px;
+    border-radius: 8px;
+    min-width: 160px;
+    height: 48px;
+    font-weight: 600;
+  }
+
+  .checkout-body {
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .card {
+    padding: 16px;
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px #0000000d;
+  }
+
+  .card>h2 {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .booking-steps {
+    padding: 12px;
+    border-radius: 12px;
+    border: 0;
+    box-shadow: 0 1px 2px #0000000d;
+    margin-bottom: 4px;
+  }
+
+  .booking-steps>div {
+    gap: 8px;
+  }
+
+  .booking-steps>div>span {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .booking-steps p {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+  }
+
+  .booking-steps small {
+    font-size: 11px;
+    line-height: 14px;
+    letter-spacing: 0.55px;
+    font-weight: 500;
+  }
+
+  .booking-steps>i {
+    height: 2px;
+  }
+
+  .stitch-review .mini-tour {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .stitch-review .mini-tour>.photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+  }
+
+  .stitch-review .mini-tour h2 {
+    font-size: 18px;
+    line-height: 22px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+
+  .stitch-review .mini-tour .eyebrow {
+    font-size: 11px;
+    line-height: 14px;
+    color: #914b2b;
+    letter-spacing: 0;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+
+  .stitch-review .mini-tour .meta {
+    font-size: 13px;
+    line-height: 18px;
+    color: #404944;
+  }
+
+  .summary-facts {
+    padding: 12px;
+    margin: 12px 0;
+    border-radius: 8px;
+    background: #edf6ef;
+  }
+
+  .summary-facts p {
+    font-size: 13px;
+    line-height: 18px;
+    gap: 8px;
+    padding: 4px 0;
+  }
+
+  .summary-facts p>span {
+    color: #404944;
+  }
+
+  .summary-facts p>strong {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+  }
+
+  .stitch-review .price-breakdown {
+    margin-top: 12px;
+  }
+
+  .stitch-review .price-breakdown .price-total {
+    padding-top: 0;
+    margin-top: 0;
+    border: 0;
+  }
+
+  .stitch-review .price-total dt {
+    font-size: 14px;
+    font-weight: 400;
+    color: #404944;
+  }
+
+  .stitch-review .price-total dd {
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 700;
+  }
+
+  .summary-includes {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    color: #04432f;
+    font-size: 11px;
+    line-height: 16px;
+    margin-top: 4px;
+  }
+
+  .quote-details {
+    font-size: 11px;
+    line-height: 16px;
+    color: #707973;
+    margin-top: 10px;
+  }
+
+  .quote-details p {
+    margin-top: 8px;
+  }
+
+  .contact-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 6px;
+  }
+
+  .contact-heading h2 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+  }
+
+  .contact-heading>span {
+    color: #761300;
+    font-size: 11px;
+    line-height: 14px;
+    white-space: nowrap;
+  }
+
+  .stitch-review .contact-fields {
+    margin-top: 0;
+  }
+
+  .stitch-review .contact-fields label {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    margin-top: 12px;
+  }
+
+  .stitch-review .contact-fields label:first-child {
+    margin-top: 0;
+  }
+
+  .stitch-input {
+    position: relative;
+    margin-top: 4px;
+  }
+
+  .stitch-input>svg {
+    position: absolute;
+    left: 12px;
+    top: 14px;
+    color: #707973;
+  }
+
+  .stitch-input input {
+    padding: 12px 12px 12px 40px;
+    margin: 0;
+    font-size: 14px;
+    line-height: 20px;
+    height: 48px;
+    border: 0;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px #0000000a;
+  }
+
+  .stitch-review .contact-fields textarea {
+    border: 0;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px #0000000a;
+    font-size: 14px;
+    line-height: 20px;
+    padding: 12px;
+    margin-top: 4px;
+    min-height: 88px;
+  }
+
+  .contact-fields .helper {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    color: #404944;
+    margin-top: 4px;
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 400;
+  }
+
+  .payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .payment-option {
+    padding: 12px;
+    border-radius: 12px;
+    gap: 12px;
+    background: #edf6ef;
+    border: 1px solid #04432f40;
+  }
+
+  .payment-option strong {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+  }
+
+  .payment-option p {
+    font-size: 13px;
+    line-height: 18px;
+    color: #404944;
+    margin-top: 2px;
+  }
+
+  .payment-option>div {
+    flex: 1;
+  }
+
+  .payment-option.unavailable {
+    border-color: #c0c9c299;
+    background: #fff;
+    color: #707973;
+  }
+
+  .payment-option.unavailable p {
+    color: #707973;
+  }
+
+  .payment-option.unavailable .radio-mark::after {
+    display: none;
+  }
+
+  .payment-option.unavailable .radio-mark {
+    border-color: #c0c9c2;
+  }
+
+  .payment-info {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: #edf6efb3;
+    border: 1px solid #c0c9c266;
+    border-radius: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: #404944;
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .payment-info svg {
+    color: #04432f;
+  }
+
+  .stitch-review .action-bar {
+    padding: 12px 16px max(12px, env(safe-area-inset-bottom));
+  }
+
+  .stitch-review .action-total {
+    margin-bottom: 6px;
+    padding: 0 4px;
+  }
+
+  .stitch-review .action-total>span {
+    font-size: 13px;
+    line-height: 18px;
+    color: #404944;
+  }
+
+  .stitch-review .action-total>strong {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 700;
+  }
+
+  .stitch-review .action-bar .button {
+    background: #245b45;
+    border-radius: 8px;
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+  }
+
+  .checkout-footer-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 11px;
+    line-height: 14px;
+    color: #404944;
+    margin-top: 6px;
+    text-align: center;
+  }
+
+  .stitch-review .agreement {
+    font-size: 11px;
+    line-height: 16px;
+  }
+
+  .stitch-login {
+    padding-bottom: 32px;
+  }
+
+  .login-landscape {
+    height: 320px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    padding: 16px;
+  }
+
+  .login-landscape::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, #04432f4d, #04432fb3 55%, #f3fcf5);
+  }
+
+  .login-landscape::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 112px;
+    background: linear-gradient(to top, #f3fcf5, transparent);
+  }
+
+  .login-landscape>span {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 24px;
+    background: #ffffffcc;
+    color: #04432f;
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 2px #0000000d;
+  }
+
+  .login-brand {
+    position: relative;
+    margin-top: -96px;
+    padding: 0 16px;
+    text-align: center;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .login-brand img {
+    width: 80px;
+    height: 80px;
+    border: 4px solid #fff;
+    background: #0b1238;
+    object-fit: contain;
+    border-radius: 20px;
+    box-shadow: 0 12px 24px #04432f24;
+  }
+
+  .login-brand h1 {
+    margin: 16px 0 4px;
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .login-brand p {
+    max-width: 320px;
+    color: #404944;
+    font-size: 13px;
+    line-height: 21px;
+  }
+
+  .stitch-login .login-content {
+    padding: 24px 16px 0;
+  }
+
+  .login-welcome {
+    box-shadow: 0 4px 8px #00000012;
+  }
+
+  .login-welcome-title {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e7f0e9;
+  }
+
+  .login-welcome-title>svg {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    border-radius: 12px;
+    background: #e7f0e9;
+    color: #04432f;
+  }
+
+  .stitch-login .login-welcome h2 {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+    margin: 0;
+    text-align: left;
+  }
+
+  .stitch-login .login-welcome p,
+  .login-features {
+    text-align: left;
+  }
+
+  .login-dev-fields {
+    padding: 16px;
+    background: #edf6ef;
+    border-radius: 12px;
+    border: 1px solid #dce5de;
+    text-align: left;
+  }
+
+  .stitch-login-dev .login-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .stitch-login-dev .login-form {
+    order: 1;
+  }
+
+  .stitch-login-dev .login-guest {
+    order: 2;
+  }
+
+  .stitch-login-dev .form-error {
+    order: 3;
+    text-align: left;
+  }
+
+  .stitch-login-dev .login-privacy {
+    order: 4;
+  }
+
+  .stitch-login-dev .login-welcome {
+    order: 5;
+    margin-top: 24px;
+  }
+
+  .stitch-login-dev .login-eco {
+    order: 6;
+  }
+
+  .stitch-login-dev .login-footer {
+    order: 7;
+  }
+
+  .stitch-login-dev .zalo-login-button {
+    margin-top: 12px;
+  }
+
+  .login-dev-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 600;
+    color: #04432f;
+  }
+
+  .login-dev-description {
+    font-size: 12px;
+    line-height: 18px;
+    color: #404944;
+    margin-top: 6px;
+  }
+
+  .login-dev-fields label {
+    margin-top: 12px;
+    font-size: 12px;
+    line-height: 18px;
+    color: #404944;
+    font-weight: 500;
+  }
+
+  .login-dev-fields input {
+    margin-top: 4px;
+    height: 44px;
+    font-size: 14px;
+    line-height: 20px;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .login-api-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 12px;
+    color: #04432f;
+    text-decoration: underline;
+  }
+
+  .login-welcome p {
+    color: #404944;
+    font-size: 13px;
+    line-height: 18px;
+    margin-top: 3px;
+  }
+
+  .login-features {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 16px;
+  }
+
+  .login-features>div {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .login-features svg {
+    padding: 7px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #edf6ef;
+    color: #04432f;
+  }
+
+  .login-features>div:nth-child(2) svg {
+    color: #914b2b;
+  }
+
+  .login-features strong {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+  }
+
+  .stitch-login .zalo-login-button {
+    height: 48px;
+    min-height: 48px;
+    border-radius: 12px;
+    background: #0068ff;
+    color: #fff;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    gap: 10px;
+    margin-top: 24px;
+    box-shadow: 0 4px 8px #0068ff33;
+  }
+
+  .zalo-login-button>span {
+    width: 24px;
+    height: 24px;
+    background: #fff;
+    color: #0068ff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+
+  .login-guest {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 44px;
+    margin-top: 12px;
+    color: #04432f;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .stitch-login .login-privacy {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 6px;
+    font-size: 11px;
+    line-height: 16px;
+    color: #404944;
+    margin: 12px 8px 0;
+    text-align: center;
+  }
+
+  .login-eco {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: #edf6ef;
+    margin-top: 24px;
+    color: #404944;
+    font-size: 13px;
+    line-height: 18px;
+    text-align: center;
+  }
+
+  .login-eco svg {
+    color: #04432f;
+  }
+
+  .stitch-login .login-footer {
+    text-align: center;
+    color: #707973;
+    font-size: 11px;
+    line-height: 16px;
+    margin-top: 32px;
+  }
+
+  @media (max-width: 374px) {
+    .tour-card-compact h3 {
+      font-size: 15px;
+    }
+
+    .detail-action .button {
+      min-width: 148px;
+      font-size: 14px;
+    }
+
+    .header-title {
+      font-size: 14px;
+    }
+
+    .stitch-review .mini-tour h2 {
+      font-size: 17px;
+    }
+  }
+}

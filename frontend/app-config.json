@@ -1,0 +1,15 @@
+{
+  "app": {
+    "title": "VNA Đắk Song",
+    "headerTitle": "Đắk Song",
+    "headerColor": "#F3FCF5",
+    "textColor": "black",
+    "leftButton": "back",
+    "statusBar": "normal",
+    "actionBarHidden": true
+  },
+  "debug": false,
+  "listCSS": [],
+  "listSyncJS": [],
+  "listAsyncJS": []
+}
