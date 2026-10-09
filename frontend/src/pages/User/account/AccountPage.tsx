@@ -79,7 +79,7 @@ export default function AccountPage() {
   const [previewNotifications, setPreviewNotifications] = useState(true);
   const dialog = useRef<HTMLDialogElement>(null);
   const profile = isPreview ? previewAccountUser : user;
-  const tierInfo = getTierProgressInfo(profile?.loyaltyPoints ?? 350, profile?.membershipTier ?? "Bạc");
+  const tierInfo = getTierProgressInfo(profile?.loyaltyPoints ?? 0, profile?.membershipTier ?? "Bạc");
   const confirmed = useApi<ListResponse<Booking>>(
     user ? API_PATHS.BOOKINGS.GET_MINE + "?status=confirmed&limit=100" : null,
     previewConfirmedBookings,
@@ -171,12 +171,12 @@ export default function AccountPage() {
               </div>
               <div className="account-profile-info">
                 <h1>
-                  <span>{profile?.name || "Nguyễn Văn An"}</span>
+                  <span>{profile?.name || "Khách tham quan"}</span>
                 </h1>
                 <div className="account-identity">
-                  <span>{isPreview ? "0967 *** 321" : profile?.phone || "0987 *** 321"}</span>
-                  <span className="account-session-label verified">
-                    <Icon name="check" size={12} />
+                  <span>{isPreview ? "0967 *** 321" : profile?.phone || "Vui lòng đăng nhập"}</span>
+                  <span className={`account-session-label ${profile ? "verified" : "unverified"}`}>
+                    <Icon name={profile ? "check" : "user"} size={12} />
                     {isPreview
                       ? "Zalo Verified"
                       : profile
@@ -210,7 +210,7 @@ export default function AccountPage() {
                   Tiến trình nâng hạng
                 </span>
                 <strong className="account-loyalty-points">
-                  {(profile?.loyaltyPoints ?? 350).toLocaleString("vi-VN")} / {tierInfo.targetPoints} điểm
+                  {(profile?.loyaltyPoints ?? 0).toLocaleString("vi-VN")} / {tierInfo.targetPoints} điểm
                 </strong>
               </div>
               <div
@@ -219,13 +219,15 @@ export default function AccountPage() {
                 aria-label="Tiến trình nâng hạng"
                 aria-valuemin={0}
                 aria-valuemax={tierInfo.targetPoints}
-                aria-valuenow={profile?.loyaltyPoints ?? 350}
+                aria-valuenow={profile?.loyaltyPoints ?? 0}
               >
-                <span style={{ width: `${tierInfo.percentage}%` }} />
+                <span style={{ width: profile ? `${tierInfo.percentage}%` : "0%" }} />
               </div>
               <p className="account-loyalty-footer">
-                <span>{tierInfo.currentTierLabel}</span>
-                <span className="next-tier-highlight">{tierInfo.nextTierLabel}</span>
+                <span>{profile ? tierInfo.currentTierLabel : "Hạng Thường"}</span>
+                <span className="next-tier-highlight">
+                  {profile ? tierInfo.nextTierLabel : "Đăng nhập để tích điểm nâng hạng"}
+                </span>
               </p>
             </div>
           </section>
