@@ -540,7 +540,7 @@ export default function AccountPage() {
             }
           >
             <Icon name={profile ? "logout" : "user"} size={18} />
-            {profile ? "Chuyển tài khoản / Đăng xuất" : "Đăng nhập thử nghiệm"}
+            {profile ? "Chuyển tài khoản / Đăng xuất" : "Đăng nhập"}
           </button>
         </div>
       )}

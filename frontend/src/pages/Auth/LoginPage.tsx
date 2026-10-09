@@ -155,17 +155,17 @@ export default function LoginPage() {
                 onClick={() => setShowMockForm(true)}
               >
                 <Icon name="user" size={17} />
-                Đăng nhập thử nghiệm (Trình duyệt Web)
+                Đăng nhập (Trình duyệt Web)
               </button>
             ) : (
               <form className="login-form" onSubmit={handleMockLogin} style={{ background: "#f3fcf5", padding: "16px", borderRadius: "12px", border: "1px solid #e4ece5" }}>
                 <div className="login-dev-fields">
                   <p className="login-dev-label" style={{ fontWeight: 650, color: "#04432f", marginBottom: "4px" }}>
                     <Icon name="info" size={16} />
-                    Dùng thử trên Web (Không cần Zalo SDK)
+                    Đăng nhập nhanh trên Web
                   </p>
                   <p className="login-dev-description" style={{ fontSize: "12px", color: "#6c7770", marginBottom: "12px" }}>
-                    Nhập tên và số điện thoại thử để tạo tài khoản trải nghiệm trên web.
+                    Nhập tên và số điện thoại của bạn để đăng nhập trên trình duyệt.
                   </p>
                   <fieldset disabled={busy} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                     <label htmlFor="login-name" style={{ fontSize: "13px" }}>
@@ -182,7 +182,7 @@ export default function LoginPage() {
                       />
                     </label>
                     <label htmlFor="login-phone" style={{ fontSize: "13px" }}>
-                      Số điện thoại thử nghiệm
+                      Số điện thoại
                       <input
                         id="login-phone"
                         name="phone"
@@ -207,7 +207,7 @@ export default function LoginPage() {
                   style={{ marginTop: "12px" }}
                 >
                   <Icon name="user" size={16} />
-                  {busy ? "Đang xử lý…" : "Xác nhận Đăng nhập thử nghiệm"}
+                  {busy ? "Đang xử lý…" : "Xác nhận Đăng nhập"}
                 </button>
               </form>
             )}
