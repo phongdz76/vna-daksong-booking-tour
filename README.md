@@ -2,6 +2,14 @@
 
 Ứng dụng khám phá du lịch và gửi yêu cầu đặt tour của VNA Group, gồm Zalo Mini App cho khách, cổng web quản trị và REST API.
 
+👉 **Tài liệu Báo cáo & Hướng dẫn Thuyết trình Chi tiết**: [PRESENTATION_GUIDE.md](PRESENTATION_GUIDE.md)
+
+## Đường dẫn Live Demo Trực tuyến (Vercel)
+
+- 📱 **App Khách hàng**: [https://vna-daksong-frontend.vercel.app](https://vna-daksong-frontend.vercel.app)
+- 🔐 **Cổng Quản trị Admin**: [https://vna-daksong-frontend.vercel.app/admin](https://vna-daksong-frontend.vercel.app/admin) (Admin: `vna@gmail.com` / `vna@1234`)
+- 🌐 **Backend API**: [https://vna-daksong-backend.vercel.app](https://vna-daksong-backend.vercel.app)
+
 ## Cấu trúc
 
 | Thư mục | Nội dung | Hướng dẫn |
