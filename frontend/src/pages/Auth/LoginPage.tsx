@@ -17,16 +17,46 @@ export default function LoginPage() {
   const { isPreview } = usePreview();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [showMockForm, setShowMockForm] = useState(!isZalo);
   const [name, setName] = useState("Khách thử nghiệm");
   const [phone, setPhone] = useState("");
-  const devLogin = !isZalo;
   const requestedPath = params.get("returnTo") || "/account";
   const returnTo =
     requestedPath.startsWith("/") && !requestedPath.startsWith("//")
       ? requestedPath
       : "/account";
 
-  async function handleLogin(event: React.FormEvent) {
+  async function handleZaloLogin() {
+    if (busy) return;
+    if (user) {
+      navigate(returnTo, true);
+      return;
+    }
+    if (isPreview) {
+      setError("Bản xem mẫu không tạo phiên đăng nhập. Chuyển sang chế độ API để đăng nhập.");
+      return;
+    }
+    if (!isZalo) {
+      setError("Mở Mini App trong Zalo để tự động đăng nhập Zalo 1-touch. Hoặc dùng form Đăng nhập thử nghiệm bên dưới.");
+      setShowMockForm(true);
+      return;
+    }
+    setBusy(true);
+    setError("");
+    try {
+      const response = await api.post<{ token: string; user: User }>(API_PATHS.AUTH.LOGIN, {
+        accessToken: await zaloAccessToken(),
+      });
+      login(response.data.token, response.data.user);
+      navigate(returnTo, true);
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleMockLogin(event: React.FormEvent) {
     event.preventDefault();
     if (busy) return;
     if (user) {
@@ -34,39 +64,27 @@ export default function LoginPage() {
       return;
     }
     if (isPreview) {
-      setError(
-        "Bản xem mẫu không tạo phiên đăng nhập. Chuyển sang chế độ API để đăng nhập thử trên trình duyệt.",
-      );
-      return;
-    }
-    if (!devLogin && !isZalo) {
-      setError("Mở Mini App trong Zalo để đăng nhập tài khoản của bạn.");
+      setError("Bản xem mẫu không tạo phiên đăng nhập. Chuyển sang chế độ API để đăng nhập thử nghiệm.");
       return;
     }
     setBusy(true);
     setError("");
     try {
-      const response = devLogin
-        ? await api.post<{ token: string; user: User }>(
-            API_PATHS.AUTH.MOCK_LOGIN,
-            { name: name.trim(), phone: phone.trim() },
-          )
-        : await api.post<{ token: string; user: User }>(API_PATHS.AUTH.LOGIN, {
-            accessToken: await zaloAccessToken(),
-          });
+      const response = await api.post<{ token: string; user: User }>(
+        API_PATHS.AUTH.MOCK_LOGIN,
+        { name: name.trim() || "Khách thử nghiệm", phone: phone.trim() },
+      );
       login(response.data.token, response.data.user);
       navigate(returnTo, true);
-    } catch (error) {
-      setError(errorMessage(error));
+    } catch (err) {
+      setError(errorMessage(err));
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <div
-      className={"page stitch-login" + (devLogin ? " stitch-login-dev" : "")}
-    >
+    <div className="page stitch-login stitch-login-dev">
       <div
         className="login-landscape"
         style={{ backgroundImage: "url(" + previewImages.hero + ")" }}
@@ -114,76 +132,87 @@ export default function LoginPage() {
             </div>
           </div>
         </section>
-        <form className="login-form" onSubmit={handleLogin}>
-          {devLogin && !user && (
-            <div className="login-dev-fields">
-              <p className="login-dev-label">
-                <Icon name="info" size={16} />
-                Chế độ phát triển · Chưa kết nối Zalo
-              </p>
-              <p className="login-dev-description">
-                Dùng tên và số điện thoại thử để kiểm tra tài khoản, đặt tour
-                trên trình duyệt.
-              </p>
-              {!isPreview && (
-                <fieldset disabled={busy}>
-                  <label htmlFor="login-name">
-                    Tên hiển thị
-                    <input
-                      id="login-name"
-                      name="name"
-                      autoComplete="name"
-                      required
-                      maxLength={200}
-                      value={name}
-                      onChange={(event) => setName(event.target.value)}
-                      placeholder="Nhập tên của bạn"
-                    />
-                  </label>
-                  <label htmlFor="login-phone">
-                    Số điện thoại thử nghiệm
-                    <input
-                      id="login-phone"
-                      name="phone"
-                      type="tel"
-                      inputMode="tel"
-                      autoComplete="tel"
-                      required
-                      minLength={7}
-                      maxLength={20}
-                      pattern="(0|\+84)[3|5|7|8|9][0-9]{8}"
-                      value={phone}
-                      onChange={(event) => setPhone(event.target.value)}
-                      placeholder="Ví dụ: 0900000000"
-                    />
-                  </label>
-                </fieldset>
-              )}
-            </div>
-          )}
+
+        <div className="login-actions-group">
+          {/* Main Zalo Login Button */}
           <button
             className="button button-wide zalo-login-button"
-            type="submit"
+            type="button"
+            onClick={handleZaloLogin}
             disabled={busy}
           >
-            <span>{devLogin ? <Icon name="user" size={17} /> : "Z"}</span>
-            {busy
-              ? "Đang đăng nhập…"
-              : user
-                ? "Tiếp tục với tài khoản của bạn"
-                : devLogin
-                  ? "Đăng nhập thử nghiệm"
-                  : "Đăng nhập nhanh với Zalo"}
+            <span>Z</span>
+            {busy ? "Đang đăng nhập…" : user ? "Tiếp tục với tài khoản Zalo" : "Đăng nhập nhanh với Zalo"}
           </button>
-          {isPreview && devLogin && (
-            <a
-              className="login-api-link"
-              href={"/login?returnTo=" + encodeURIComponent(returnTo)}
-            >
-              Mở đăng nhập thử với API <Icon name="arrow" size={15} />
-            </a>
-          )}
-        </form>
+
+          {/* Dedicated Mock/Test Login Section for Web */}
+          <div className="login-mock-section" style={{ marginTop: "16px" }}>
+            {!showMockForm ? (
+              <button
+                type="button"
+                className="button button-outline button-wide"
+                style={{ background: "#fff", color: "#04432f", borderColor: "#04432f44" }}
+                onClick={() => setShowMockForm(true)}
+              >
+                <Icon name="user" size={17} />
+                Đăng nhập thử nghiệm (Trình duyệt Web)
+              </button>
+            ) : (
+              <form className="login-form" onSubmit={handleMockLogin} style={{ background: "#f3fcf5", padding: "16px", borderRadius: "12px", border: "1px solid #e4ece5" }}>
+                <div className="login-dev-fields">
+                  <p className="login-dev-label" style={{ fontWeight: 650, color: "#04432f", marginBottom: "4px" }}>
+                    <Icon name="info" size={16} />
+                    Dùng thử trên Web (Không cần Zalo SDK)
+                  </p>
+                  <p className="login-dev-description" style={{ fontSize: "12px", color: "#6c7770", marginBottom: "12px" }}>
+                    Nhập tên và số điện thoại thử để tạo tài khoản trải nghiệm trên web.
+                  </p>
+                  <fieldset disabled={busy} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <label htmlFor="login-name" style={{ fontSize: "13px" }}>
+                      Tên hiển thị
+                      <input
+                        id="login-name"
+                        name="name"
+                        autoComplete="name"
+                        required
+                        maxLength={200}
+                        value={name}
+                        onChange={(event) => setName(event.target.value)}
+                        placeholder="Nhập tên của bạn"
+                      />
+                    </label>
+                    <label htmlFor="login-phone" style={{ fontSize: "13px" }}>
+                      Số điện thoại thử nghiệm
+                      <input
+                        id="login-phone"
+                        name="phone"
+                        type="tel"
+                        inputMode="tel"
+                        autoComplete="tel"
+                        required
+                        minLength={7}
+                        maxLength={20}
+                        pattern="(0|\+84)[3|5|7|8|9][0-9]{8}"
+                        value={phone}
+                        onChange={(event) => setPhone(event.target.value)}
+                        placeholder="Ví dụ: 0900000000"
+                      />
+                    </label>
+                  </fieldset>
+                </div>
+                <button
+                  className="button button-wide button-primary"
+                  type="submit"
+                  disabled={busy}
+                  style={{ marginTop: "12px" }}
+                >
+                  <Icon name="user" size={16} />
+                  {busy ? "Đang xử lý…" : "Xác nhận Đăng nhập thử nghiệm"}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
         <AppLink className="login-guest" to="/">
           Tiếp tục khám phá không đăng nhập
           <Icon name="arrow" size={16} />
