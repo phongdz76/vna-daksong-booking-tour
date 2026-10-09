@@ -17,9 +17,9 @@
 
   .app-header {
     min-height: 56px;
-    height: calc(56px + env(safe-area-inset-top));
-    padding: env(safe-area-inset-top) 12px 0;
-    gap: 6px;
+    height: auto;
+    padding: max(8px, env(safe-area-inset-top)) 12px 8px;
+    gap: 8px;
     background: #f3fcf5ed;
     border: 0;
     box-shadow: 0 1px 8px #0000000a;
