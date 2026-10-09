@@ -13,6 +13,7 @@ const bookingSchema = new mongoose.Schema({
   contact: {
     name: { type: String, required: true, maxlength: 200 },
     phone: { type: String, required: true, maxlength: 20 },
+    email: { type: String, maxlength: 254, lowercase: true, trim: true },
   },
   note: { type: String, maxlength: 2000, default: "" },
   snapshot: {

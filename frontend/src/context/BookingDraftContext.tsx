@@ -10,7 +10,7 @@ import type { Booking, Departure, Quote } from "../types/api";
 
 export interface BookingPayload {
   quoteToken: string;
-  contact: { name: string; phone: string };
+  contact: { name: string; phone: string; email: string };
   note: string;
   couponCode: string;
   paymentMethod: Booking["paymentMethod"];
@@ -21,7 +21,7 @@ export interface BookingDraft {
   adults: number;
   children: number;
   quote: Quote;
-  contact: { name: string; phone: string };
+  contact: { name: string; phone: string; email: string };
   note: string;
 }
 const BookingDraftContext = createContext<{

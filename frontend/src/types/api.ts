@@ -59,12 +59,16 @@ export interface Departure {
   adultPrice: number;
   childPrice: number | null;
   maxGuestsPerBooking: number;
+  maxCapacity?: number;
+  bookedGuests?: number;
+  availableSeats?: number;
   status: "open" | "closed";
 }
 export interface User {
   _id: string;
   name: string;
   avatar?: string;
+  phone?: string;
   role: "user" | "admin";
   membershipTier: string;
   loyaltyPoints: number;
@@ -90,6 +94,15 @@ export interface Quote {
   expiresAt: string;
   message: string;
 }
+export interface AvailableCoupon {
+  code: string;
+  description: string;
+  discountType: "percentage" | "fixed";
+  discountValue: number;
+  maxDiscount: number | null;
+  minOrderValue: number;
+  validUntil: string;
+}
 export interface Booking {
   _id: string;
   code: string;
@@ -97,7 +110,7 @@ export interface Booking {
   departureId: string;
   adults: number;
   children: number;
-  contact: { name: string; phone: string };
+  contact: { name: string; phone: string; email: string };
   note: string;
   snapshot: Omit<
     Quote,

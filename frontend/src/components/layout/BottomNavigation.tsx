@@ -22,7 +22,6 @@ export default function BottomNavigation() {
         >
           <Icon name={tab.icon} />
           <span>{tab.label}</span>
-          <i />
         </AppLink>
       ))}
     </nav>

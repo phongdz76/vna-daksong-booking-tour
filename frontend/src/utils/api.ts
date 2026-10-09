@@ -26,6 +26,9 @@ export const API_PATHS = {
   DEPARTURES: {
     GET_ALL: "/departures",
   },
+  COUPONS: {
+    AVAILABLE: "/coupons/available",
+  },
   BOOKINGS: {
     GET_ALL: "/bookings",
     GET_MINE: "/bookings/mine",

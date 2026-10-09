@@ -1,7 +1,12 @@
 import express from "express";
-import { protect, adminOnly } from "../middlewares/authMiddleware.js";
+import {
+  protect,
+  adminOnly,
+  optionalProtect,
+} from "../middlewares/authMiddleware.js";
 import {
   getCoupons,
+  getAvailableCoupons,
   createCoupon,
   updateCoupon,
   deleteCoupon,
@@ -9,14 +14,12 @@ import {
 
 const router = express.Router();
 
+router.get("/available", optionalProtect, getAvailableCoupons);
+
 router.use(protect, adminOnly);
 
-router.route("/")
-  .get(getCoupons)
-  .post(createCoupon);
+router.route("/").get(getCoupons).post(createCoupon);
 
-router.route("/:id")
-  .put(updateCoupon)
-  .delete(deleteCoupon);
+router.route("/:id").put(updateCoupon).delete(deleteCoupon);
 
 export default router;

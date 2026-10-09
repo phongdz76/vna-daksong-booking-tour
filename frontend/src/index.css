@@ -236,15 +236,21 @@
     letter-spacing: 0.3px;
   }
   .avatar-button {
-    width: 35px;
-    height: 35px;
-    display: flex;
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     color: #fff;
-    background: var(--primary);
+    background: #04432f;
+    border: 2px solid #914b2b;
     border-radius: 50%;
     flex-shrink: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    line-height: 0;
   }
   .avatar-button img,
   .profile-avatar img {
@@ -291,15 +297,6 @@
   .nav-item.active {
     color: var(--primary);
     font-weight: 650;
-  }
-  .nav-item i {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    margin-top: -1px;
-  }
-  .nav-item.active i {
-    background: var(--primary);
   }
   .button {
     border: 1px solid transparent;
@@ -451,6 +448,10 @@
   .search-box > span:first-of-type {
     font-size: 12px;
     flex: 1;
+  }
+  .search-form .search-submit {
+    color: #527263;
+    flex: 0 0 auto;
   }
   .search-shortcut {
     color: var(--primary);
@@ -784,14 +785,80 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    overflow: visible;
   }
-  .filter-panel label {
+  .filter-select {
+    position: relative;
+  }
+  .filter-label {
+    display: block;
     font-size: 12px;
     color: var(--muted);
   }
-  .filter-panel select {
+  .filter-select-trigger {
+    width: 100%;
+    min-height: 46px;
     margin-top: 5px;
+    padding: 10px 12px 10px 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
     font-size: 13px;
+    text-align: left;
+    color: #19352a;
+    background: #f7fbf8;
+    border: 1px solid #dbe9df;
+    border-radius: 12px;
+    transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+  }
+  .filter-select-trigger svg {
+    color: #527263;
+    transition: transform 160ms ease;
+  }
+  .filter-select-trigger.open {
+    background: #fff;
+    border-color: #2d7658;
+    box-shadow: 0 0 0 3px #2d765814;
+  }
+  .filter-select-trigger.open svg {
+    transform: rotate(90deg);
+  }
+  .filter-select-menu {
+    position: absolute;
+    z-index: 5;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    padding: 5px;
+    background: #fff;
+    border: 1px solid #dbe9df;
+    border-radius: 13px;
+    box-shadow: 0 12px 28px #23462d1c;
+  }
+  .filter-select-menu button {
+    width: 100%;
+    min-height: 40px;
+    padding: 9px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #32443a;
+    font-size: 13px;
+    text-align: left;
+  }
+  .filter-select-menu button:hover,
+  .filter-select-menu button.selected {
+    background: #edf7f0;
+    color: #1e6045;
+    font-weight: 600;
+  }
+  .filter-select-menu button.selected svg {
+    color: #2d7658;
   }
   .pagination {
     display: flex;
@@ -1074,7 +1141,7 @@
     font-size: 12px;
   }
   .has-action-bar {
-    padding-bottom: calc(154px + env(safe-area-inset-bottom));
+    padding-bottom: calc(118px + env(safe-area-inset-bottom));
   }
   .action-bar {
     position: fixed;

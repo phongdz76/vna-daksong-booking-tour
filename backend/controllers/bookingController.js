@@ -8,6 +8,7 @@ import Destination from "../models/Destination.js";
 import Coupon from "../models/Coupon.js";
 import User from "../models/User.js";
 import PaymentTransaction from "../models/PaymentTransaction.js";
+import { sendBookingConfirmation } from "../utils/email.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -74,6 +75,32 @@ function publicBooking(booking) {
       return res.status(409).json({ message: "Chuyến hiện không nhận yêu cầu đặt." });
     }
     
+    const maxCapacity = departure.maxCapacity || 50;
+    const activeBookings = await Booking.aggregate([
+      {
+        $match: {
+          departureId: departure._id,
+          status: { $in: ["pending_confirmation", "confirmed", "completed"] }
+        }
+      },
+      {
+        $group: {
+          _id: "$departureId",
+          bookedGuests: { $sum: { $add: ["$adults", "$children"] } }
+        }
+      }
+    ]);
+    const currentBooked = activeBookings[0]?.bookedGuests || 0;
+    const availableSeats = Math.max(0, maxCapacity - currentBooked);
+
+    if (availableSeats <= 0) {
+      return res.status(409).json({ message: `Chuyến đã nhận đủ ${maxCapacity} khách (Đã hết chỗ).` });
+    }
+
+    if (adults + c > availableSeats) {
+      return res.status(400).json({ message: `Chuyến chỉ còn ${availableSeats} chỗ trống.` });
+    }
+
     if (adults + c > departure.maxGuestsPerBooking) {
       return res.status(400).json({ message: `Mỗi yêu cầu nhận tối đa ${departure.maxGuestsPerBooking} khách.` });
     }
@@ -149,6 +176,9 @@ export const createBooking = async (req, res) => {
     if (typeof contact.phone !== "string" || !contact.phone.trim()) {
       return res.status(400).json({ message: "Số điện thoại liên hệ là bắt buộc." });
     }
+    if (typeof contact.email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email.trim())) {
+      return res.status(400).json({ message: "Email liên hệ không hợp lệ." });
+    }
     
     const idempotencyKey = req.get("Idempotency-Key");
     if (!idempotencyKey || typeof idempotencyKey !== "string" || idempotencyKey.length < 8) {
@@ -156,7 +186,11 @@ export const createBooking = async (req, res) => {
     }
     
     // Chuẩn hóa contact trước khi hash — thứ tự key không ảnh hưởng
-    const normalizedContact = { name: contact.name.trim(), phone: contact.phone.trim() };
+    const normalizedContact = {
+      name: contact.name.trim(),
+      phone: contact.phone.trim(),
+      email: contact.email.trim().toLowerCase(),
+    };
     const normalizedNote = typeof note === "string" ? note.trim() : "";
     const requestHash = fingerprint({ quoteToken, contact: normalizedContact, note: normalizedNote, couponCode: couponCode || "", paymentMethod: paymentMethod || "" });
     const key = { userId: req.user._id, idempotencyKey };
@@ -285,6 +319,11 @@ export const createBooking = async (req, res) => {
           return res.status(400).json({ message: "Mã giảm giá không hợp lệ." });
       }
       throw error;
+    }
+    try {
+      await sendBookingConfirmation(booking);
+    } catch (error) {
+      console.error(`[email] Không gửi được email xác nhận cho ${booking.code}:`, error);
     }
     res.status(201).json({ data: publicBooking(booking), replayed: false });
   } catch (error) {

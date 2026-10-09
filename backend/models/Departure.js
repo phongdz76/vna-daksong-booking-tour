@@ -7,6 +7,7 @@ const departureSchema = new mongoose.Schema({
   adultPrice: { type: Number, required: true, min: 0, max: 1_000_000_000, validate: Number.isSafeInteger },
   childPrice: { type: Number, min: 0, max: 1_000_000_000, default: null, validate: value => value === null || Number.isSafeInteger(value) },
   maxGuestsPerBooking: { type: Number, default: 20, min: 1, max: 100, validate: Number.isSafeInteger },
+  maxCapacity: { type: Number, default: 50, min: 1, max: 200, validate: Number.isSafeInteger },
   status: { type: String, enum: ["open", "closed"], default: "open", index: true },
   bookingRevision: { type: Number, default: 0, select: false },
 }, { timestamps: true, optimisticConcurrency: true });

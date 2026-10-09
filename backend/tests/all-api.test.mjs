@@ -145,7 +145,7 @@ async function getQuote(extra={}) {
   return status(await http("POST","/api/bookings/quote",{body:{departureId:state.departure,adults:2,children:1,...extra}}),200);
 }
 function bookingBody(quote,extra={}) {
-  return {quoteToken:quote.quoteToken,contact:{name:"Khách API Test",phone:"0900000001"},note:"API TEST "+runId,
+  return {quoteToken:quote.quoteToken,contact:{name:"Khách API Test",phone:"0900000001",email:"api.test@example.com"},note:"API TEST "+runId,
     couponCode:quote.appliedCoupon||"",paymentMethod:"cash_on_arrival",...extra};
 }
 async function createBooking(extra={}) {
@@ -1009,6 +1009,40 @@ async function runTests() {
   await test("Admin CREATE Tour",async()=>{requireState("destination");state.tour=status(await http("POST","/api/tours",{token:admin(),body:tourBody()}),201)._id;});
   await test("Admin CREATE Departure",async()=>{requireState("tour");state.departure=status(await http("POST","/api/departures",{token:admin(),body:departureBody()}),201)._id;});
   await test("Admin CREATE Coupon",async()=>{const b=status(await http("POST","/api/coupons",{token:admin(),body:couponBody()}),201);state.coupon=b.data._id;state.couponCode=b.data.code;});
+  await test("Backend tự sinh mã ưu đãi duy nhất khi không gửi code",async()=>{
+    const body=couponBody();delete body.code;
+    const first=status(await http("POST","/api/coupons",{token:admin(),body}),201).data;
+    const second=status(await http("POST","/api/coupons",{token:admin(),body}),201).data;
+    assert.match(first.code,/^VNA-[A-F0-9]{10}$/);assert.match(second.code,/^VNA-[A-F0-9]{10}$/);
+    assert.notEqual(first.code,second.code);assert.notEqual(first._id,second._id);
+    state.autoCoupon=first;
+  });
+  await test("Khách xem ưu đãi còn hiệu lực, hết lượt và mã tắt bị loại",async()=>{
+    const cases=[{code:"AVAILABLE",usageLimit:null},{code:"MINIMUM",minOrderValue:9000000},
+      {code:"OFF",isActive:false},{code:"FUTURE",validFrom:future(2)},
+      {code:"EXPIRED",validFrom:future(-5),validUntil:future(-1)},
+      {code:"EXHAUSTED",usageLimit:1,usedCount:1},{code:"ZERO",usageLimit:0}];
+    for(const fields of cases)await Coupon.create(couponBody({...fields,code:fields.code+"-"+runId}));
+    const result=status(await http("GET","/api/coupons/available?limit=1000"),200);
+    assert.equal(result.pagination.limit,100);
+    const codes=result.data.map(c=>c.code);
+    for(const name of ["AVAILABLE","MINIMUM"])assert.ok(codes.includes(name+"-"+runId.toUpperCase()));
+    for(const name of ["OFF","FUTURE","EXPIRED","EXHAUSTED","ZERO"])assert.ok(!codes.includes(name+"-"+runId.toUpperCase()));
+    for(const item of result.data)assert.deepEqual(Object.keys(item).sort(),["code","description","discountType","discountValue","maxDiscount","minOrderValue","validUntil"].sort());
+    const first=status(await http("GET","/api/coupons/available?limit=1&page=1",{token:customer()}),200);
+    const second=status(await http("GET","/api/coupons/available?limit=1&page=2"),200);
+    assert.equal(first.data.length,1);assert.notEqual(first.data[0].code,second.data[0].code);
+    assert.equal(first.pagination.total,result.pagination.total);
+  });
+  await test("Mã tự sinh dùng được khi báo giá và backend kiểm tra lại sau khi tắt",async()=>{
+    requireState("autoCoupon","departure");
+    const quote=await getQuote({couponCode:state.autoCoupon.code});
+    assert.equal(quote.appliedCoupon,state.autoCoupon.code);assert.ok(quote.discountAmount>0);
+    status(await http("PUT","/api/coupons/"+state.autoCoupon._id,{token:admin(),body:{isActive:false}}),200);
+    const available=status(await http("GET","/api/coupons/available?limit=100"),200);
+    assert.ok(!available.data.some(c=>c.code===state.autoCoupon.code));
+    status(await http("POST","/api/bookings/quote",{body:{departureId:state.departure,adults:2,children:1,couponCode:state.autoCoupon.code}}),400);
+  });
   const resources=[
     ["destinations","destination",{address:"Địa chỉ demo đã sửa"},{visitNotes:"Ghi chú đã sửa"}],
     ["articles","article",{summary:"Tóm tắt đã sửa"},{content:"Nội dung đã sửa"}],

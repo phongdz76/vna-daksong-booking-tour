@@ -1,5 +1,6 @@
 import { API_PATHS } from "../../../utils/api";
 import { useMemo, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import Header from "../../../components/layout/Header";
 import Icon from "../../../components/common/Icon";
@@ -13,6 +14,73 @@ import useApi from "../../../hooks/useApi";
 import { previewList, previewTours } from "../../../data/preview";
 import { themeLabels } from "../../../utils/format";
 import type { ListResponse, Theme, Tour } from "../../../types/api";
+
+function FilterSelect({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: { value: string; label: string }[];
+  onChange: (value: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  const selected = options.find((option) => option.value === value) || options[0];
+
+  useEffect(() => {
+    function close(event: MouseEvent) {
+      if (!root.current?.contains(event.target as Node)) setOpen(false);
+    }
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", close);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, []);
+
+  return (
+    <div className="filter-select" ref={root}>
+      <span className="filter-label">{label}</span>
+      <button
+        type="button"
+        className={`filter-select-trigger ${open ? "open" : ""}`}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
+      >
+        <span>{selected.label}</span>
+        <Icon name="chevron" size={16} />
+      </button>
+      {open && (
+        <div className="filter-select-menu" role="listbox" aria-label={label}>
+          {options.map((option) => (
+            <button
+              type="button"
+              role="option"
+              aria-selected={option.value === value}
+              className={option.value === value ? "selected" : ""}
+              key={option.value}
+              onClick={() => {
+                onChange(option.value);
+                setOpen(false);
+              }}
+            >
+              <span>{option.label}</span>
+              {option.value === value && <Icon name="check" size={16} />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ToursPage() {
   const [params, setParams] = useSearchParams();
@@ -28,7 +96,9 @@ export default function ToursPage() {
       (t) =>
         (!theme || t.themes.includes(theme as Theme)) &&
         (!q ||
-          t.name.toLocaleLowerCase("vi").includes(q.toLocaleLowerCase("vi"))) &&
+          [t.name, t.summary, t.description || ""].some((value) =>
+            value.toLocaleLowerCase("vi").includes(q.toLocaleLowerCase("vi")),
+          )) &&
         (!maxDuration || t.durationHours <= Number(maxDuration)),
     );
     if (sort === "price_asc")
@@ -49,6 +119,16 @@ export default function ToursPage() {
     if (value) next.set(key, value);
     else next.delete(key);
     if (key !== "page") next.delete("page");
+    setParams(next);
+  }
+  function clearSearch() {
+    setSearch("");
+    update("q", "");
+  }
+  function showAllTours() {
+    setSearch("");
+    const next = new URLSearchParams();
+    if (sort !== "newest") next.set("sort", sort);
     setParams(next);
   }
   return (
@@ -73,8 +153,13 @@ export default function ToursPage() {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
-        <button type="submit" className="icon-button" aria-label="Tìm kiếm">
-          <Icon name="arrow" size={19} />
+        <button
+          type={search ? "button" : "submit"}
+          className="icon-button search-submit"
+          aria-label={search ? "Xóa từ khóa" : "Tìm kiếm"}
+          onClick={search ? clearSearch : undefined}
+        >
+          <Icon name={search ? "close" : "arrow"} size={19} />
         </button>
       </form>
       <div className="chip-rail">
@@ -110,32 +195,28 @@ export default function ToursPage() {
       </div>
       {showFilters && (
         <div className="filter-panel card">
-          <label>
-            Sắp xếp
-            <select
-              value={sort}
-              onChange={(event) => update("sort", event.target.value)}
-            >
-              <option value="newest">Mới nhất</option>
-              <option value="price_asc">Giá tăng dần</option>
-              <option value="price_desc">Giá giảm dần</option>
-              <option value="duration">Thời lượng ngắn nhất</option>
-            </select>
-          </label>
-          <label>
-            Thời lượng
-            <select
-              value={maxDuration}
-              onChange={(event) =>
-                update("maxDurationHours", event.target.value)
-              }
-            >
-              <option value="">Tất cả</option>
-              <option value="12">Trong ngày · tối đa 12 giờ</option>
-              <option value="48">Tối đa 2 ngày</option>
-              <option value="72">Tối đa 3 ngày</option>
-            </select>
-          </label>
+          <FilterSelect
+            label="Sắp xếp"
+            value={sort}
+            onChange={(value) => update("sort", value)}
+            options={[
+              { value: "newest", label: "Mới nhất" },
+              { value: "price_asc", label: "Giá tăng dần" },
+              { value: "price_desc", label: "Giá giảm dần" },
+              { value: "duration", label: "Thời lượng ngắn nhất" },
+            ]}
+          />
+          <FilterSelect
+            label="Thời lượng"
+            value={maxDuration}
+            onChange={(value) => update("maxDurationHours", value)}
+            options={[
+              { value: "", label: "Tất cả" },
+              { value: "12", label: "Trong ngày · tối đa 12 giờ" },
+              { value: "48", label: "Tối đa 2 ngày" },
+              { value: "72", label: "Tối đa 3 ngày" },
+            ]}
+          />
         </div>
       )}
       <section className="section list-section">
@@ -176,11 +257,13 @@ export default function ToursPage() {
           <EmptyState
             title="Chưa tìm thấy hành trình"
             description="Thử một chủ đề hoặc từ khóa khác nhé."
-          />
+          >
+            <button className="button button-outline" onClick={showAllTours}>
+              Xem tất cả hành trình
+            </button>
+          </EmptyState>
         )}
       </section>
     </div>
   );
 }
-
-

@@ -1,0 +1,68 @@
+.coupon-picker-options {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.coupon-picker-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #dbe6df;
+  border-radius: 14px;
+  background: #fbfdfb;
+  cursor: pointer;
+}
+.coupon-picker-option input {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin: 3px 0 0;
+  accent-color: #17634b;
+}
+.coupon-picker-option.is-selected {
+  border-color: #17634b;
+  background: #eff8f2;
+  box-shadow: 0 0 0 1px #17634b;
+}
+.coupon-picker-copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+.coupon-picker-copy strong {
+  color: #17634b;
+  font-size: 16px;
+}
+.coupon-picker-copy small {
+  color: #6c7c73;
+  line-height: 1.5;
+}
+.coupon-picker-copy .coupon-picker-code {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+.coupon-picker-option.is-unavailable {
+  background: #f7f7f5;
+  cursor: default;
+}
+.coupon-picker-copy .coupon-picker-minimum {
+  color: #a26029;
+}
+.coupon-picker-selection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.coupon-picker-selection .text-link {
+  flex-shrink: 0;
+}

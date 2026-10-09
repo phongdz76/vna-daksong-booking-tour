@@ -6,6 +6,43 @@ import mongoose from "mongoose";
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 const ALLOWED_STATUSES = ["open", "closed"];
 
+async function enrichDeparturesWithBookingInfo(departures) {
+  if (!departures || !departures.length) return [];
+  const depIds = departures.map(d => d._id);
+  const bookingCounts = await Booking.aggregate([
+    {
+      $match: {
+        departureId: { $in: depIds },
+        status: { $in: ["pending_confirmation", "confirmed", "completed"] }
+      }
+    },
+    {
+      $group: {
+        _id: "$departureId",
+        bookedGuests: { $sum: { $add: ["$adults", "$children"] } }
+      }
+    }
+  ]);
+
+  const bookedMap = {};
+  bookingCounts.forEach(b => {
+    bookedMap[b._id.toString()] = b.bookedGuests;
+  });
+
+  return departures.map(d => {
+    const maxCapacity = d.maxCapacity || 50;
+    const bookedGuests = bookedMap[d._id.toString()] || 0;
+    const availableSeats = Math.max(0, maxCapacity - bookedGuests);
+    return {
+      ...d,
+      maxCapacity,
+      bookedGuests,
+      availableSeats,
+      status: availableSeats <= 0 ? "closed" : d.status
+    };
+  });
+}
+
 // @desc   Get departures by tour ID
 // @route  GET /api/departures/tour/:id
 // @access Public/Private
@@ -45,9 +82,10 @@ export const getTourDepartures = async (req, res) => {
       .lean();
       
     const total = await Departure.countDocuments(filter);
+    const enriched = await enrichDeparturesWithBookingInfo(departures);
 
     res.json({
-      data: departures,
+      data: enriched,
       pagination: {
         page, limit, total, pages: Math.ceil(total / limit)
       }
@@ -83,9 +121,10 @@ export const getDepartures = async (req, res) => {
       .lean();
       
     const total = await Departure.countDocuments(filter);
+    const enriched = await enrichDeparturesWithBookingInfo(departures);
 
     res.json({
-      data: departures,
+      data: enriched,
       pagination: { page, limit, total, pages: Math.ceil(total / limit) }
     });
   } catch (error) {
@@ -99,9 +138,10 @@ export const getDepartures = async (req, res) => {
 export const getDepartureById = async (req, res) => {
   try {
     if (!isValidObjectId(req.params.id)) return res.status(400).json({ message: "Invalid ID" });
-    const departure = await Departure.findById(req.params.id);
+    const departure = await Departure.findById(req.params.id).lean();
     if (!departure) return res.status(404).json({ message: "Chuyến không tồn tại" });
-    res.json(departure);
+    const [enriched] = await enrichDeparturesWithBookingInfo([departure]);
+    res.json(enriched);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }

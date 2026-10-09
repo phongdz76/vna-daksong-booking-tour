@@ -1,0 +1,3121 @@
+.vna-admin {
+  min-height: 100vh;
+  line-height: 1.5;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color: #151d19;
+  background: #f3fcf5;
+  font-synthesis: none;
+  font-size: 14px;
+  --primary: #04432f;
+  --primary-mid: #245b45;
+  --surface: #f3fcf5;
+  --soft: #edf6ef;
+  --line: #e2eae4;
+  --muted: #69796f;
+  --earth: #914b2b;
+  --sidebar: 288px;
+}
+
+html[data-vna-admin] {
+  font-size: 14px;
+  background: #f3fcf5;
+}
+
+.vna-admin .form-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.vna-admin .stats-grid.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.vna-admin .guide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.vna-admin .guide-grid h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.vna-admin .guide-grid p {
+  font-size: 12px;
+  color: #69796f;
+}
+
+.vna-admin .address-cell {
+  display: block;
+  min-width: 160px;
+  max-width: 240px;
+}
+
+.vna-admin .rating-link {
+  border: 0;
+  background: none;
+  color: #7d8e83;
+  padding: 7px 0 0;
+  font-size: 10px;
+}
+
+.vna-admin .rating-link span,
+.vna-admin .review-stars {
+  color: #ab773b;
+  margin-right: 5px;
+}
+
+.vna-admin .review-card {
+  border: 1px solid #e3ece5;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.vna-admin .review-card p {
+  margin: 12px 0;
+  white-space: pre-wrap;
+}
+
+.vna-admin .review-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.vna-admin .review-heading small {
+  display: block;
+  color: #7d8e83;
+  margin-top: 4px;
+}
+
+.vna-admin .departure-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 250px;
+}
+
+.vna-admin .calendar-tile {
+  background: #edf6ef;
+  border: 1px solid #dfe9e2;
+  border-radius: 10px;
+  min-width: 55px;
+  text-align: center;
+  padding: 7px;
+}
+
+.vna-admin .calendar-tile strong {
+  display: block;
+  font-size: 22px;
+  color: #245b45;
+}
+
+.vna-admin .calendar-tile span {
+  font-size: 8px;
+  color: #7d8e83;
+  display: block;
+}
+
+.vna-admin .coupon-code {
+  background: #edf6ef;
+  border: 1px dashed #a2baa9;
+  padding: 7px 10px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #245b45;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.vna-admin .coupon-description {
+  max-width: 230px;
+}
+
+.vna-admin .usage-track {
+  background: #edf2ee;
+  border-radius: 5px;
+  overflow: hidden;
+  height: 5px;
+  margin-top: 9px;
+  min-width: 90px;
+}
+
+.vna-admin .usage-track span {
+  height: 100%;
+  display: block;
+  background: #458368;
+}
+
+@media (max-width: 650px) {
+  .vna-admin .stats-grid.three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .vna-admin .stats-grid.three .stat-card:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .vna-admin .guide-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.vna-admin * {
+  box-sizing: border-box;
+}
+
+html[data-vna-admin] body {
+  margin: 0;
+}
+
+.vna-admin button,
+.vna-admin input,
+.vna-admin select,
+.vna-admin textarea {
+  font: inherit;
+}
+
+.vna-admin button,
+.vna-admin a,
+.vna-admin input,
+.vna-admin select,
+.vna-admin textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.vna-admin button,
+.vna-admin a {
+  touch-action: manipulation;
+}
+
+.vna-admin a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.vna-admin button {
+  cursor: pointer;
+}
+
+.vna-admin button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
+.vna-admin button {
+  color: inherit;
+}
+
+.vna-admin h1,
+.vna-admin h2,
+.vna-admin h3,
+.vna-admin p {
+  margin: 0;
+}
+
+.vna-admin h1 {
+  font-size: 28px;
+  line-height: 1.35;
+  letter-spacing: -0.8px;
+}
+
+.vna-admin h2 {
+  font-size: 18px;
+  line-height: 1.5;
+  letter-spacing: -0.3px;
+}
+
+.vna-admin h3 {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.vna-admin p {
+  line-height: 1.7;
+}
+
+.vna-admin small {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.vna-admin svg {
+  flex-shrink: 0;
+}
+
+.vna-admin strong {
+  font-weight: 600;
+}
+
+.vna-admin img {
+  max-width: 100%;
+}
+
+.vna-admin input,
+.vna-admin select,
+.vna-admin textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #dfe9e2;
+  background: #f8fbf9;
+  color: #151d19;
+  border-radius: 8px;
+  padding: 11px 12px;
+  outline: none;
+}
+
+.vna-admin input,
+.vna-admin select {
+  min-height: 44px;
+}
+
+.vna-admin textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.vna-admin input:focus,
+.vna-admin select:focus,
+.vna-admin textarea:focus {
+  border-color: #458368;
+  box-shadow: 0 0 0 3px #04432f10;
+}
+
+.vna-admin input[type="checkbox"] {
+  width: 17px;
+  min-height: 17px;
+  height: 17px;
+  accent-color: var(--primary);
+  margin: 0;
+}
+
+.vna-admin input[type="file"] {
+  background: #fff;
+}
+
+.vna-admin input:disabled,
+.vna-admin select:disabled {
+  opacity: 0.6;
+}
+
+.vna-admin button:focus-visible,
+.vna-admin a:focus-visible,
+.vna-admin summary:focus-visible {
+  outline: 3px solid #78b69b;
+  outline-offset: 3px;
+}
+
+.vna-admin ::selection {
+  background: #b5efd2;
+}
+
+.vna-admin .sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--sidebar);
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+}
+
+.vna-admin .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 19px 20px;
+  background: #ffffff08;
+  min-height: 80px;
+}
+
+.vna-admin .brand img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border: 1px solid #ffffff35;
+  border-radius: 12px;
+}
+
+.vna-admin .brand strong {
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.vna-admin .brand span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  color: #a8d6bf;
+  margin-top: 4px;
+}
+
+.vna-admin .sidebar nav {
+  padding: 22px 12px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.vna-admin .nav-group {
+  margin-bottom: 22px;
+}
+
+.vna-admin .nav-group-title {
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  color: #8fbba5;
+  margin: 0 12px 10px;
+  font-weight: 500;
+}
+
+.vna-admin .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 9px;
+  min-height: 46px;
+  font-weight: 500;
+  font-size: 13px;
+  margin: 3px 0;
+  color: #e6f4ec;
+  transition: background 0.15s;
+}
+
+.vna-admin .nav-item:hover {
+  background: #ffffff0c;
+}
+
+.vna-admin .nav-item.active {
+  background: #245b45;
+  color: #b5efd2;
+}
+
+.vna-admin .nav-item > span:nth-child(2) {
+  flex: 1;
+}
+
+.vna-admin .nav-count {
+  background: rgba(244, 63, 94, 0.18);
+  color: #fca5a5;
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+  border-radius: 20px;
+  padding: 3px 9px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  transition: all 0.2s ease;
+}
+
+.vna-admin .nav-item.active .nav-count {
+  background: #ffffff;
+  color: #04432f;
+  border-color: #ffffff;
+}
+
+.vna-admin .sidebar-footer {
+  margin: 12px;
+  padding: 15px 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #ffffff06;
+  border-radius: 10px;
+  font-size: 12px;
+  color: #cfebda;
+}
+
+.vna-admin .sidebar-footer small {
+  display: block;
+  font-size: 10px;
+  margin-top: 4px;
+  color: #8fbba5;
+}
+
+.vna-admin .workspace {
+  margin-left: var(--sidebar);
+  min-height: 100vh;
+}
+
+.vna-admin .topbar {
+  height: 72px;
+  position: sticky;
+  top: 0;
+  z-index: 35;
+  background: #f3fcf5ed;
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid #e4eee7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 0 28px;
+}
+
+.vna-admin .breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  font-size: 12px;
+}
+
+.vna-admin .breadcrumb strong {
+  white-space: nowrap;
+}
+
+.vna-admin .breadcrumb-root,
+.vna-admin .breadcrumb-divider {
+  color: #7d8e83;
+}
+
+.vna-admin .topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.vna-admin .refresh-control {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #eaf4ed;
+  border: 0;
+  border-radius: 20px;
+  padding: 8px 10px;
+  color: #6a7c70;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.vna-admin .profile {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.vna-admin .avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #b5efd2;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.vna-admin .profile strong {
+  font-size: 12px;
+  display: block;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vna-admin .profile small {
+  font-size: 10px;
+  color: var(--earth);
+}
+
+.vna-admin .logout-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 40px;
+  min-height: 40px;
+  flex-shrink: 0;
+  border: 1px solid #d5e5da;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--primary);
+  padding: 9px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px #04432f06;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.vna-admin .logout-button:hover {
+  background: #eaf4ed;
+  border-color: #a7c4b2;
+  box-shadow: 0 2px 5px #04432f0a;
+}
+
+.vna-admin .logout-button:active {
+  background: #dfeee4;
+}
+
+.vna-admin .menu-toggle {
+  display: none !important;
+}
+
+.vna-admin .main-content {
+  padding: 26px 28px 0;
+  max-width: 1850px;
+  margin: 0 auto;
+  min-width: 0;
+}
+
+.vna-admin .page-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.vna-admin .page-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10px;
+  color: #829187;
+  padding: 25px 0;
+}
+
+.vna-admin .page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  padding: 25px 24px;
+  background: #eaf5ee;
+  border-radius: 12px;
+}
+
+.vna-admin .page-header p {
+  font-size: 13px;
+  color: #69796f;
+  margin-top: 8px;
+  max-width: 650px;
+}
+
+.vna-admin .eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.25px;
+  font-weight: 600;
+  color: var(--earth);
+  display: block;
+  margin-bottom: 7px;
+}
+
+.vna-admin .header-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.vna-admin .page-header.dark {
+  background: linear-gradient(115deg, #04432f 30%, #36745a);
+  color: white;
+}
+
+.vna-admin .page-header.dark .eyebrow {
+  color: #b5efd2;
+}
+
+.vna-admin .page-header.dark p {
+  color: #d2e7da;
+}
+
+.vna-admin .page-header.dark .button.primary {
+  background: #b5efd2;
+  color: #04432f;
+}
+
+.vna-admin .button {
+  min-height: 41px;
+  padding: 10px 15px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.45;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s;
+  white-space: nowrap;
+}
+
+.vna-admin .button.primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 2px 3px #04432f15;
+}
+
+.vna-admin .button.primary:hover:not(:disabled) {
+  background: #245b45;
+}
+
+.vna-admin .button.secondary {
+  background: #e7f0e9;
+  color: #245b45;
+  border-color: #dfe9e2;
+}
+
+.vna-admin .button.secondary:hover:not(:disabled) {
+  background: #dcebe1;
+}
+
+.vna-admin .button.ghost {
+  background: transparent;
+  color: #5c7163;
+}
+
+.vna-admin .button.ghost:hover {
+  background: #edf6ef;
+}
+
+.vna-admin .button.danger {
+  background: #b8322b;
+  color: white;
+}
+
+.vna-admin .button.danger:hover:not(:disabled) {
+  background: #96261f;
+}
+
+.vna-admin .icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #4b6555;
+  padding: 7px;
+}
+
+.vna-admin .icon-button:hover {
+  background: #e7f0e9;
+}
+
+.vna-admin .icon-button.danger {
+  color: #bb3a31;
+}
+
+.vna-admin .actions {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+
+.vna-admin .wrap {
+  flex-wrap: wrap;
+}
+
+.vna-admin .text-link {
+  color: var(--primary);
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.vna-admin .text-link:hover {
+  text-decoration: underline;
+}
+
+.vna-admin .muted {
+  color: var(--muted);
+}
+
+.vna-admin .small-text {
+  font-size: 12px;
+}
+
+.vna-admin .nowrap {
+  white-space: nowrap;
+}
+
+.vna-admin .break-anywhere {
+  overflow-wrap: anywhere;
+}
+
+.vna-admin .price {
+  white-space: nowrap;
+  color: var(--earth);
+  font-weight: 600;
+  display: block;
+}
+
+.vna-admin .soft-box {
+  background: var(--soft);
+  border: 1px solid #e1eee5;
+  padding: 16px;
+  border-radius: 10px;
+}
+
+.vna-admin .icon-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+}
+
+.vna-admin .icon-line svg {
+  margin-top: 3px;
+}
+
+.vna-admin .count-pill {
+  padding: 3px 8px;
+  background: #e3f2e9;
+  color: var(--primary);
+  border-radius: 20px;
+  font-size: 10px;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+.vna-admin .panel {
+  background: #fff;
+  border: 1px solid #e3ece5;
+  border-radius: 12px;
+  overflow: hidden;
+  min-width: 0;
+  box-shadow: 0 1px 2px #04432f03;
+}
+
+.vna-admin .panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 19px 20px;
+}
+
+.vna-admin .panel-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.vna-admin .panel-heading p {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.vna-admin .panel-bottom {
+  margin-top: auto;
+  padding: 18px 20px;
+  border-top: 1px solid #edf2ee;
+  color: #7b8c80;
+  font-size: 11px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.vna-admin .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.4;
+  padding: 5px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.vna-admin .badge-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.vna-admin .badge.green {
+  background: #dff2e7;
+  color: #245b45;
+}
+
+.vna-admin .badge.amber {
+  background: #fff0dc;
+  color: #93501b;
+}
+
+.vna-admin .badge.red {
+  background: #fce8e5;
+  color: #ae362e;
+}
+
+.vna-admin .badge.gray {
+  background: #edf0ed;
+  color: #6d7972;
+}
+
+.vna-admin .badge-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+}
+
+.vna-admin .badge-list {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.vna-admin .notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #eaf5ee;
+  border-left: 3px solid #458368;
+  border-radius: 7px;
+  font-size: 12px;
+  line-height: 1.65;
+  color: #3e6050;
+}
+
+.vna-admin .notice svg {
+  margin-top: 1px;
+}
+
+.vna-admin .notice.error {
+  background: #fff0ed;
+  color: #9e3830;
+  border-color: #c4483b;
+}
+
+.vna-admin .query-error {
+  padding: 20px;
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+}
+
+.vna-admin .query-error .notice {
+  width: 100%;
+}
+
+.vna-admin .empty {
+  padding: 45px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.vna-admin .empty-icon {
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  background: #edf6ef;
+  border-radius: 50%;
+  color: #7ca48b;
+  margin-bottom: 3px;
+}
+
+.vna-admin .empty h3 {
+  font-size: 15px;
+}
+
+.vna-admin .empty p {
+  color: #7d8b81;
+  font-size: 12px;
+  max-width: 340px;
+}
+
+.vna-admin .loading {
+  padding: 45px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #6d8173;
+  font-size: 13px;
+}
+
+.vna-admin .spinner {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #bdd5c6;
+  border-top-color: #245b45;
+  border-radius: 50%;
+  animation: admin-spin 0.7s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.vna-admin .spinner.small {
+  width: 16px;
+  height: 16px;
+  border-color: #ffffff60;
+  border-top-color: currentColor;
+}
+
+@keyframes admin-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.vna-admin .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.vna-admin .stat-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #e3ece5;
+  padding: 19px 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 2px #04432f02;
+  min-width: 0;
+}
+
+.vna-admin .stat-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  line-height: 1.55;
+  min-height: 35px;
+}
+
+.vna-admin .stat-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #e6f2ea;
+  color: #245b45;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.vna-admin .stat-value {
+  font-size: clamp(22px, 2.1vw, 32px);
+  font-weight: 650;
+  letter-spacing: -1px;
+  margin: 16px 0 12px;
+  white-space: nowrap;
+}
+
+.vna-admin .stat-card p {
+  margin-top: auto;
+  font-size: 11px;
+  color: #7b887f;
+  border-top: 1px solid #edf3ef;
+  padding-top: 12px;
+}
+
+.vna-admin .stat-card.accent .stat-value {
+  color: #914b2b;
+}
+
+.vna-admin .stat-counts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.vna-admin .stat-counts > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  line-height: 1.2;
+}
+
+.vna-admin .stat-counts > div + div {
+  border-left: 1px solid var(--line);
+  padding-left: 16px;
+}
+
+.vna-admin .stat-counts small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.vna-admin .task-banner {
+  background: linear-gradient(135deg, #ffffff 0%, #f4fbf7 60%, #e8f7ef 100%);
+  border: 1px solid #c7ebd8;
+  border-radius: 14px;
+  padding: 18px 22px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  overflow: hidden;
+  box-shadow:
+    0 4px 16px -2px rgba(4, 67, 47, 0.05),
+    0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s ease;
+}
+
+.vna-admin .task-symbol {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #04432f;
+  color: #34d399;
+  border-radius: 12px;
+  flex-shrink: 0;
+  position: relative;
+  box-shadow: 0 3px 10px rgba(4, 67, 47, 0.18);
+}
+
+.vna-admin .task-symbol-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background-color: #f43f5e;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.2);
+}
+
+.vna-admin .task-banner-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.vna-admin .task-banner-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.vna-admin .task-banner strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0c2b20;
+  letter-spacing: -0.1px;
+  line-height: 1.3;
+}
+
+.vna-admin .task-banner-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #dcfce7;
+  color: #065f46;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 20px;
+  border: 1px solid #a7f3d0;
+  letter-spacing: 0.2px;
+}
+
+.vna-admin .task-banner p {
+  font-size: 13px;
+  color: #2d5a48;
+  margin-top: 4px;
+  line-height: 1.45;
+}
+
+.vna-admin .task-banner-btn {
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 9px 20px;
+  background: #04432f;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 3px 10px rgba(4, 67, 47, 0.2);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.vna-admin .task-banner-btn:hover {
+  background: #033223;
+  box-shadow: 0 6px 16px rgba(4, 67, 47, 0.3);
+  transform: translateY(-1px);
+}
+
+.vna-admin .task-banner-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.vna-admin .task-banner-btn:hover svg {
+  transform: translateX(4px);
+}
+
+.vna-admin .dashboard-middle {
+  display: grid;
+  grid-template-columns: minmax(290px, 0.85fr) minmax(0, 1.35fr);
+  gap: 20px;
+}
+
+.vna-admin .donut {
+  width: 185px;
+  height: 185px;
+  border-radius: 50%;
+  margin: 14px auto 28px;
+  padding: 21px;
+}
+
+.vna-admin .donut > div {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.vna-admin .donut strong {
+  font-size: 34px;
+  letter-spacing: -1px;
+}
+
+.vna-admin .donut span {
+  font-size: 9px;
+  color: #7b8c80;
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+
+.vna-admin .chart-legend {
+  padding: 0 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vna-admin .chart-legend a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  padding: 9px 8px;
+  border-radius: 7px;
+}
+
+.vna-admin .chart-legend a:hover {
+  background: #edf6ef;
+}
+
+.vna-admin .legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.vna-admin .chart-legend a > span:nth-child(2) {
+  flex: 1;
+}
+
+.vna-admin .chart-legend small {
+  color: #8a978e;
+  font-size: 10px;
+  min-width: 43px;
+  text-align: right;
+}
+
+.vna-admin .top-tours {
+  display: flex;
+  flex-direction: column;
+}
+
+.vna-admin .rank-list {
+  padding: 4px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vna-admin .rank-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f0f7f2;
+  padding: 14px 12px;
+  border-radius: 9px;
+}
+
+.vna-admin .rank-item:hover {
+  background: #e7f2eb;
+}
+
+.vna-admin .rank-number {
+  font-size: 12px;
+  color: #5b7b68;
+  font-weight: 600;
+}
+
+.vna-admin .photo {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: inline-block;
+  background: #eaf2ec;
+}
+
+.vna-admin .photo.placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #8ca694;
+}
+
+.vna-admin .rank-description {
+  flex: 1;
+  min-width: 0;
+}
+
+.vna-admin .rank-description strong {
+  font-size: 12px;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.vna-admin .rank-description span {
+  font-size: 10px;
+  color: #8d654b;
+  margin-top: 4px;
+  display: block;
+}
+
+.vna-admin .rank-count {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.vna-admin .rank-count strong {
+  display: block;
+  font-size: 17px;
+  color: #245b45;
+}
+
+.vna-admin .rank-count small {
+  font-size: 9px;
+  color: #819286;
+}
+
+.vna-admin .table-scroll {
+  overflow: auto;
+  max-width: 100%;
+}
+
+.vna-admin table {
+  border-collapse: collapse;
+  width: 100%;
+  text-align: left;
+  font-size: 12px;
+}
+
+.vna-admin th {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.5;
+  background: #edf6ef;
+  color: #42584a;
+  padding: 15px 18px;
+  white-space: nowrap;
+}
+
+.vna-admin td {
+  padding: 18px;
+  border-bottom: 1px solid #edf2ee;
+  vertical-align: middle;
+  line-height: 1.6;
+}
+
+.vna-admin tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.vna-admin tbody tr:hover {
+  background: #fbfdfb;
+}
+
+.vna-admin tbody tr.selected {
+  background: #f0f8f2;
+}
+
+.vna-admin td small {
+  display: block;
+  color: #839086;
+  margin-top: 4px;
+  font-size: 10px;
+}
+
+.vna-admin td .price {
+  margin-top: 4px;
+}
+
+.vna-admin td .cell-title {
+  font-size: 12px;
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-width: 150px;
+  max-width: 260px;
+}
+
+.vna-admin td .code-link {
+  color: #245b45;
+  font-weight: 650;
+  white-space: nowrap;
+  font-size: 11px;
+}
+
+.vna-admin .contact-name {
+  font-size: 12px;
+  display: block;
+  margin: 5px 0 1px;
+}
+
+.vna-admin .table-identity {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-width: 250px;
+}
+
+.vna-admin .table-identity .photo {
+  width: 58px;
+  height: 58px;
+}
+
+.vna-admin .table-identity .cell-title {
+  font-size: 13px;
+  color: #04432f;
+}
+
+.vna-admin .table-identity small {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vna-admin .pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  background: #f4f9f5;
+  font-size: 11px;
+  color: #728277;
+  border-top: 1px solid #edf2ee;
+}
+
+.vna-admin .pagination select {
+  width: auto;
+  min-height: 32px;
+  font-size: 10px;
+  padding: 5px 6px;
+  display: inline-block;
+  margin-left: 12px;
+  background: #fff;
+}
+
+.vna-admin .page-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.vna-admin .page-buttons button {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: #e5eee8;
+  border-radius: 7px;
+  color: #245b45;
+}
+
+.vna-admin .page-buttons span {
+  background: #04432f;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 7px;
+  font-weight: 500;
+}
+
+.vna-admin .filters {
+  background: #fff;
+  border: 1px solid #e3ece5;
+  padding: 18px;
+  border-radius: 11px;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.vna-admin .filters .field {
+  flex: 1;
+  min-width: 0;
+}
+
+.vna-admin .filters .field > label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-weight: 600;
+}
+
+.vna-admin .filters input,
+.vna-admin .filters select {
+  background: #edf6ef;
+  font-size: 12px;
+}
+
+.vna-admin .filters .filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+.vna-admin .filters .search-field {
+  flex: 1.6;
+}
+
+.vna-admin .search-input {
+  position: relative;
+}
+
+.vna-admin .search-input > svg {
+  position: absolute;
+  left: 12px;
+  top: 13px;
+  color: #718477;
+}
+
+.vna-admin .search-input input {
+  padding-left: 38px;
+}
+
+.vna-admin .field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.vna-admin .field > label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4b5f51;
+}
+
+.vna-admin .field small {
+  color: #839086;
+  font-size: 11px;
+}
+
+.vna-admin .field-control {
+  min-width: 0;
+}
+
+.vna-admin .field.full {
+  grid-column: 1/-1;
+}
+
+.vna-admin .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.vna-admin .form-section {
+  padding: 22px 0;
+  border-bottom: 1px solid #e7eee9;
+}
+
+.vna-admin .form-section:first-child {
+  padding-top: 0;
+}
+
+.vna-admin .form-section:last-child {
+  border: 0;
+  padding-bottom: 0;
+}
+
+.vna-admin .form-section h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  font-size: 15px;
+}
+
+.vna-admin .form-section > p {
+  color: #829087;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+
+.vna-admin .form-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.vna-admin .checkbox-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.vna-admin .checkbox-options label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 10px;
+  border: 1px solid #e0ebe3;
+  border-radius: 7px;
+  font-size: 12px;
+  background: #f7fbf8;
+}
+
+.vna-admin .checkbox-options label:has(input:checked) {
+  background: #e7f3eb;
+  border-color: #9ec6ae;
+  color: #245b45;
+}
+
+.vna-admin .multi-select {
+  max-height: 175px;
+  overflow: auto;
+  display: grid;
+  gap: 8px;
+  border: 1px solid #e0ebe3;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.vna-admin .multi-select label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.vna-admin .multi-select input {
+  margin-top: 2px;
+}
+
+.vna-admin .array-item {
+  background: #f5faf6;
+  padding: 16px;
+  border: 1px solid #e2ece5;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.vna-admin .array-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+
+.vna-admin .array-item .form-grid {
+  gap: 12px;
+}
+
+.vna-admin .array-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.vna-admin .image-edit {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.vna-admin .image-edit .photo {
+  width: 95px;
+  height: 95px;
+}
+
+.vna-admin .image-edit > div {
+  flex: 1;
+}
+
+.vna-admin .upload-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.vna-admin .upload-bar label {
+  cursor: pointer;
+}
+
+.vna-admin .upload-bar input[type="file"] {
+  width: auto;
+  font-size: 11px;
+  max-width: 100%;
+}
+
+.vna-admin .check-label {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.vna-admin .check-label input {
+  flex-shrink: 0;
+}
+
+.vna-admin .inline-note {
+  font-size: 11px;
+  color: #7b8f81;
+  margin-top: 10px;
+}
+
+.vna-admin .booking-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.vna-admin .booking-grid.has-selection {
+  grid-template-columns: minmax(0, 1fr) 410px;
+}
+
+.vna-admin .booking-list table {
+  min-width: 640px;
+}
+
+.vna-admin .booking-list td,
+.vna-admin .booking-list th {
+  padding: 15px 14px;
+}
+
+.vna-admin .booking-detail {
+  position: sticky;
+  top: 94px;
+}
+
+.vna-admin .detail-close {
+  padding: 14px 20px 0;
+}
+
+.vna-admin .detail-body {
+  padding: 18px 20px 24px;
+}
+
+.vna-admin .detail-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 20px;
+}
+
+.vna-admin .detail-title h2 {
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+
+.vna-admin .detail-title .badge {
+  margin-top: 21px;
+}
+
+.vna-admin .detail-section {
+  padding: 20px 0;
+  border-top: 1px solid #e9f0eb;
+}
+
+.vna-admin .detail-section:last-child {
+  padding-bottom: 0;
+}
+
+.vna-admin .detail-section h3 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 13px;
+  color: #526556;
+}
+
+.vna-admin .detail-section p {
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+
+.vna-admin .detail-section.action-box {
+  border: 1px solid #dfebe2;
+  background: #edf6ef;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.vna-admin .action-box p {
+  color: #7b8b80;
+  margin-bottom: 15px;
+  font-size: 11px;
+}
+
+.vna-admin .action-box .button {
+  font-size: 10px;
+  padding: 9px 10px;
+  min-height: 37px;
+}
+
+.vna-admin .detail-section dl {
+  font-size: 12px;
+}
+
+.vna-admin .detail-section dl > div {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 11px;
+}
+
+.vna-admin .detail-section dt {
+  color: #78897c;
+  flex-shrink: 0;
+}
+
+.vna-admin .detail-section dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 500;
+}
+
+.vna-admin .detail-section dl > div:last-child {
+  margin-bottom: 0;
+}
+
+.vna-admin .customer-note {
+  background: #f6f9f6;
+  border: 1px solid #e4ede6;
+  padding: 13px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #607365;
+  white-space: pre-wrap;
+  margin-top: 14px;
+}
+
+.vna-admin .soft-box > strong {
+  font-size: 13px;
+}
+
+.vna-admin .soft-box p {
+  font-size: 11px;
+  margin-top: 8px;
+  color: #6f8175;
+}
+
+.vna-admin .soft-box dl {
+  margin-top: 15px;
+  margin-bottom: 0;
+}
+
+.vna-admin .detail-section .total-row {
+  border-top: 1px solid #d9e7de;
+  padding-top: 12px;
+  margin-top: 15px;
+}
+
+.vna-admin .total-row dt {
+  font-weight: 600;
+  color: #245b45;
+}
+
+.vna-admin .total-row dd {
+  color: #04432f;
+  font-weight: 700;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.vna-admin .policy {
+  font-size: 11px;
+  margin-top: 13px;
+  color: #789080;
+}
+
+.vna-admin .policy summary {
+  cursor: pointer;
+  color: #426451;
+}
+
+.vna-admin .policy p {
+  font-size: 11px;
+  margin-top: 9px;
+  white-space: pre-wrap;
+}
+
+.vna-admin .payment-summary {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.vna-admin .payment-summary > span:last-child {
+  font-size: 11px;
+  color: #7f8c83;
+}
+
+.vna-admin .payment-card {
+  border: 1px solid #e3ece5;
+  border-radius: 9px;
+  padding: 13px;
+  margin-top: 10px;
+  background: #fafdfa;
+}
+
+.vna-admin .payment-card-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.vna-admin .payment-card > small {
+  display: block;
+  font-size: 10px;
+  line-height: 1.7;
+  margin-top: 5px;
+}
+
+.vna-admin .payment-card .actions {
+  margin-top: 12px;
+}
+
+.vna-admin .payment-card .button {
+  font-size: 10px;
+  min-height: 34px;
+  padding: 8px 9px;
+}
+
+.vna-admin .payment-card .notice {
+  margin-top: 10px;
+}
+
+.vna-admin .timeline {
+  padding: 0 0 0 16px;
+  margin: 0;
+  list-style: none;
+}
+
+.vna-admin .timeline li {
+  position: relative;
+  border-left: 1px solid #dfebe3;
+  padding: 0 0 22px 18px;
+  font-size: 12px;
+}
+
+.vna-admin .timeline li:last-child {
+  padding-bottom: 0;
+  border-color: transparent;
+}
+
+.vna-admin .timeline-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  left: -4.5px;
+  top: 4px;
+  border-radius: 50%;
+  background: #9aa99f;
+}
+
+.vna-admin .timeline-dot.green {
+  background: #245b45;
+}
+
+.vna-admin .timeline-dot.amber {
+  background: #ce8a40;
+}
+
+.vna-admin .timeline-dot.red {
+  background: #c25043;
+}
+
+.vna-admin .timeline li small {
+  display: block;
+  color: #8b968e;
+  font-size: 10px;
+  margin-top: 5px;
+}
+
+.vna-admin .timeline li p {
+  font-size: 11px;
+  margin-top: 6px;
+  color: #6b7d71;
+}
+
+.vna-admin .modal {
+  border: 1px solid #dce8df;
+  border-radius: 15px;
+  padding: 0;
+  width: min(560px, calc(100vw - 28px));
+  max-height: calc(100dvh - 40px);
+  color: #151d19;
+  box-shadow: 0 24px 80px #00211528;
+}
+
+.vna-admin .modal.wide {
+  width: min(880px, calc(100vw - 28px));
+}
+
+.vna-admin .modal::backdrop {
+  background: #0b241b75;
+  backdrop-filter: blur(3px);
+}
+
+.vna-admin .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px;
+  background: #f0f7f2;
+  border-bottom: 1px solid #dfebe2;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.vna-admin .modal-header h2 {
+  font-size: 20px;
+}
+
+.vna-admin .modal-header .eyebrow {
+  font-size: 9px;
+  margin-bottom: 4px;
+  color: #64816e;
+}
+
+.vna-admin .modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.vna-admin .modal-body > p {
+  font-size: 13px;
+  color: #667b6d;
+}
+
+.vna-admin .modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid #e2ece5;
+  background: #fff;
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+}
+
+.vna-admin .modal-footer .save-hint {
+  margin-right: auto;
+  color: #8b978f;
+  font-size: 11px;
+}
+
+.vna-admin .toast-region {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 100;
+}
+
+.vna-admin .toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 16px;
+  border: 1px solid #b9d4c3;
+  box-shadow: 0 6px 30px #04432f19;
+  background: #fff;
+  color: #245b45;
+  border-radius: 10px;
+  font-size: 12px;
+  max-width: min(480px, calc(100vw - 32px));
+}
+
+.vna-admin .toast button {
+  display: flex;
+  border: 0;
+  background: transparent;
+  color: #7d8d82;
+  padding: 2px;
+}
+
+.vna-admin .review-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #edf6ef;
+  padding: 18px;
+  border-radius: 10px;
+}
+
+.vna-admin .review-score {
+  font-size: 34px;
+  font-weight: 650;
+  color: #04432f;
+}
+
+.vna-admin .stars {
+  color: #c17d42;
+  letter-spacing: 2px;
+  font-size: 15px;
+}
+
+.vna-admin .review-item {
+  padding: 20px 0;
+  border-bottom: 1px solid #edf2ee;
+}
+
+.vna-admin .review-item-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.vna-admin .review-item-top > div {
+  flex: 1;
+}
+
+.vna-admin .review-item p {
+  font-size: 13px;
+  white-space: pre-wrap;
+}
+
+.vna-admin .review-item small {
+  color: #839386;
+}
+
+.vna-admin .guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.vna-admin .guide-card {
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e3ece5;
+  border-radius: 11px;
+}
+
+.vna-admin .guide-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #245b45;
+  margin-bottom: 10px;
+}
+
+.vna-admin .guide-card p {
+  font-size: 12px;
+  color: #7c8c81;
+}
+
+.vna-admin .source-checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 15px;
+}
+
+.vna-admin .source-checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 12px;
+  color: #647c6c;
+  line-height: 1.7;
+}
+
+.vna-admin .source-checklist svg {
+  color: #245b45;
+  margin-top: 2px;
+}
+
+.vna-admin .coupon-code {
+  display: inline-block;
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.7px;
+  padding: 5px 9px;
+  background: #e8f7ed;
+  color: #04432f;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 650;
+  margin-bottom: 8px;
+}
+
+.vna-admin .usage-bar {
+  height: 4px;
+  background: #e4eee7;
+  border-radius: 10px;
+  width: 85px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.vna-admin .usage-bar > span {
+  display: block;
+  background: #245b45;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.vna-admin .coupon-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  padding: 6px 0;
+  color: #718477;
+  font-size: 10px;
+}
+
+.vna-admin .toggle-track {
+  width: 27px;
+  height: 16px;
+  background: #d8e1db;
+  border-radius: 20px;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+}
+
+.vna-admin .toggle-track::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px #0002;
+}
+
+.vna-admin .coupon-toggle[aria-checked="true"] .toggle-track {
+  background: #245b45;
+  justify-content: flex-end;
+}
+
+.vna-admin .full-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 18px;
+  padding: 30px;
+}
+
+.vna-admin .login-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.vna-admin .login-story {
+  padding: 30px 50px;
+  background: #04432f;
+  background-size: cover;
+  background-position: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.vna-admin .login-story::after {
+  content: "";
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  bottom: -300px;
+  right: -240px;
+  border: 70px solid #ffffff04;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.vna-admin .login-story .brand {
+  padding: 0;
+  background: transparent;
+}
+
+.vna-admin .login-story .brand strong {
+  font-size: 20px;
+}
+
+.vna-admin .login-intro {
+  padding: 80px 0;
+}
+
+.vna-admin .login-intro .eyebrow {
+  color: #a2d3b7;
+  font-size: 10px;
+  letter-spacing: 1.7px;
+}
+
+.vna-admin .login-intro h1 {
+  font-size: 54px;
+  line-height: 1.22;
+  letter-spacing: -2px;
+  font-weight: 600;
+  margin: 20px 0 22px;
+  text-shadow: 0 3px 14px #012d2270;
+}
+
+.vna-admin .login-intro p {
+  color: #e1f1e7;
+  font-size: 14px;
+  max-width: 370px;
+  line-height: 1.9;
+  text-shadow: 0 2px 8px #012d2280;
+}
+
+.vna-admin .login-features {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  margin-top: 38px;
+  color: #f0faf3;
+  font-size: 12px;
+}
+
+.vna-admin .login-features span {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.vna-admin .login-features svg {
+  color: #b9e6ca;
+  filter: drop-shadow(0 2px 5px #012d2280);
+}
+
+.vna-admin .login-story > small {
+  color: #90b59e;
+  font-size: 10px;
+  letter-spacing: 0.3px;
+}
+
+.vna-admin .login-form-side {
+  display: grid;
+  place-items: center;
+  padding: 45px;
+}
+
+.vna-admin .login-form {
+  width: 100%;
+  max-width: 375px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.vna-admin .login-form .eyebrow {
+  margin-top: 10px;
+  margin-bottom: -10px;
+  font-size: 10px;
+}
+
+.vna-admin .login-form h2 {
+  font-size: 29px;
+  letter-spacing: -0.7px;
+}
+
+.vna-admin .login-form > p {
+  font-size: 12px;
+  color: #7c8b81;
+  margin-top: -12px;
+}
+
+.vna-admin .login-form input {
+  background: white;
+  min-height: 46px;
+}
+
+.vna-admin .login-form > .login-submit {
+  min-height: 52px;
+  margin-top: 6px;
+  justify-content: center;
+  padding: 8px 18px;
+  border-radius: 13px;
+  letter-spacing: 0.1px;
+  box-shadow: 0 7px 16px #04432f20;
+}
+
+.vna-admin .login-form > .login-submit:hover:not(:disabled) {
+  background: #1d6349;
+  box-shadow: 0 9px 20px #04432f2b;
+  transform: translateY(-1px);
+}
+
+.vna-admin .login-form > .login-submit:focus-visible {
+  outline: 3px solid #9bd7b8;
+  outline-offset: 3px;
+}
+
+.vna-admin .password-field {
+  position: relative;
+}
+
+.vna-admin .password-field input {
+  padding-right: 60px;
+}
+
+.vna-admin .password-field button {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: #738879;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.vna-admin .password-field button:hover {
+  color: #2d7658;
+}
+
+.vna-admin .login-help {
+  display: flex;
+  gap: 8px;
+  font-size: 10px;
+  color: #89998e;
+  line-height: 1.8;
+  padding-top: 4px;
+}
+
+@media (min-width: 1800px) {
+  .vna-admin .main-content {
+    padding: 32px 36px 0;
+  }
+
+  .vna-admin .booking-grid.has-selection {
+    grid-template-columns: minmax(0, 1fr) 470px;
+  }
+}
+
+@media (max-width: 1499px) {
+  .vna-admin .booking-grid,
+  .vna-admin .booking-grid.has-selection {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .vna-admin .booking-detail {
+    display: none;
+    position: static;
+  }
+
+  .vna-admin .has-selection .booking-list {
+    display: none;
+  }
+
+  .vna-admin .has-selection .booking-detail {
+    display: block;
+    max-width: 950px;
+    width: 100%;
+    margin: auto;
+  }
+
+  .vna-admin .has-selection .detail-body {
+    padding: 24px 30px;
+  }
+
+  .vna-admin .has-selection .detail-section .actions .button {
+    font-size: 12px;
+  }
+
+  .vna-admin .detail-close {
+    padding: 20px 30px 0;
+  }
+
+  .vna-admin .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .vna-admin .header-actions {
+    width: 100%;
+  }
+
+  .vna-admin .stats-grid .stat-value {
+    font-size: 25px;
+  }
+
+  .vna-admin .refresh-control span {
+    display: none;
+  }
+
+  .vna-admin .refresh-control {
+    padding: 8px;
+  }
+
+  .vna-admin .dashboard-middle {
+    grid-template-columns: minmax(270px, 0.8fr) minmax(0, 1.2fr);
+  }
+}
+
+@media (max-width: 1199px) {
+  .vna-admin {
+    --sidebar: 248px;
+  }
+
+  .vna-admin .brand {
+    padding: 19px 15px;
+    gap: 9px;
+  }
+
+  .vna-admin .brand strong {
+    font-size: 16px;
+  }
+
+  .vna-admin .brand img {
+    width: 39px;
+    height: 39px;
+  }
+
+  .vna-admin .nav-item {
+    font-size: 12px;
+    gap: 10px;
+  }
+
+  .vna-admin .nav-group-title {
+    font-size: 9px;
+  }
+
+  .vna-admin .topbar {
+    padding: 0 20px;
+    gap: 10px;
+  }
+
+  .vna-admin .topbar-actions {
+    gap: 12px;
+  }
+
+  .vna-admin .main-content {
+    padding: 22px 20px 0;
+  }
+
+  .vna-admin .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .vna-admin .dashboard-middle {
+    grid-template-columns: 1fr;
+  }
+
+  .vna-admin .rank-list {
+    padding-bottom: 24px;
+  }
+
+  .vna-admin .rank-item {
+    padding: 14px;
+  }
+
+  .vna-admin .filters {
+    flex-wrap: wrap;
+  }
+
+  .vna-admin .filters .field {
+    flex: 1 1 180px;
+  }
+
+  .vna-admin .filters .search-field {
+    flex: 1 1 240px;
+  }
+
+  .vna-admin .guide-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vna-admin .login-story {
+    padding: 35px;
+  }
+
+  .vna-admin .login-intro h1 {
+    font-size: 44px;
+  }
+}
+
+@media (max-width: 900px) {
+  .vna-admin .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.2s;
+  }
+
+  .vna-admin .sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .vna-admin .sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    border: 0;
+    background: #0b241b60;
+    z-index: 45;
+  }
+
+  .vna-admin .workspace {
+    margin-left: 0;
+  }
+
+  .vna-admin .menu-toggle {
+    display: inline-flex !important;
+  }
+
+  .vna-admin .topbar {
+    height: 64px;
+  }
+
+  .vna-admin .breadcrumb-root,
+  .vna-admin .breadcrumb-divider {
+    display: none;
+  }
+
+  .vna-admin .breadcrumb {
+    gap: 10px;
+  }
+
+  .vna-admin .topbar-actions {
+    gap: 10px;
+  }
+
+  .vna-admin .page-header {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .vna-admin .header-actions {
+    width: auto;
+  }
+
+  .vna-admin .page-header h1 {
+    font-size: 25px;
+  }
+
+  .vna-admin .dashboard-middle {
+    grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
+  }
+
+  .vna-admin .login-page {
+    grid-template-columns: 0.8fr 1fr;
+  }
+
+  .vna-admin .login-story {
+    padding: 28px;
+  }
+
+  .vna-admin .login-intro h1 {
+    font-size: 37px;
+  }
+
+  .vna-admin .login-form-side {
+    padding: 30px;
+  }
+
+  .vna-admin .login-story .brand strong {
+    font-size: 16px;
+  }
+
+  .vna-admin .login-intro p {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 650px) {
+  .vna-admin .main-content {
+    padding: 16px 14px 0;
+  }
+
+  .vna-admin .topbar {
+    padding: 0 12px;
+  }
+
+  .vna-admin .profile > div,
+  .vna-admin .refresh-control,
+  .vna-admin .logout-button span {
+    display: none;
+  }
+
+  .vna-admin .logout-button {
+    width: 40px;
+    padding: 9px;
+  }
+
+  .vna-admin .profile .avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 10px;
+  }
+
+  .vna-admin .topbar-actions {
+    gap: 8px;
+  }
+
+  .vna-admin .breadcrumb {
+    font-size: 11px;
+  }
+
+  .vna-admin .breadcrumb > a {
+    display: none;
+  }
+
+  .vna-admin .page-stack {
+    gap: 16px;
+  }
+
+  .vna-admin .page-header {
+    padding: 20px;
+    display: block;
+  }
+
+  .vna-admin .page-header h1 {
+    font-size: 23px;
+  }
+
+  .vna-admin .page-header p {
+    font-size: 12px;
+  }
+
+  .vna-admin .eyebrow {
+    font-size: 9px;
+  }
+
+  .vna-admin .header-actions {
+    margin-top: 16px;
+    gap: 8px;
+  }
+
+  .vna-admin .header-actions .button {
+    font-size: 11px;
+    flex: 1;
+    padding: 10px 12px;
+  }
+
+  .vna-admin .stats-grid {
+    gap: 10px;
+  }
+
+  .vna-admin .stat-card {
+    padding: 15px 12px;
+  }
+
+  .vna-admin .stat-top {
+    font-size: 9px;
+    gap: 4px;
+    min-height: 40px;
+  }
+
+  .vna-admin .stat-icon {
+    width: 25px;
+    height: 25px;
+  }
+
+  .vna-admin .stat-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .vna-admin .stats-grid .stat-value {
+    font-size: 21px;
+    margin: 14px 0 10px;
+    letter-spacing: -0.7px;
+  }
+
+  .vna-admin .stat-card:first-child .stat-value {
+    font-size: 18px;
+  }
+
+  .vna-admin .stat-card p {
+    font-size: 10px;
+    min-height: 40px;
+  }
+
+  .vna-admin .stat-counts {
+    gap: 10px;
+  }
+
+  .vna-admin .stat-counts > div + div {
+    padding-left: 10px;
+  }
+
+  .vna-admin .stat-counts small {
+    font-size: 10px;
+  }
+
+  .vna-admin .task-banner {
+    padding: 15px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .vna-admin .task-symbol {
+    width: 32px;
+    height: 32px;
+  }
+
+  .vna-admin .task-banner .button {
+    width: 100%;
+    margin-top: 3px;
+  }
+
+  .vna-admin .task-banner strong {
+    font-size: 12px;
+  }
+
+  .vna-admin .task-banner p {
+    font-size: 11px;
+  }
+
+  .vna-admin .dashboard-middle {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .vna-admin .panel-heading {
+    padding: 17px 16px;
+    gap: 8px;
+  }
+
+  .vna-admin .panel-heading h2 {
+    font-size: 15px;
+  }
+
+  .vna-admin .panel-heading .text-link {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .vna-admin .rank-item {
+    padding: 12px;
+    gap: 9px;
+  }
+
+  .vna-admin .rank-count small {
+    font-size: 8px;
+  }
+
+  .vna-admin .rank-description strong {
+    font-size: 11px;
+  }
+
+  .vna-admin .rank-item .photo {
+    width: 42px;
+    height: 42px;
+  }
+
+  .vna-admin .rank-count strong {
+    font-size: 16px;
+  }
+
+  .vna-admin th,
+  .vna-admin td {
+    padding: 13px 14px;
+  }
+
+  .vna-admin .filters {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .vna-admin .filters .field {
+    flex-basis: 100%;
+  }
+
+  .vna-admin .filters .filter-actions {
+    width: 100%;
+  }
+
+  .vna-admin .filter-actions .button {
+    flex: 1;
+  }
+
+  .vna-admin .filters input,
+  .vna-admin .filters select {
+    font-size: 14px;
+  }
+
+  .vna-admin .form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .vna-admin .modal {
+    max-height: calc(100dvh - 20px);
+    width: calc(100vw - 20px);
+  }
+
+  .vna-admin .modal.wide {
+    width: calc(100vw - 20px);
+  }
+
+  .vna-admin .modal-header {
+    padding: 17px;
+  }
+
+  .vna-admin .modal-header h2 {
+    font-size: 17px;
+  }
+
+  .vna-admin .modal-body {
+    padding: 18px;
+  }
+
+  .vna-admin .modal-footer {
+    padding: 13px 17px;
+  }
+
+  .vna-admin .modal-footer .save-hint {
+    display: none;
+  }
+
+  .vna-admin .modal-footer .button {
+    flex: 1;
+  }
+
+  .vna-admin .modal input,
+  .vna-admin .modal select,
+  .vna-admin .modal textarea {
+    font-size: 16px;
+  }
+
+  .vna-admin .array-item {
+    padding: 13px;
+  }
+
+  .vna-admin .image-edit {
+    flex-direction: column;
+  }
+
+  .vna-admin .image-edit > div {
+    width: 100%;
+  }
+
+  .vna-admin .image-edit .photo {
+    width: 90px;
+    height: 70px;
+  }
+
+  .vna-admin .pagination {
+    padding: 13px;
+    font-size: 10px;
+    flex-wrap: wrap;
+  }
+
+  .vna-admin .pagination select {
+    margin-left: 6px;
+    font-size: 10px;
+  }
+
+  .vna-admin .page-buttons {
+    gap: 7px;
+  }
+
+  .vna-admin .page-footer {
+    font-size: 9px;
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+  }
+
+  .vna-admin .has-selection .detail-body {
+    padding: 20px 17px;
+  }
+
+  .vna-admin .detail-close {
+    padding: 16px 17px 0;
+  }
+
+  .vna-admin .detail-title {
+    flex-wrap: wrap;
+  }
+
+  .vna-admin .detail-title .badge {
+    margin-top: 0;
+  }
+
+  .vna-admin .detail-section dd {
+    overflow-wrap: anywhere;
+  }
+
+  .vna-admin .detail-section dt {
+    flex-shrink: 1;
+  }
+
+  .vna-admin .detail-section dl > div {
+    gap: 12px;
+  }
+
+  .vna-admin .payment-card-title .badge {
+    font-size: 9px;
+  }
+
+  .vna-admin .toast-region {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .vna-admin .login-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  .vna-admin .login-story {
+    padding: 23px;
+  }
+
+  .vna-admin .login-story .brand {
+    min-height: 44px;
+  }
+
+  .vna-admin .login-story .brand strong {
+    font-size: 17px;
+  }
+
+  .vna-admin .login-intro {
+    padding: 27px 0 5px;
+  }
+
+  .vna-admin .login-intro h1 {
+    font-size: 29px;
+    letter-spacing: -1px;
+    margin: 12px 0;
+  }
+
+  .vna-admin .login-intro h1 br {
+    display: none;
+  }
+
+  .vna-admin .login-intro p,
+  .vna-admin .login-features,
+  .vna-admin .login-story > small {
+    display: none;
+  }
+
+  .vna-admin .login-intro .eyebrow {
+    font-size: 8px;
+  }
+
+  .vna-admin .login-form-side {
+    padding: 30px 25px;
+    flex: 1;
+  }
+
+  .vna-admin .login-form {
+    max-width: 400px;
+    gap: 20px;
+  }
+
+  .vna-admin .login-form h2 {
+    font-size: 26px;
+  }
+
+  .vna-admin .login-form input {
+    font-size: 16px;
+  }
+
+  .vna-admin .login-emblem {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vna-admin *,
+  .vna-admin *::before,
+  .vna-admin *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

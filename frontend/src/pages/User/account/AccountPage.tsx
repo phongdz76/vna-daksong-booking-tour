@@ -41,6 +41,35 @@ const panelTitles: Record<string, string> = {
   ticket: "Thông tin vé mẫu",
 };
 
+function getTierProgressInfo(points: number = 0, currentTier: string = "Bạc") {
+  if (currentTier === "Kim Cương" || points >= 5000) {
+    return {
+      currentTierLabel: "Hạng Kim Cương",
+      nextTierLabel: "Đã đạt hạng cao nhất",
+      targetPoints: 5000,
+      percentage: 100,
+    };
+  }
+  if (currentTier === "Vàng" || points >= 1000) {
+    const targetPoints = 5000;
+    const percentage = Math.min(100, Math.round((points / targetPoints) * 100));
+    return {
+      currentTierLabel: "Hạng Vàng",
+      nextTierLabel: "Còn 5.000 điểm để lên Kim Cương",
+      targetPoints,
+      percentage,
+    };
+  }
+  const targetPoints = points <= 500 ? 500 : 1000;
+  const percentage = Math.min(100, Math.round((points / targetPoints) * 100));
+  return {
+    currentTierLabel: "Hạng Bạc",
+    nextTierLabel: "Còn 1.000 điểm để lên Vàng",
+    targetPoints,
+    percentage,
+  };
+}
+
 export default function AccountPage() {
   const { user, loading, logout } = useAuth();
   const { setDraft, setAttempt } = useBookingDraft();
@@ -50,6 +79,7 @@ export default function AccountPage() {
   const [previewNotifications, setPreviewNotifications] = useState(true);
   const dialog = useRef<HTMLDialogElement>(null);
   const profile = isPreview ? previewAccountUser : user;
+  const tierInfo = getTierProgressInfo(profile?.loyaltyPoints ?? 350, profile?.membershipTier ?? "Bạc");
   const confirmed = useApi<ListResponse<Booking>>(
     user ? API_PATHS.BOOKINGS.GET_MINE + "?status=confirmed&limit=100" : null,
     previewConfirmedBookings,
@@ -135,28 +165,24 @@ export default function AccountPage() {
                 </div>
                 {profile && (
                   <span className="account-avatar-badge">
-                    <Icon
-                      name={isPreview || isZalo ? "shield" : "user"}
-                      size={14}
-                    />
+                    <Icon name="compass" size={13} />
                   </span>
                 )}
               </div>
               <div className="account-profile-info">
                 <h1>
-                  <span>{profile?.name || "Chào bạn, người khám phá!"}</span>
-                  {profile && <Icon name="award" size={18} />}
+                  <span>{profile?.name || "Nguyễn Văn An"}</span>
                 </h1>
                 <div className="account-identity">
-                  {isPreview && <span>0987 *** 321</span>}
-                  <span className="account-session-label">
+                  <span>{isPreview ? "0967 *** 321" : profile?.phone || "0987 *** 321"}</span>
+                  <span className="account-session-label verified">
                     <Icon name="check" size={12} />
                     {isPreview
                       ? "Zalo Verified"
                       : profile
                         ? isZalo
-                          ? "Đã đăng nhập"
-                          : "Phiên thử nghiệm"
+                          ? "Zalo Verified"
+                          : "Đã xác thực"
                         : "Chưa đăng nhập"}
                   </span>
                 </div>
@@ -179,41 +205,27 @@ export default function AccountPage() {
               </div>
             </div>
             <div className="account-loyalty">
-              <div>
-                <span>
-                  <Icon name="award" size={15} />
-                  {isPreview ? "Tiến trình nâng hạng" : "Điểm tích lũy"}
+              <div className="account-loyalty-header">
+                <span className="account-loyalty-title">
+                  Tiến trình nâng hạng
                 </span>
-                <strong>
-                  {profile
-                    ? profile.loyaltyPoints.toLocaleString("vi-VN")
-                    : "—"}
-                  {isPreview ? " / 500 điểm" : " điểm"}
+                <strong className="account-loyalty-points">
+                  {(profile?.loyaltyPoints ?? 350).toLocaleString("vi-VN")} / {tierInfo.targetPoints} điểm
                 </strong>
               </div>
-              {isPreview ? (
-                <div
-                  className="account-progress"
-                  role="progressbar"
-                  aria-label="Tiến trình nâng hạng mẫu"
-                  aria-valuemin={0}
-                  aria-valuemax={500}
-                  aria-valuenow={350}
-                >
-                  <span style={{ width: "70%" }} />
-                </div>
-              ) : (
-                <div className="account-points-rule" />
-              )}
-              <p>
-                <span>Hạng {profile?.membershipTier || "thành viên"}</span>
-                <span>
-                  {isPreview
-                    ? "Hạng Vàng (Ưu đãi 10%)"
-                    : profile
-                      ? "Thông tin từ tài khoản"
-                      : "Khám phá cùng VNA"}
-                </span>
+              <div
+                className="account-progress"
+                role="progressbar"
+                aria-label="Tiến trình nâng hạng"
+                aria-valuemin={0}
+                aria-valuemax={tierInfo.targetPoints}
+                aria-valuenow={profile?.loyaltyPoints ?? 350}
+              >
+                <span style={{ width: `${tierInfo.percentage}%` }} />
+              </div>
+              <p className="account-loyalty-footer">
+                <span>{tierInfo.currentTierLabel}</span>
+                <span className="next-tier-highlight">{tierInfo.nextTierLabel}</span>
               </p>
             </div>
           </section>
@@ -587,8 +599,8 @@ export default function AccountPage() {
               </p>
               <p>
                 {isPreview
-                  ? "Tiến trình 350/500 điểm và ưu đãi 10% là dữ liệu minh họa từ Stitch."
-                  : "Hạng và điểm hiển thị theo tài khoản. Ưu đãi được kiểm tra khi lấy báo giá chuyến đi."}
+                  ? "Tiến trình điểm trong bản xem mẫu chỉ là dữ liệu minh họa."
+                  : "Hạng và điểm hiển thị theo tài khoản. Hiện chưa có giảm giá tự động theo hạng; mã giảm giá hợp lệ sẽ được kiểm tra khi lấy báo giá."}
               </p>
             </>
           )}
@@ -647,11 +659,7 @@ export default function AccountPage() {
               <p>
                 {isPreview
                   ? "Số mã ưu đãi trên màn mẫu lấy từ thiết kế Stitch."
-                  : "Hiện chưa có danh sách mã ưu đãi riêng cho tài khoản."}
-              </p>
-              <p>
-                Nếu có mã từ VNA, nhập ở bước chọn chuyến. Backend sẽ kiểm tra
-                điều kiện và giá giảm trước khi gửi yêu cầu.
+                  : "Hiện chưa có mã ưu đãi dành riêng cho tài khoản. Vui lòng theo dõi các chương trình khuyến mãi từ VNA Đắk Song."}
               </p>
               <AppLink className="button button-primary" to="/tours">
                 Chọn tour

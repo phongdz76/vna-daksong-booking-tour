@@ -38,8 +38,10 @@ temp/
 /backend/scripts/seed.js
 /backend/scripts/seedTestUsers.js
 
-# Local design tools (require the ignored Stitch reference folder)
-/frontend/scripts/prepare-*.mjs
+# Local frontend helper tools and design scripts
+/frontend/scripts/*
+!/frontend/scripts/check-ui.mjs
+!/frontend/scripts/check-notifications-ui.mjs
 
 # Local database exports and backups
 /backups/
@@ -70,3 +72,10 @@ docs/
 
 # UX/UI 
 stitch_vna_k_song_booking_tour/
+
+# Local admin design exports and tool artifacts
+/stitch_vna_k_song_booking_tour_admin/
+playwright-report/
+.cache/
+*.pid
+*.pid.lock

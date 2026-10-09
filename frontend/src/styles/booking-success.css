@@ -1,0 +1,111 @@
+.success-acknowledgement .success-icon {
+  position: relative;
+  isolation: isolate;
+  animation: acknowledgement-pop 560ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+.success-acknowledgement .success-icon::before,
+.success-acknowledgement .success-icon::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  z-index: -1;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  animation: acknowledgement-ripple 950ms ease-out 180ms both;
+}
+
+.success-acknowledgement .success-icon::after {
+  animation-delay: 360ms;
+}
+
+.success-acknowledgement .success-check path {
+  stroke-dasharray: 1;
+  animation: acknowledgement-check 440ms ease-out 220ms both;
+}
+
+.success-acknowledgement > .eyebrow,
+.success-acknowledgement > h1,
+.success-acknowledgement > .success-description,
+.success-acknowledgement > .success-card,
+.success-acknowledgement > .notice {
+  animation: acknowledgement-reveal 480ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+.success-acknowledgement > .eyebrow {
+  animation-delay: 160ms;
+}
+.success-acknowledgement > h1 {
+  animation-delay: 220ms;
+}
+.success-acknowledgement > .success-description {
+  animation-delay: 280ms;
+}
+.success-acknowledgement > .success-card {
+  animation-delay: 340ms;
+}
+.success-acknowledgement > .notice {
+  animation-delay: 420ms;
+}
+
+@keyframes acknowledgement-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes acknowledgement-ripple {
+  0% {
+    opacity: 0.18;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.55);
+  }
+}
+
+@keyframes acknowledgement-check {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes acknowledgement-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .success-acknowledgement .success-icon,
+  .success-acknowledgement .success-icon::before,
+  .success-acknowledgement .success-icon::after,
+  .success-acknowledgement .success-check path,
+  .success-acknowledgement > .eyebrow,
+  .success-acknowledgement > h1,
+  .success-acknowledgement > .success-description,
+  .success-acknowledgement > .success-card,
+  .success-acknowledgement > .notice {
+    animation: none;
+  }
+}

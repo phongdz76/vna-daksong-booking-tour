@@ -8,7 +8,9 @@
     "start": "node server.js",
     "create:admin": "node createAdmin.js",
     "test:api": "node tests/all-api.test.mjs",
-    "test:notifications": "node tests/notifications.test.mjs"
+    "test:notifications": "node tests/notifications.test.mjs",
+    "test:email": "node --test tests/booking-email.test.mjs",
+    "preview:email": "node tests/preview-booking-email.mjs"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
@@ -24,7 +26,8 @@
     "jsonwebtoken": "^9.0.3",
     "moment": "^2.31.0",
     "mongoose": "^9.11.0",
-    "multer": "^2.4.0"
+    "multer": "^2.4.0",
+    "nodemailer": "^7.0.6"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

@@ -64,9 +64,31 @@ export default function BookingSuccessPage() {
         <ErrorState message={result.error} retry={result.retry} />
       ) : (
         booking && (
-          <div className="success-body">
-            <span className="success-icon">
-              <Icon name="check" size={37} />
+          <div
+            className="success-body success-acknowledgement"
+            key={booking._id}
+          >
+            <span
+              className="success-icon"
+              key={booking.paymentStatus === "paid" ? "paid" : "received"}
+              aria-hidden="true"
+            >
+              <svg
+                className="success-check"
+                width="37"
+                height="37"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="m5 12 4 4L19 6"
+                  pathLength="1"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </span>
             <span className="eyebrow">
               {isPreview ? "BẢN XEM MẪU" : "ĐÃ GHI NHẬN"}
@@ -131,7 +153,7 @@ export default function BookingSuccessPage() {
                           );
                           if (res.data.order_url)
                             window.location.href = res.data.order_url;
-                        } catch (e) {
+                        } catch (error) {
                           alert(
                             "Không thể khởi tạo thanh toán ZaloPay. Vui lòng thử lại sau.",
                           );

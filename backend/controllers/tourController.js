@@ -8,6 +8,7 @@ const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 const ALLOWED_THEMES = ["nature", "culture", "food", "history"];
 const ALLOWED_STATUSES = ["draft", "published", "archived"];
 const ALLOWED_SORTS = ["newest", "duration", "price_asc", "price_desc", "most_bought"];
+const escapeRegex = value => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 const ensureDestinationsExist = async (ids) => {
   if (!Array.isArray(ids)) return false;
@@ -33,7 +34,15 @@ export const getTours = async (req, res) => {
     let filter = {};
 
     if (q && typeof q === 'string') {
-      filter.$text = { $search: q };
+      const search = q.trim();
+      if (search) {
+        const pattern = new RegExp(escapeRegex(search), "i");
+        filter.$or = [
+          { name: pattern },
+          { summary: pattern },
+          { description: pattern },
+        ];
+      }
     }
 
     if (req.user?.role !== "admin") {
@@ -416,4 +425,3 @@ export const toggleSavedTour = async (req, res) => {
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
-

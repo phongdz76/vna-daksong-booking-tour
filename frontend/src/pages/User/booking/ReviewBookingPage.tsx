@@ -45,7 +45,7 @@ export default function ReviewBookingPage() {
   );
   const tour = tourResult.data;
 
-  function updateContact(field: "name" | "phone", value: string) {
+  function updateContact(field: "name" | "phone" | "email", value: string) {
     setDraft((previous) =>
       previous
         ? { ...previous, contact: { ...previous.contact, [field]: value } }
@@ -122,6 +122,7 @@ export default function ReviewBookingPage() {
           contact: {
             name: selected.contact.name.trim(),
             phone: selected.contact.phone.trim(),
+            email: selected.contact.email.trim().toLowerCase(),
           },
           note: selected.note.trim(),
           snapshot,
@@ -138,6 +139,7 @@ export default function ReviewBookingPage() {
             contact: {
               name: selected.contact.name.trim(),
               phone: selected.contact.phone.trim(),
+              email: selected.contact.email.trim().toLowerCase(),
             },
             note: selected.note.trim(),
             couponCode: quote.appliedCoupon || "",
@@ -373,6 +375,28 @@ export default function ReviewBookingPage() {
                   <span className="helper">
                     <Icon name="info" size={13} />
                     VNA dùng để liên hệ về chuyến đi của bạn.
+                  </span>
+                </label>
+                <label>
+                  Email <span className="required">*</span>
+                  <div className="stitch-input">
+                    <Icon name="mail" size={20} />
+                    <input
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      maxLength={254}
+                      value={selected.contact.email}
+                      onChange={(event) =>
+                        updateContact("email", event.target.value)
+                      }
+                      placeholder="Nhập email để nhận xác nhận..."
+                    />
+                  </div>
+                  <span className="helper">
+                    <Icon name="info" size={13} />
+                    Xác nhận đặt tour sẽ được gửi về email này.
                   </span>
                 </label>
                 <label>

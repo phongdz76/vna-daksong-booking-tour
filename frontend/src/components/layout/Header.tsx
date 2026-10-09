@@ -56,7 +56,7 @@ export default function Header({
           aria-label="Chia sẻ"
           onClick={handleShare}
         >
-          <Icon name="share" size={21} />
+          <Icon name="share" size={20} />
         </button>
       ) : (
         <NotificationBell />
@@ -65,7 +65,7 @@ export default function Header({
         {user?.avatar ? (
           <img src={user.avatar} alt="" />
         ) : (
-          <Icon name="user" size={20} />
+          <Icon name="user" size={18} />
         )}
       </AppLink>
       {message && (

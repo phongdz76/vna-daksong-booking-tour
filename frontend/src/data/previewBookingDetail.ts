@@ -9,7 +9,7 @@ export const previewBookingDetail: Booking = {
   departureId: "preview-departure-1",
   adults: 2,
   children: 1,
-  contact: { name: "Nguyễn Văn An", phone: "0900000000" },
+  contact: { name: "Nguyễn Văn An", phone: "0900000000", email: "an.nguyen@example.com" },
   note: "",
   status: "pending_confirmation",
   paymentStatus: "unpaid",

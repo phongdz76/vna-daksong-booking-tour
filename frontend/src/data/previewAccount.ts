@@ -23,7 +23,7 @@ export const previewAccountBooking: Booking = {
   departureId: departure._id,
   adults: 1,
   children: 0,
-  contact: { name: previewAccountUser.name, phone: "0900000000" },
+  contact: { name: previewAccountUser.name, phone: "0900000000", email: "an.nguyen@example.com" },
   note: "Đơn minh họa theo thiết kế Stitch.",
   status: "confirmed",
   paymentStatus: "unpaid",

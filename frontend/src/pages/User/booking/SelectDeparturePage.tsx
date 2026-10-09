@@ -12,6 +12,7 @@ import {
 } from "../../../components/common/States";
 import BookingSteps from "../../../components/booking/BookingSteps";
 import GuestCounter from "../../../components/booking/GuestCounter";
+import CouponPicker from "../../../components/booking/CouponPicker";
 import { useBookingDraft } from "../../../context/BookingDraftContext";
 import { usePreview } from "../../../context/PreviewContext";
 import useApi from "../../../hooks/useApi";
@@ -60,8 +61,7 @@ export default function SelectDeparturePage() {
     available.find((d) => d._id === selectedId) ||
     (selectedId ? undefined : available[0]);
   const tour = tourResult.data;
-  const canSelectChildren =
-    selected?.childPrice != null && Boolean(tour?.childPolicy);
+  const canSelectChildren = selected?.childPrice != null;
   const maxGuests = selected?.maxGuestsPerBooking ?? 1;
   const estimated = selected
     ? adults * selected.adultPrice + children * (selected.childPrice ?? 0)
@@ -129,7 +129,7 @@ export default function SelectDeparturePage() {
         adults,
         children,
         quote,
-        contact: saved?.contact || { name: "", phone: "" },
+        contact: saved?.contact || { name: "", phone: "", email: "" },
         note: saved?.note || "",
       });
       navigate(`/booking/${id}/review`);
@@ -177,29 +177,45 @@ export default function SelectDeparturePage() {
                       className="departure-options"
                       disabled={busy || Boolean(attempt)}
                     >
-                      {available.map((departure) => (
-                        <label
-                          className={`departure-option ${selected?._id === departure._id ? "selected" : ""}`}
-                          key={departure._id}
-                        >
-                          <input
-                            type="radio"
-                            name="departure"
-                            checked={selected?._id === departure._id}
-                            onChange={() => {
-                              setSelectedId(departure._id);
-                              setChildren(0);
-                              setAdults(1);
-                              setError("");
-                            }}
-                          />
-                          <div>
-                            <strong>{dateTime(departure.departureAt)}</strong>
-                            <small>Đang nhận yêu cầu</small>
-                          </div>
-                          <strong>{money(departure.adultPrice)}</strong>
-                        </label>
-                      ))}
+                      {available.map((departure) => {
+                        const maxCap = departure.maxCapacity || 50;
+                        const booked = departure.bookedGuests ?? 0;
+                        const avail = departure.availableSeats ?? Math.max(0, maxCap - booked);
+                        const isFull = avail <= 0 || departure.status === "closed";
+                        const isSelected = selected?._id === departure._id;
+
+                        return (
+                          <label
+                            className={`departure-option ${isSelected ? "selected" : ""} ${isFull ? "disabled full" : ""}`}
+                            key={departure._id}
+                          >
+                            <input
+                              type="radio"
+                              name="departure"
+                              checked={isSelected}
+                              disabled={busy || Boolean(attempt) || isFull}
+                              onChange={() => {
+                                if (isFull) return;
+                                setSelectedId(departure._id);
+                                setChildren(0);
+                                setAdults(1);
+                                setError("");
+                              }}
+                            />
+                            <div>
+                              <strong>{dateTime(departure.departureAt)}</strong>
+                              <small className={isFull ? "status-full" : "status-open"}>
+                                {isFull ? (
+                                  <>Đã hết chỗ ({booked}/{maxCap} khách)</>
+                                ) : (
+                                  <>Còn {avail}/{maxCap} chỗ (Đang nhận yêu cầu)</>
+                                )}
+                              </small>
+                            </div>
+                            <strong>{money(departure.adultPrice)}</strong>
+                          </label>
+                        );
+                      })}
                     </fieldset>
                     {departures.data &&
                       departures.data.pagination.pages > 1 && (
@@ -274,25 +290,7 @@ export default function SelectDeparturePage() {
                       <p className="helper">{tour.childPolicy}</p>
                     )}
                   </section>
-                  <section className="card">
-                    <label className="field-label" htmlFor="coupon">
-                      Mã ưu đãi
-                    </label>
-                    <div className="input-with-icon">
-                      <Icon name="ticket" size={19} />
-                      <input
-                        id="coupon"
-                        value={coupon}
-                        maxLength={50}
-                        placeholder="Nhập mã nếu có"
-                        disabled={busy || Boolean(attempt)}
-                        onChange={(event) => setCoupon(event.target.value)}
-                      />
-                    </div>
-                    <p className="helper">
-                      Giá sau ưu đãi được kiểm tra ở bước tiếp theo.
-                    </p>
-                  </section>
+                  <CouponPicker value={coupon} onChange={setCoupon} orderTotal={estimated ?? 0} disabled={busy || Boolean(attempt)} />
                   <div className="notice">
                     <Icon name="info" />
                     <p>
@@ -342,5 +340,3 @@ export default function SelectDeparturePage() {
     </div>
   );
 }
-
-
