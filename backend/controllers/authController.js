@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { createHmac } from "node:crypto";
 import bcrypt from "bcryptjs";
 import User from "../models/User.js";
+import { safeZaloErrorMessage } from "../utils/zaloAuthDiagnostics.js";
 
 function generateToken(userId) {
   const secret = process.env.JWT_SECRET || "";
@@ -52,6 +53,8 @@ export const loginWithZalo = async (req, res) => {
       console.warn("Zalo identity verification rejected", {
         status: response.status,
         errorCode: Number.isInteger(profile?.error) ? profile.error : null,
+        providerMessage: safeZaloErrorMessage(profile?.message, [accessToken, process.env.ZALO_APP_SECRET]),
+        region: process.env.VERCEL_REGION || "local",
       });
       return res.status(401).json({ message: "Zalo không xác nhận được phiên đăng nhập." });
     }

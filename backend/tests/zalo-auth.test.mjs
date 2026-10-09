@@ -4,6 +4,7 @@ import { createHmac } from "node:crypto";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { loginWithZalo } from "../controllers/authController.js";
+import { safeZaloErrorMessage } from "../utils/zaloAuthDiagnostics.js";
 
 const accessToken = "test-identity-only-token";
 const appSecret = "test-parent-zalo-app-secret";
@@ -120,4 +121,32 @@ test("verified identity cannot sign in to a disabled account", async t => {
   const res = await h.login();
   assert.equal(res.statusCode, 403);
   assert.equal(res.body.token, undefined);
+});
+
+test("provider -501 explanation reaches logs without credentials or profile data", async t => {
+  const message = `Diagnostic failure; access_token=${accessToken}; secret=${appSecret}; id=${zaloId}`;
+  const h = setup(t, { profile: { error: -501, message, name: "PRIVATE_PROFILE_NAME" } });
+  const res = await h.login();
+  assert.equal(res.statusCode, 401);
+  assert.equal(h.databaseCalls.length, 0);
+  const details = h.warnings[0][1];
+  assert.equal(details.errorCode, -501);
+  assert.match(details.providerMessage, /Diagnostic failure/);
+  assert.equal(details.region, process.env.VERCEL_REGION || "local");
+  const log = JSON.stringify(h.warnings);
+  for (const value of [accessToken, appSecret, zaloId, "PRIVATE_PROFILE_NAME"]) assert.ok(!log.includes(value));
+});
+
+test("diagnostics redact encoded credentials, proof strings, URLs and multiline content", () => {
+  const credential = "short+secret/example";
+  const proof = createHmac("sha256", appSecret).update(accessToken).digest("hex");
+  const message = `Reason\n${encodeURIComponent(credential)} appsecret_proof=${proof} https://example.test/?token=${credential}`;
+  const safe = safeZaloErrorMessage(message, [credential]);
+  assert.ok(!safe.includes(credential));
+  assert.ok(!safe.includes(encodeURIComponent(credential)));
+  assert.ok(!safe.includes(proof));
+  assert.ok(!safe.includes("https://"));
+  assert.ok(!safe.includes("\n"));
+  assert.match(safe, /Reason/);
+  assert.equal(safeZaloErrorMessage({ token: accessToken }), null);
 });

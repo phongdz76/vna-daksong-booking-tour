@@ -173,7 +173,7 @@ Backend gọi Zalo Graph API để xác thực `accessToken` do Mini App gửi l
 
 Lấy khóa tại ứng dụng cha trên Zalo Developers (trường **Khóa bí mật của ứng dụng**), không dùng Mini App ID hay deploy token. Với dự án này, ứng dụng cha có ID `623554610017872975`; Mini App demo có ID `518986987538037878`.
 
-Đăng nhập chỉ yêu cầu `fields=id`, phù hợp với quyền mặc định của `getAccessToken`. Tên và ảnh đại diện cần quyền `scope.userInfo` riêng, không bắt buộc để đăng nhập. Hồ sơ đã lưu được giữ nguyên khi đăng nhập lại. Nếu Zalo từ chối token, kiểm tra dòng `Zalo identity verification rejected` trong Vercel Logs (chỉ có HTTP status và mã lỗi, không có token/secret), kiểm tra khóa ứng dụng cha và redeploy backend sau khi đổi biến môi trường.
+Đăng nhập chỉ yêu cầu `fields=id`, phù hợp với quyền mặc định của `getAccessToken`. Tên và ảnh đại diện cần quyền `scope.userInfo` riêng, không bắt buộc để đăng nhập. Hồ sơ đã lưu được giữ nguyên khi đăng nhập lại. Nếu Zalo từ chối token, kiểm tra dòng `Zalo identity verification rejected` trong Vercel Logs: `status`, `errorCode`, `providerMessage` (thông báo Zalo đã che token/secret/chuỗi định danh), `region` (vùng chạy function). Không ghi toàn bộ phản hồi hay hồ sơ người dùng vào log. Đối chiếu thông báo đầy đủ trước khi kết luận mã lỗi là sai khóa, token hay vùng máy chủ; kiểm tra khóa ứng dụng cha và redeploy backend sau khi đổi biến môi trường.
 
 ### Mock login development
 
