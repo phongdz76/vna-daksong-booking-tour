@@ -1,0 +1,24 @@
+@layer components {
+  /* With actionBarHidden, Zalo's menu/close capsule still overlays the webview.
+     Reserve its row outside the scroller so sticky headers stay below it. */
+  :root[data-vna-zalo="true"] {
+    --vna-native-toolbar-space: calc(48px + env(safe-area-inset-top, 0px));
+  }
+
+  [data-vna-zalo="true"] .app-container {
+    padding-top: var(--vna-native-toolbar-space);
+  }
+
+  [data-vna-zalo="true"] .app-header {
+    padding-top: 8px;
+  }
+
+  [data-vna-zalo="true"] .explore-subnav {
+    top: 56px;
+  }
+
+  /* Notifications render through a portal, outside the app container. */
+  [data-vna-zalo="true"] .notification-panel {
+    padding-top: var(--vna-native-toolbar-space);
+  }
+}

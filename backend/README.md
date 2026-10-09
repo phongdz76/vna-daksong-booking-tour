@@ -166,10 +166,14 @@ JWT_SECRET=<chuỗi ngẫu nhiên tối thiểu 32 ký tự>
 ### Đăng nhập Zalo
 
 ```env
-ZALO_APP_SECRET=<App Secret của Mini App>
+ZALO_APP_SECRET=<Khóa bí mật của ứng dụng Zalo Developers chứa Mini App>
 ```
 
 Backend gọi Zalo Graph API để xác thực `accessToken` do Mini App gửi lên. App Secret không được đưa vào frontend hoặc biến `VITE_*`.
+
+Lấy khóa tại ứng dụng cha trên Zalo Developers (trường **Khóa bí mật của ứng dụng**), không dùng Mini App ID hay deploy token. Với dự án này, ứng dụng cha có ID `623554610017872975`; Mini App demo có ID `518986987538037878`.
+
+Đăng nhập chỉ yêu cầu `fields=id`, phù hợp với quyền mặc định của `getAccessToken`. Tên và ảnh đại diện cần quyền `scope.userInfo` riêng, không bắt buộc để đăng nhập. Hồ sơ đã lưu được giữ nguyên khi đăng nhập lại. Nếu Zalo từ chối token, kiểm tra dòng `Zalo identity verification rejected` trong Vercel Logs (chỉ có HTTP status và mã lỗi, không có token/secret), kiểm tra khóa ứng dụng cha và redeploy backend sau khi đổi biến môi trường.
 
 ### Mock login development
 
@@ -769,7 +773,7 @@ Production cần:
 3. Secret production riêng.
 4. `NODE_ENV=production`.
 5. `ALLOW_MOCK_LOGIN=false`.
-6. Zalo App Secret đúng với Mini App đang chạy.
+6. Zalo App Secret thuộc ứng dụng cha chứa Mini App đang chạy.
 7. Cloudinary production nếu dùng upload.
 8. ZaloPay production credentials nếu bật thanh toán.
 9. Webhook ZaloPay trỏ về backend public.

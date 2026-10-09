@@ -8,6 +8,7 @@
     "start": "node server.js",
     "create:admin": "node createAdmin.js",
     "test:api": "node tests/all-api.test.mjs",
+    "test:auth": "node --test tests/zalo-auth.test.mjs",
     "test:notifications": "node tests/notifications.test.mjs",
     "test:email": "node --test tests/booking-email.test.mjs",
     "preview:email": "node tests/preview-booking-email.mjs"

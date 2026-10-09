@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit",
-    "build": "npm run typecheck && vite build",
-    "preview": "vite preview",
+    "build": "npm run typecheck && vite build --outDir dist",
+    "build:zalo": "npm run typecheck && vite build",
+    "preview": "vite preview --outDir dist",
     "test:ui": "node scripts/check-ui.mjs",
     "test:notifications": "node scripts/check-notifications-ui.mjs",
     "test:admin": "node tests/admin-ui.mjs"

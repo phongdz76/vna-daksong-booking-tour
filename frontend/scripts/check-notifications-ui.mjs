@@ -188,6 +188,70 @@ try {
       ),
     );
   }
+  // Emulate the native capsule's occupied region; this checks web geometry and
+  // taps only. Real Zalo SDK authentication still needs a device test.
+  const tap = async (selector) => {
+    const point = await evaluate(`(() => {
+      const r = document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();
+      return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+    })()`);
+    await command("Input.dispatchMouseEvent", { type: "mousePressed", button: "left", clickCount: 1, ...point });
+    await command("Input.dispatchMouseEvent", { type: "mouseReleased", button: "left", clickCount: 1, ...point });
+  };
+  for (const width of [360, 390, 430]) {
+    await command("Emulation.setDeviceMetricsOverride", { width, height: 844, deviceScaleFactor: 1, mobile: true });
+    await command("Page.navigate", { url: base + "/?preview=1" });
+    await waitFor("document.querySelector('.notification-bell')");
+    await evaluate(`(() => {
+      document.documentElement.dataset.vnaZalo = 'true';
+      document.querySelector('.preview-banner').style.display = 'none';
+      const capsule = document.createElement('div');
+      capsule.id = 'simulated-native-capsule';
+      capsule.textContent = '•••  ×';
+      capsule.style.cssText = 'position:fixed;top:8px;right:8px;width:88px;height:36px;border:1px solid #aab9ae;border-radius:24px;background:#f3fcf5;z-index:2147483647;display:grid;place-items:center;font:20px system-ui;';
+      document.body.append(capsule);
+    })()`);
+    for (const scrollTop of [0, 450]) {
+      await evaluate(`document.querySelector('.page-content').scrollTop = ${scrollTop}`);
+      await delay(150);
+      check(`Zalo ${width}px bell and account stay below native controls after scroll ${scrollTop}`, await evaluate(`(() => {
+        const native = document.querySelector('#simulated-native-capsule').getBoundingClientRect();
+        return ['.notification-bell', '.avatar-button'].every(selector => {
+          const button = document.querySelector(selector);
+          const r = button.getBoundingClientRect();
+          return r.top >= native.bottom && r.right <= innerWidth && r.left >= 0 &&
+            button.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2));
+        });
+      })()`));
+    }
+    if (width === 390) {
+      await evaluate("document.querySelector('.page-content').scrollTop = 0; document.fonts.ready");
+      await delay(150);
+      const shot = await command("Page.captureScreenshot", { format: "png" });
+      await writeFile(new URL("zalo-header-390.png", output), Buffer.from(shot.data, "base64"));
+    }
+    await tap(".notification-bell");
+    await waitFor("document.querySelector('.notification-dialog[open]')");
+    check(`Zalo ${width}px notification heading clears native controls`, await evaluate(`
+      document.querySelector('.notification-panel-heading').getBoundingClientRect().top >=
+      document.querySelector('#simulated-native-capsule').getBoundingClientRect().bottom
+    `));
+    check(`Zalo ${width}px notification list still fits the viewport`, await evaluate(
+      "Math.abs(document.querySelector('.notification-list').getBoundingClientRect().bottom - innerHeight) < 1",
+    ));
+    if (width === 390) {
+      const shot = await command("Page.captureScreenshot", { format: "png" });
+      await writeFile(new URL("zalo-notifications-390.png", output), Buffer.from(shot.data, "base64"));
+    }
+    await tap(".notification-panel-heading button");
+    await waitFor("!document.querySelector('.notification-dialog[open]')");
+    await tap(".avatar-button");
+    await waitFor("location.pathname === '/account'");
+    check(`Zalo ${width}px account icon opens the account page`, await evaluate("location.pathname === '/account'"));
+    check(`Zalo ${width}px layout has no horizontal overflow`, await evaluate(
+      "document.querySelector('.app-container').scrollWidth <= innerWidth",
+    ));
+  }
   check(
     "Notification UI has no uncaught browser exceptions",
     errors.length === 0,

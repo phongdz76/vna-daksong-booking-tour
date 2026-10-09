@@ -72,6 +72,8 @@ Từ thư mục frontend, chạy npm.cmd ci, sao chép .env.example thành .env 
 
 Admin mở tại http://localhost:5173/admin; tài khoản tạo bằng npm.cmd run create:admin ở backend. Entry main.tsx tải UserApp hoặc pages/Admin/AdminApp theo môi trường và URL; phiên admin tách khỏi phiên khách. Test admin: npm.cmd run test:admin khi dev server đang chạy. Admin dùng API thật khi chạy ứng dụng, còn test chặn request và dùng fixture.
 
-Build sản phẩm: npm.cmd run build; xem build bằng npm.cmd run preview tại http://localhost:4173. Web hosting cần chuyển /admin/* về index.html. Khi đổi API production, đặt VITE_API_BASE_URL trước khi build. dist/app-config.json được sinh tự động với tên asset thực tế, không commit dist/.
+Build web/Vercel: npm.cmd run build; đầu ra là dist/. Xem build bằng npm.cmd run preview tại http://localhost:4173. Web hosting cần chuyển /admin/* về index.html. Khi đổi API production, đặt VITE_API_BASE_URL trước khi build. dist/app-config.json được sinh tự động với tên asset thực tế, không commit dist/.
+
+Build Zalo: npm.cmd run build:zalo; đầu ra là www/. Zalo Mini App Extension cũng build vào www/ khi bấm Deploy. zmp-vite-plugin được bật trong vite.config.ts để tạo đúng thư mục và app-config.json. Nếu extension báo ENOENT khi đọc frontend/www, kiểm tra plugin và build lại. Liên kết Mini App ID, đăng nhập bằng tài khoản có quyền, chọn Development rồi Deploy; mở QR trong kết quả deploy. www/ là đầu ra build, không commit. Build thành công chưa xác nhận SDK chạy trên điện thoại hoặc deploy thành công.
 
 Các file src/data/preview*.ts, src/assets/, scripts/check-ui.mjs, scripts/check-notifications-ui.mjs và tests/admin-ui.mjs được giữ trong Git vì ứng dụng hoặc kiểm thử cần chúng. Bản thiết kế và công cụ prepare-* giữ local. Đã xác minh typecheck và build thành công ngày 09/10/2026; chưa xác minh SDK trên thiết bị Zalo trong đợt này.

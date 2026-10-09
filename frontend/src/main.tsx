@@ -3,9 +3,9 @@ import { createRoot } from "react-dom/client";
 
 const UserApp = lazy(() => import("./UserApp"));
 const AdminApp = lazy(() => import("./pages/Admin/AdminApp"));
-const isAdmin =
-  !(window as Window & { APP_ID?: string }).APP_ID &&
-  /^\/admin(?:\/|$)/.test(window.location.pathname);
+const isZalo = Boolean((window as Window & { APP_ID?: string }).APP_ID);
+const isAdmin = !isZalo && /^\/admin(?:\/|$)/.test(window.location.pathname);
+if (isZalo) document.documentElement.dataset.vnaZalo = "true";
 if (isAdmin) document.documentElement.dataset.vnaAdmin = "true";
 
 createRoot(document.getElementById("app")!).render(

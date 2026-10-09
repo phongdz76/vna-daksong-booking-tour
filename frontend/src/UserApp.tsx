@@ -11,6 +11,7 @@ import "./styles/booking-success.css";
 import "./styles/explore.css";
 import "./styles/notifications.css";
 import "./styles/coupons.css";
+import "./styles/zalo-layout.css";
 import NotificationProvider from "./context/NotificationContext";
 import MainApp from "./App";
 import AuthProvider from "./context/AuthContext";

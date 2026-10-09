@@ -33,7 +33,9 @@ export const loginWithZalo = async (req, res) => {
     let response;
     let profile;
     try {
-      response = await fetch("https://graph.zalo.me/v2.0/me?fields=id,name,picture", {
+      // Default Mini App tokens grant identity only. Profile fields require
+      // separate scope.userInfo consent and must not block sign-in.
+      response = await fetch("https://graph.zalo.me/v2.0/me?fields=id", {
         headers: {
           access_token: accessToken,
           appsecret_proof: createHmac("sha256", process.env.ZALO_APP_SECRET).update(accessToken).digest("hex"),
@@ -46,17 +48,19 @@ export const loginWithZalo = async (req, res) => {
     }
     
     if (!response.ok || profile?.error !== 0 || typeof profile.id !== "string" || !/^\d{1,40}$/.test(profile.id)) {
+      // Keep credentials and personal data out of Vercel logs.
+      console.warn("Zalo identity verification rejected", {
+        status: response.status,
+        errorCode: Number.isInteger(profile?.error) ? profile.error : null,
+      });
       return res.status(401).json({ message: "Zalo không xác nhận được phiên đăng nhập." });
     }
-    
-    const name = typeof profile.name === "string" && profile.name.trim() ? profile.name.trim().slice(0, 200) : "Khách Zalo";
-    const avatar = typeof profile.picture?.data?.url === "string" && /^https:\/\//.test(profile.picture.data.url) ? profile.picture.data.url.slice(0, 2000) : "";
     
     let user;
     try {
       user = await User.findOneAndUpdate({ zaloId: profile.id }, {
-        $set: { name, avatar },
-        $setOnInsert: { role: "user", active: true },
+        // A returning user's saved profile must survive an ID-only response.
+        $setOnInsert: { name: "Khách Zalo", avatar: "", role: "user", active: true },
       }, { upsert: true, returnDocument: "after", runValidators: true });
     } catch (error) {
       if (error.code !== 11000) throw error;

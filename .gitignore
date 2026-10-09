@@ -7,6 +7,7 @@ node_modules/
 
 # Build output and temporary files
 dist/
+/frontend/www/
 build/
 coverage/
 .vite/
