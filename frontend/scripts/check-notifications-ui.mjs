@@ -26,6 +26,19 @@ const browser = spawn(
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const checks = [];
 const errors = [];
+const errorDetails = [];
+// This browser test checks layout. A simulated capsule has no Zalo native bridge.
+// Keep authentication unavailable instead of making the SDK attempt native login.
+const layoutSdk = `
+  const values = new Map();
+  export const nativeStorage = {
+    getItem: key => values.get(key) ?? null,
+    setItem: (key, value) => values.set(key, value),
+    removeItem: key => values.delete(key),
+  };
+  export async function getAccessToken() { throw new Error('Verify Zalo authentication on a real device'); }
+  export async function getUserInfo() { throw new Error('Verify Zalo profile permission on a real device'); }
+`;
 let socket;
 let command;
 let launchError;
@@ -76,6 +89,14 @@ try {
     });
   socket.onmessage = (message) => {
     const event = JSON.parse(message.data);
+    if (event.method === "Fetch.requestPaused") {
+      command("Fetch.fulfillRequest", {
+        requestId: event.params.requestId,
+        responseCode: 200,
+        responseHeaders: [{ name: "Content-Type", value: "application/javascript" }],
+        body: Buffer.from(layoutSdk).toString("base64"),
+      }).catch(error => errors.push(error.message));
+    }
     if (event.id) {
       const request = pending.get(event.id);
       if (!request) return;
@@ -84,8 +105,15 @@ try {
       if (event.error) request.reject(new Error(JSON.stringify(event.error)));
       else request.resolve(event.result);
     }
-    if (event.method === "Runtime.exceptionThrown")
-      errors.push(event.params.exceptionDetails.text);
+    if (event.method === "Runtime.exceptionThrown") {
+      const exception = event.params.exceptionDetails.exception;
+      const index = errors.push(exception?.description || event.params.exceptionDetails.text) - 1;
+      if (exception?.objectId) errorDetails.push(command("Runtime.getProperties", {
+        objectId: exception.objectId, ownProperties: true,
+      }).then(details => {
+        errors[index] = details.result.map(property => `${property.name}: ${property.value?.value ?? property.value?.description ?? ""}`).join(", ");
+      }).catch(() => {}));
+    }
   };
   const evaluate = async (expression) => {
     const result = await command("Runtime.evaluate", {
@@ -109,6 +137,9 @@ try {
   }
   await command("Page.enable");
   await command("Runtime.enable");
+  await command("Fetch.enable", {
+    patterns: [{ urlPattern: "*zmp-sdk.js*", resourceType: "Script", requestStage: "Request" }],
+  });
   for (const width of [360, 390, 430]) {
     await command("Emulation.setDeviceMetricsOverride", {
       width,
@@ -252,8 +283,9 @@ try {
       "document.querySelector('.app-container').scrollWidth <= innerWidth",
     ));
   }
+  await Promise.all(errorDetails);
   check(
-    "Notification UI has no uncaught browser exceptions",
+    `Notification UI has no uncaught browser exceptions: ${errors.join("; ")}`,
     errors.length === 0,
   );
   await writeFile(

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Header from "../../../components/layout/Header";
 import AppLink, { useAppNavigate } from "../../../components/common/AppLink";
 import Icon from "../../../components/common/Icon";
+import AccountAvatar from "../../../components/common/AccountAvatar";
 import Photo from "../../../components/common/Photo";
 import {
   EmptyState,
@@ -151,17 +152,7 @@ export default function AccountPage() {
             <div className="account-profile-top">
               <div className="account-avatar-wrap">
                 <div className="account-avatar">
-                  {profile?.avatar ? (
-                    <img
-                      src={profile.avatar}
-                      alt={profile.name}
-                      onError={(event) => {
-                        event.currentTarget.style.display = "none";
-                      }}
-                    />
-                  ) : (
-                    <Icon name="user" size={32} />
-                  )}
+                  <AccountAvatar src={profile?.avatar} name={profile?.name} size={32} />
                 </div>
                 {profile && (
                   <span className="account-avatar-badge">

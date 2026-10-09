@@ -12,7 +12,7 @@ const jwtSecret = "test-session-secret-with-at-least-32-characters";
 const userId = "000000000000000000000001";
 const zaloId = "999000000001";
 
-function setup(t, { profile = { error: 0, id: zaloId }, status = 200, existing, failure } = {}) {
+function setup(t, { profile = { error: 0, id: zaloId }, status = 200, existing, failure, optionalProfile, profileFailure } = {}) {
   const savedEnv = { ZALO_APP_SECRET: process.env.ZALO_APP_SECRET, JWT_SECRET: process.env.JWT_SECRET };
   process.env.ZALO_APP_SECRET = appSecret;
   process.env.JWT_SECRET = jwtSecret;
@@ -28,6 +28,10 @@ function setup(t, { profile = { error: 0, id: zaloId }, status = 200, existing, 
   t.mock.method(globalThis, "fetch", async (url, options) => {
     providerCalls.push({ url, options });
     if (failure) throw failure;
+    if (new URL(url).searchParams.get("fields") !== "id") {
+      if (profileFailure) throw profileFailure;
+      return new Response(JSON.stringify(optionalProfile ?? profile), { status });
+    }
     return new Response(JSON.stringify(profile), { status });
   });
   t.mock.method(console, "warn", (...args) => warnings.push(args));
@@ -75,6 +79,57 @@ test("ID-only sign-in preserves a returning user's name and avatar", async t => 
   assert.equal(res.body.user.avatar, existing.avatar);
   assert.equal(h.databaseCalls[0].update.$set, undefined);
 });
+
+test("consented Zalo profile persists a verified name and avatar instead of client data", async t => {
+  const avatar = "https://example.test/zalo-avatar.jpg";
+  const h = setup(t, { optionalProfile: { error: 0, id: zaloId, name: "  Tên Zalo  ", picture: { data: { url: avatar } } } });
+  const res = await h.login({ accessToken, includeProfile: true, name: "Forged name", avatar: "https://example.test/forged.jpg", role: "admin" });
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.user.name, "Tên Zalo");
+  assert.equal(res.body.user.avatar, avatar);
+  assert.equal(res.body.user.role, "user");
+  assert.equal(h.providerCalls.length, 2);
+  assert.equal(new URL(h.providerCalls[1].url).searchParams.get("fields"), "id,name,picture");
+  assert.equal(h.providerCalls[1].options.headers.appsecret_proof, createHmac("sha256", appSecret).update(accessToken).digest("hex"));
+  const { update } = h.databaseCalls[0];
+  assert.equal(update.$setOnInsert.name, undefined);
+  assert.equal(update.$setOnInsert.avatar, undefined);
+});
+
+for (const [name, optionalProfile] of [
+  ["profile permission denied", { error: -1402 }],
+  ["profile belongs to another identity", { error: 0, id: "999000000002", name: "Other user", picture: { data: { url: "https://example.test/other.jpg" } } }],
+  ["profile success flag missing", { id: zaloId, name: "Unverified profile" }],
+]) {
+  test(`${name} preserves saved profile and still allows verified ID sign-in`, async t => {
+    const existing = { _id: userId, zaloId, name: "Saved name", avatar: "https://example.test/saved.jpg", role: "user", active: true };
+    const h = setup(t, { existing, optionalProfile });
+    const res = await h.login({ accessToken, includeProfile: true });
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.body.user.name, existing.name);
+    assert.equal(res.body.user.avatar, existing.avatar);
+    assert.equal(h.databaseCalls[0].update.$set, undefined);
+  });
+}
+
+test("optional profile network failure cannot block sign-in", async t => {
+  const h = setup(t, { profileFailure: new Error("provider timeout") });
+  const res = await h.login({ accessToken, includeProfile: true });
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.user.name, "Khách Zalo");
+  assert.equal(res.body.user.avatar, "");
+});
+
+for (const avatar of ["javascript:alert(1)", "http://example.test/avatar.jpg", "/relative.jpg", "https://private:credential@example.test/avatar.jpg"]) {
+  test(`unsafe avatar ${avatar.split(":")[0]} is not persisted`, async t => {
+    const h = setup(t, { optionalProfile: { error: 0, id: zaloId, name: "Zalo name", picture: { data: { url: avatar } } } });
+    const res = await h.login({ accessToken, includeProfile: true });
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.body.user.name, "Zalo name");
+    assert.equal(res.body.user.avatar, "");
+    assert.equal(h.databaseCalls[0].update.$set.avatar, undefined);
+  });
+}
 
 for (const [name, profile, status] of [
   ["invalid token", { error: -1 }, 401],

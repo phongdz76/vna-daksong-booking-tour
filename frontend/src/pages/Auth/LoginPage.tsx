@@ -6,7 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { usePreview } from "../../context/PreviewContext";
 import { previewImages } from "../../data/preview";
 import { api, API_PATHS, errorMessage } from "../../utils/api";
-import { isZalo, zaloAccessToken } from "../../utils/zalo";
+import { isZalo, zaloLoginCredentials } from "../../utils/zalo";
 import logo from "../../assets/images/0bbfd724.png";
 import type { User } from "../../types/api";
 
@@ -44,9 +44,10 @@ export default function LoginPage() {
     setBusy(true);
     setError("");
     try {
-      const response = await api.post<{ token: string; user: User }>(API_PATHS.AUTH.LOGIN, {
-        accessToken: await zaloAccessToken(),
-      });
+      const response = await api.post<{ token: string; user: User }>(
+        API_PATHS.AUTH.LOGIN,
+        await zaloLoginCredentials(),
+      );
       login(response.data.token, response.data.user);
       navigate(returnTo, true);
     } catch (err) {

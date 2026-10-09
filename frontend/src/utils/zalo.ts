@@ -1,4 +1,4 @@
-import { getAccessToken, nativeStorage } from "zmp-sdk";
+import { getAccessToken, getUserInfo, nativeStorage } from "zmp-sdk";
 
 export const isZalo = Boolean((window as Window & { APP_ID?: string }).APP_ID);
 const sessionKey = "vna-customer-session";
@@ -26,6 +26,23 @@ export async function zaloAccessToken() {
   if (!isZalo)
     throw new Error("Mở Mini App trong Zalo để đăng nhập tài khoản của bạn.");
   return getAccessToken();
+}
+
+export async function zaloLoginCredentials() {
+  if (!isZalo)
+    throw new Error("Mở Mini App trong Zalo để đăng nhập tài khoản của bạn.");
+  let includeProfile = false;
+  try {
+    const { userInfo } = await getUserInfo({
+      autoRequestPermission: true,
+      avatarType: "normal",
+    });
+    includeProfile = Boolean(userInfo?.name || userInfo?.avatar);
+  } catch {
+    // Name/avatar consent is optional; ID-only authentication still works.
+  }
+  // Obtain the token after consent. The server verifies both identity and profile.
+  return { accessToken: await zaloAccessToken(), includeProfile };
 }
 
 // Destination bookmarks stay on this device; they are separate from account saved tours.

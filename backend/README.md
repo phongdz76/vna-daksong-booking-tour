@@ -173,7 +173,20 @@ Backend gọi Zalo Graph API để xác thực `accessToken` do Mini App gửi l
 
 Lấy khóa tại ứng dụng cha trên Zalo Developers (trường **Khóa bí mật của ứng dụng**), không dùng Mini App ID hay deploy token. Với dự án này, ứng dụng cha có ID `623554610017872975`; Mini App demo có ID `518986987538037878`.
 
-Đăng nhập chỉ yêu cầu `fields=id`, phù hợp với quyền mặc định của `getAccessToken`. Tên và ảnh đại diện cần quyền `scope.userInfo` riêng, không bắt buộc để đăng nhập. Hồ sơ đã lưu được giữ nguyên khi đăng nhập lại. Nếu Zalo từ chối token, kiểm tra dòng `Zalo identity verification rejected` trong Vercel Logs: `status`, `errorCode`, `providerMessage` (thông báo Zalo đã che token/secret/chuỗi định danh), `region` (vùng chạy function). Không ghi toàn bộ phản hồi hay hồ sơ người dùng vào log. Đối chiếu thông báo đầy đủ trước khi kết luận mã lỗi là sai khóa, token hay vùng máy chủ; kiểm tra khóa ứng dụng cha và redeploy backend sau khi đổi biến môi trường.
+Đăng nhập xác minh bằng `fields=id`, phù hợp với quyền mặc định của `getAccessToken`.
+Frontend xin phép lấy tên và ảnh qua `getUserInfo({ autoRequestPermission: true })`;
+nếu người dùng đồng ý, gửi `includeProfile: true` cùng token. Backend đọc thêm
+`id,name,picture` từ Zalo, chỉ lưu tên/ảnh khi ID trùng với ID vừa xác minh. Không dùng
+tên/ảnh/ID do client tự gửi để xác thực. Từ chối quyền hoặc lỗi lấy hồ sơ vẫn cho
+đăng nhập bằng ID và giữ hồ sơ đã lưu. Ảnh được trả trong session và `/auth/me`,
+hiển thị ở header và trang Tài khoản. Người đã đăng nhập trước bản cập nhật cần
+đăng xuất rồi đăng nhập lại để cấp quyền và đồng bộ ảnh.
+
+Nếu Zalo từ chối token, kiểm tra dòng `Zalo identity verification rejected` trong
+log backend đang sử dụng: `status`, `errorCode`, `providerMessage` (đã che bí mật),
+`region` (vùng chạy function). Không ghi toàn bộ phản hồi hay hồ sơ người dùng vào
+log. Đối chiếu thông báo đầy đủ trước khi kết luận lỗi khóa, token hay vùng máy
+chủ; kiểm tra khóa ứng dụng cha và khởi động lại backend sau khi đổi cấu hình.
 
 ### Mock login development
 
@@ -785,6 +798,47 @@ Sau deploy, kiểm tra:
 GET https://<backend-domain>/
 GET https://<backend-domain>/api/tours
 ```
+
+### Thử đăng nhập Zalo bằng backend trên máy tính tại Việt Nam
+
+Nếu log Zalo ghi `Personal information is limited due to IP address not inside Vietnam`,
+backend cần gọi Zalo từ IP ở Việt Nam. Có thể dùng máy tính đang ở Việt Nam và
+[Cloudflare Quick Tunnel](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/)
+để thử tạm mà không cần tạo tài khoản tunnel.
+
+Từ thư mục gốc dự án, chạy:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-zalo-local.ps1
+cd frontend
+npm.cmd run build:zalo
+```
+
+Script dùng `backend/.env`, chạy API cổng 8000 với mock login bị tắt, tải cloudflared
+Windows từ bản phát hành chính thức nếu chưa có, và mở HTTPS tạm. URL được ghi vào
+`frontend/.env.local` (Git bỏ qua), còn cấu hình API Vercel trong `.env` được giữ.
+Sau khi build thành công, vào extension Zalo Mini App → Deploy → Development,
+triển khai bản mới rồi dùng Zalo trên điện thoại quét QR của bản đó.
+
+Giữ máy tính và mạng hoạt động suốt lúc thử. Log nằm ở `tmp/zalo-local/`; lỗi đăng nhập
+trong lần thử này xem ở `backend.err.log`, thay vì Vercel. URL tunnel thay đổi khi mở
+phiên mới; khi đó cần build và deploy lại Mini App. Đây là môi trường thử tạm.
+
+Sau khi sửa khóa trong `backend/.env`, khởi động lại riêng backend để giữ nguyên
+HTTPS và QR đã deploy:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-zalo-local.ps1 -RestartBackend
+```
+
+Để dừng, chạy từ thư mục gốc:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/stop-zalo-local.ps1
+```
+
+Script dừng các tiến trình đã tạo và phục hồi API trước đó trong `.env.local`, nếu
+bạn chưa tự đổi URL này. Muốn Mini App quay về Vercel cũng cần build và deploy lại.
 
 ## 14. Checklist bàn giao
 

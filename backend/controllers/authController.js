@@ -12,6 +12,35 @@ function generateToken(userId) {
 
 const sessionResponse = user => ({ user: user.toJSON(), token: generateToken(user._id), tokenType: "Bearer", expiresIn: 86400 });
 
+async function optionalZaloProfile(accessToken, verifiedId) {
+  try {
+    const response = await fetch("https://graph.zalo.me/v2.0/me?fields=id,name,picture", {
+      headers: {
+        access_token: accessToken,
+        appsecret_proof: createHmac("sha256", process.env.ZALO_APP_SECRET).update(accessToken).digest("hex"),
+      },
+      signal: AbortSignal.timeout(5000),
+    });
+    const profile = await response.json();
+    if (!response.ok || profile?.error !== 0 || profile.id !== verifiedId) return {};
+    const update = {};
+    if (typeof profile.name === "string" && profile.name.trim()) {
+      update.name = profile.name.trim().slice(0, 200);
+    }
+    const avatar = profile.picture?.data?.url;
+    if (typeof avatar === "string" && avatar.length <= 2000) {
+      try {
+        const url = new URL(avatar);
+        if (url.protocol === "https:" && !url.username && !url.password) update.avatar = avatar;
+      } catch { /* Keep a valid name and any previously saved avatar. */ }
+    }
+    return update;
+  } catch {
+    // Profile permission or network errors must not prevent verified ID sign-in.
+    return {};
+  }
+}
+
 // @desc   Login with Zalo
 // @route  POST /api/auth/zalo
 // @access Public
@@ -59,12 +88,18 @@ export const loginWithZalo = async (req, res) => {
       return res.status(401).json({ message: "Zalo không xác nhận được phiên đăng nhập." });
     }
     
+    const profileUpdate = req.body.includeProfile === true
+      ? await optionalZaloProfile(accessToken, profile.id)
+      : {};
+    const defaults = { name: "Khách Zalo", avatar: "", role: "user", active: true };
+    // MongoDB cannot set the same path in $set and $setOnInsert.
+    for (const key of Object.keys(profileUpdate)) delete defaults[key];
+    const update = { $setOnInsert: defaults };
+    if (Object.keys(profileUpdate).length) update.$set = profileUpdate;
     let user;
     try {
-      user = await User.findOneAndUpdate({ zaloId: profile.id }, {
-        // A returning user's saved profile must survive an ID-only response.
-        $setOnInsert: { name: "Khách Zalo", avatar: "", role: "user", active: true },
-      }, { upsert: true, returnDocument: "after", runValidators: true });
+      user = await User.findOneAndUpdate({ zaloId: profile.id }, update,
+        { upsert: true, returnDocument: "after", runValidators: true });
     } catch (error) {
       if (error.code !== 11000) throw error;
       user = await User.findOne({ zaloId: profile.id });

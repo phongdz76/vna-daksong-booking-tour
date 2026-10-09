@@ -39,7 +39,8 @@ temp/
 /backend/scripts/seed.js
 /backend/scripts/seedTestUsers.js
 
-# Local frontend helper tools and design scripts
+# Local helper tools and design scripts
+/scripts/
 /frontend/scripts/*
 !/frontend/scripts/check-ui.mjs
 !/frontend/scripts/check-notifications-ui.mjs

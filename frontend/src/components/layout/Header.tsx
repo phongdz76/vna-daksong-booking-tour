@@ -3,6 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import logo from "../../assets/images/0bbfd724.png";
 import AppLink, { useAppNavigate } from "../common/AppLink";
 import Icon from "../common/Icon";
+import AccountAvatar from "../common/AccountAvatar";
 import NotificationBell from "./NotificationBell";
 
 export default function Header({
@@ -62,11 +63,7 @@ export default function Header({
         <NotificationBell />
       )}
       <AppLink to="/account" className="avatar-button" aria-label="Tài khoản">
-        {user?.avatar ? (
-          <img src={user.avatar} alt="" />
-        ) : (
-          <Icon name="user" size={18} />
-        )}
+        <AccountAvatar src={user?.avatar} />
       </AppLink>
       {message && (
         <button className="header-message" onClick={() => setMessage("")}>
