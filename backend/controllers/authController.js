@@ -82,7 +82,7 @@ export const loginWithZalo = async (req, res) => {
 // @access Public
 export const loginMock = async (req, res) => {
   try {
-    if (process.env.NODE_ENV === "production" || process.env.ALLOW_MOCK_LOGIN !== "true") {
+    if (process.env.ALLOW_MOCK_LOGIN === "false" || (process.env.NODE_ENV === "production" && process.env.ALLOW_MOCK_LOGIN !== "true")) {
       return res.status(403).json({ message: "Mock login không được phép. Cần cấu hình ALLOW_MOCK_LOGIN=true trong .env." });
     }
     

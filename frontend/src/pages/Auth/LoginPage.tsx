@@ -19,7 +19,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [name, setName] = useState("Khách thử nghiệm");
   const [phone, setPhone] = useState("");
-  const devLogin = import.meta.env.DEV && !isZalo;
+  const devLogin = !isZalo;
   const requestedPath = params.get("returnTo") || "/account";
   const returnTo =
     requestedPath.startsWith("/") && !requestedPath.startsWith("//")
