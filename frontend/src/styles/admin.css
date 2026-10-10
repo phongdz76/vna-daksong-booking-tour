@@ -3127,6 +3127,33 @@ html[data-vna-admin] body {
   }
 }
 
+.vna-admin .destination-picker-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.vna-admin .destination-picker-filters>input { grid-column: 1 / -1; }
+.vna-admin .destination-picker-options { max-height: 330px; overflow-y: auto; border: 1px solid #dce7df; border-radius: 10px; padding: 12px; }
+.vna-admin .destination-picker-area+section { margin-top: 18px; }
+.vna-admin .destination-picker-area h4 { margin: 0 0 8px; color: #04432f; }
+.vna-admin .destination-picker-group>strong { display: block; padding: 4px 8px; color: #66796c; font-size: 12px; }
+.vna-admin .destination-picker-group label { display: flex; align-items: flex-start; gap: 10px; padding: 10px 8px; border-radius: 8px; cursor: pointer; }
+.vna-admin .destination-picker-group label.is-selected { background: #e7f1e9; }
+.vna-admin .destination-picker-group label input { margin-top: 4px; flex-shrink: 0; }
+.vna-admin .destination-picker-group label span { min-width: 0; overflow-wrap: anywhere; }
+.vna-admin .destination-picker-group small { display: block; font-size: 12px; color: #66796c; }
+.vna-admin .has-map-location { color: #245b45; }
+.vna-admin .selected-destinations-bar { margin-top: 12px; padding: 12px; border-radius: 10px; border: 1px solid #d3e7da; background: #f0f7f3; }
+.vna-admin .selected-destinations-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.vna-admin .selected-destination-list { list-style: none; padding: 0; margin: 8px 0 0; }
+.vna-admin .selected-destination-list li { display: flex; align-items: center; gap: 8px; padding: 8px; margin-top: 6px; border: 1px solid #dce7df; border-radius: 8px; background: #fff; }
+.vna-admin .selected-destination-list li[draggable=true] { cursor: grab; }
+.vna-admin .selected-destination-list li.is-dragging { opacity: .5; }
+.vna-admin .destination-order { flex-shrink: 0; display: grid; place-items: center; width: 25px; height: 25px; border-radius: 50%; background: #e7f1e9; color: #245b45; font-weight: 600; }
+.vna-admin .selected-destination-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.vna-admin .selected-destination-name small { display: block; color: #66796c; font-size: 12px; }
+@media (max-width: 600px) {
+  .vna-admin .destination-picker-filters { grid-template-columns: 1fr; }
+  .vna-admin .selected-destination-list li { flex-wrap: wrap; }
+  .vna-admin .selected-destination-list .array-actions { margin-left: auto; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .vna-admin *,
   .vna-admin *::before,

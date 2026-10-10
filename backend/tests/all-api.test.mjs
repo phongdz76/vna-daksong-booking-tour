@@ -221,6 +221,10 @@ function installExternalStubs() {
       externalCalls.push({provider:"ZaloPay Query Refund",mode:refundQueryMode,mocked:true});
       assert.equal(order.mac,createHmac("sha256",process.env.ZALOPAY_KEY1).update([order.app_id,order.m_refund_id,order.timestamp].join("|")).digest("hex"));
       if(refundQueryMode==="network-error")throw new Error("SIMULATED_REFUND_QUERY_NETWORK_ERROR");
+      if(refundQueryMode==="http-503") {
+        const error=new Error("SIMULATED_PROVIDER_UNAVAILABLE");error.response={status:503};throw error;
+      }
+      if(refundQueryMode.startsWith("failed:"))return {data:{return_code:2,sub_return_code:Number(refundQueryMode.split(":")[1])}};
       return {data:{return_code:refundQueryMode==="success"?1:3}};
     }
     assert.equal(url,base,"Unexpected external HTTP target");
@@ -593,6 +597,33 @@ async function runPaymentRecoveryTests() {
     status(await refund(tx),409);status(await queryRefund(tx),200);
     assert.equal((await PaymentTransaction.findById(tx._id)).status,"refund_pending");
   },"external-mocked");
+  for (const code of [-2,-13,-14,-32]) await test("Query refund thất bại cuối cùng " + code + " cho phép gửi lại",async()=>{
+    const b=await createBooking();const tx=await paymentFor(b.booking._id);
+    status(await webhook(tx),200);status(await cancel(b.booking._id),200);status(await refund(tx),202);
+    refundQueryMode="failed:"+code;
+    try {
+      const result=status(await queryRefund(tx),200);assert.equal(result.refundState,"failed");
+      assert.match(result.message,/không thành công/);
+      const saved=await PaymentTransaction.findById(tx._id);assert.equal(saved.status,"refund_pending");
+      assert.equal(saved.refundState,"failed");assert.equal((await Booking.findById(tx.bookingId)).paymentStatus,"refund_pending");
+      const retried=status(await refund(tx),202);assert.notEqual(retried.refundRequestId,saved.refundRequestId);
+    } finally {refundQueryMode="processing";}
+  },"regression");
+  for (const mode of ["http-503","network-error","failed:-101","failed:-401","failed:-402","failed:-500","failed:-999","failed:-1","failed:-16"]) {
+    await test("Query refund " + mode + " không báo hoàn tiền hoặc tạo lại yêu cầu",async()=>{
+      const tx=state.lateTx;const before=await PaymentTransaction.findById(tx._id);
+      refundQueryMode=mode;
+      try {
+        const waiting=["failed:-1","failed:-16"].includes(mode);
+        const result=status(await queryRefund(tx),waiting?200:502);
+        if (!waiting) assert.equal(result.code,"REFUND_QUERY_UNVERIFIED");
+        if(mode==="http-503") {assert.equal(result.providerHttpStatus,503);assert.match(result.message,/HTTP 503/);}
+        const after=await PaymentTransaction.findById(tx._id);
+        assert.equal(after.refundState,before.refundState);assert.equal(after.refundRequestId,before.refundRequestId);
+        status(await refund(tx),409);
+      } finally {refundQueryMode="processing";}
+    },"regression");
+  }
   await test("Query refund thành công đồng bộ hai model, replay không lặp lịch sử",async()=>{
     refundQueryMode="success";
     try{

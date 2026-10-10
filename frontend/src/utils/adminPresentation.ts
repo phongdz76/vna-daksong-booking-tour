@@ -22,7 +22,7 @@ export const transactionLabels = {
 };
 export const refundLabels = {
   none: "Chưa gửi yêu cầu hoàn tiền",
-  pending: "Đang xử lý hoàn tiền",
+  pending: "Đã gửi yêu cầu hoàn tiền, chờ xác minh kết quả",
   failed: "Yêu cầu hoàn tiền không thành công",
   success: "Hoàn tiền thành công",
 };

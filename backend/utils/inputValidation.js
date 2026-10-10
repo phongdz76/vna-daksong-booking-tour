@@ -62,10 +62,11 @@ const source = object({ title: text(300, true), url, checkedAt: date }, ['title'
 const itinerary = object({ title: text(200, true), description: text(3000, true), destinationId: nullable(id) }, ['title', 'description']);
 const shared = { slug, summary: text(1000, true), images: array(image), sources: array(source), status: choice(['draft', 'published', 'archived']) };
 const categories = ['nature', 'culture', 'food', 'history'];
+const coordinates = nullable(object({ latitude: number(-90, 90, false), longitude: number(-180, 180, false) }, ['latitude', 'longitude']));
 export const bodySchemas = {
-  destination: { ...shared, name: text(200, true), description: text(30000, true), category: choice(categories), address: text(500), visitNotes: text(3000) },
+  destination: { ...shared, name: text(200, true), description: text(30000, true), category: choice(categories), address: text(500), visitNotes: text(3000), placeGroup: choice(['nature', 'culture', 'rest', 'pickup']), areaScope: choice(['daksong', 'nearby', 'unspecified']), locality: text(200), coordinates },
   article: { ...shared, title: text(200, true), content: text(50000, true), category: choice(['culture', 'food', 'travel_tips', 'story']), destinationIds: array(id, 100, true) },
-  tour: { ...shared, name: text(200, true), description: text(30000, true), durationHours: number(1, 720, false), themes: array(choice(categories), 4, true), destinationIds: array(id, 100, true), itinerary: array(itinerary), meetingPoint: text(1000, true), includes: array(text(500, true)), excludes: array(text(500, true)), childPolicy: text(3000), cancellationPolicy: text(3000, true) },
+  tour: { ...shared, name: text(200, true), description: text(30000, true), durationHours: number(1, 720, false), themes: array(choice(categories), 4, true), destinationIds: array(id, 100, true), itinerary: array(itinerary), meetingPoint: text(1000, true), meetingDestinationId: nullable(id), includes: array(text(500, true)), excludes: array(text(500, true)), childPolicy: text(3000), cancellationPolicy: text(3000, true) },
   departure: { tourId: id, departureAt: date, bookingDeadline: date, adultPrice: money, childPrice: nullable(money), maxGuestsPerBooking: number(1, 100), status: choice(['open', 'closed']) },
   coupon: { code: couponCode, description: text(1000), discountType: choice(['percentage', 'fixed']), discountValue: number(0, 1_000_000_000, false), maxDiscount: nullable(money), minOrderValue: money, validFrom: date, validUntil: date, usageLimit: nullable(number(0, 1_000_000_000)), isActive: boolean },
   quote: { departureId: id, adults: number(1, 100), children: number(0, 100), couponCode },

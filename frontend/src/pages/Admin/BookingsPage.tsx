@@ -558,19 +558,23 @@ function PaymentCard({ payment: payment }: { payment: Payment }) {
     setBusy(true);
     setError("");
     try {
-      await api.post(
+      const { data } = await api.post(
         `/payments/zalopay/${encodeURIComponent(payment.appTransId)}/${action}`,
       );
       changed();
       toast(
-        action === "refund"
+        data.message || (action === "refund"
           ? "Đã gửi yêu cầu hoàn tiền. Hãy kiểm tra kết quả xử lý."
-          : "Đã kiểm tra trạng thái giao dịch.",
+          : "Đã kiểm tra trạng thái giao dịch."),
       );
     } catch (error) {
       const message = errorMessage(error);
       setError(message);
-      if (action === "refund") throw new Error(message);
+      if (action === "refund") {
+        toast(message);
+        changed();
+        throw new Error(message);
+      }
     } finally {
       setBusy(false);
     }

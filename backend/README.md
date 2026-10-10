@@ -990,6 +990,23 @@ Chạy `npm.cmd run update:tour-prices --prefix backend` để kiểm tra, thêm
 
 Chạy `npm run update:tour-children` để kiểm tra, sau đó thêm `-- --apply` để áp dụng. Script sao lưu trước khi cập nhật chính sách và giá trẻ em của các lịch sắp tới đang mở; không sửa đơn hàng đã tạo. Giá tour Gia Nghĩa dựa trên tỷ lệ 70% cho trẻ 6–11 tuổi trong bài nguồn năm 2023. Tour Tà Đùng – Nâm Nung dùng tỷ lệ 70% cho lịch mẫu, ghi rõ trong chính sách vì bài nguồn không có giá trẻ em. Giá tùy chỉnh trong quản trị được giữ lại và script yêu cầu kiểm tra nếu không khớp bộ mẫu.
 
+## Địa điểm Đắk Song và bản đồ tour
+
+`npm run add:locations` kiểm tra danh mục mới trong `data/dakSongLocations.json`.
+Thêm `-- --apply` để tạo bốn địa điểm có tọa độ theo Cổng thông tin du lịch Đắk Nông.
+Script chỉ thêm slug chưa tồn tại, đối chiếu dữ liệu cũ trước/sau và không sửa
+tên, tọa độ, phân nhóm hay nội dung của bất kỳ địa điểm đã có nào. Chạy lại không tạo trùng.
+
+Trong form tour, chọn **Trong Đắk Song**, chọn nhóm và đánh dấu các địa điểm.
+Sắp xếp thứ tự bằng kéo thả hoặc nút lên/xuống, chọn điểm tập trung rồi lưu tour.
+Trang chi tiết tour của khách dùng các địa điểm đã xuất bản và tọa độ đã lưu để
+hiển thị ghim bản đồ, thứ tự điểm dừng và liên kết cung đường Google Maps.
+Địa điểm cũ chưa có tọa độ vẫn chọn được nhưng không được gán vị trí giả.
+
+Chỉ kiểm tra tính năng này: `npm run test:locations` trong backend hoặc frontend;
+`npm run test:locations:ui` trong backend kiểm tra giao diện admin đến bản đồ user
+trên Chrome, với frontend localhost:5173 đang chạy và database test riêng.
+
 ## Kiểm tra dữ liệu đầu vào
 
 Các API nội dung, chuyến khởi hành, ưu đãi, báo giá, đặt/hủy/duyệt tour, đánh giá và tạo thanh toán kiểm tra dữ liệu trước controller. Trường lạ, kiểu sai, mục lồng nhau sai, văn bản chỉ có khoảng trắng và giá tiền không phải số nguyên đều trả HTTP 400 với `code: VALIDATION_ERROR` và `fields`. Giá vé/số tiền ưu đãi tối đa 1 tỷ đồng; phần trăm giảm tối đa 100%; mỗi mảng nội dung tối đa 100 mục. Số điện thoại liên hệ dùng định dạng di động Việt Nam bắt đầu bằng `0` hoặc `+84`. Hạn nhận đặt phải trước khởi hành và giới hạn khách mỗi yêu cầu không vượt sức chứa chuyến. Backend vẫn kiểm tra quyền, chỗ còn trống và giá tại lúc gửi đơn.

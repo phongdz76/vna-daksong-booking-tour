@@ -98,7 +98,7 @@ export const getDestinationById = async (req, res) => {
 // @access Private (Admin)
 export const createDestination = async (req, res) => {
   try {
-    const { name, slug, summary, description, category, address, images, sources, visitNotes, status } = req.body;
+    const { name, slug, summary, description, category, address, images, sources, visitNotes, status, placeGroup, areaScope, locality, coordinates } = req.body;
 
     if (address !== undefined && typeof address !== "string") return res.status(400).json({ message: "Địa chỉ không hợp lệ." });
     if (visitNotes !== undefined && typeof visitNotes !== "string") return res.status(400).json({ message: "Ghi chú không hợp lệ." });
@@ -134,6 +134,7 @@ export const createDestination = async (req, res) => {
       summary: summary.trim(),
       description: description.trim(),
       category,
+      placeGroup, areaScope, locality: locality?.trim(), coordinates,
       address: address ? address.trim() : "",
       images: Array.isArray(images) ? images : [],
       sources: Array.isArray(sources) ? sources : [],
@@ -165,7 +166,11 @@ export const updateDestination = async (req, res) => {
       return res.status(404).json({ message: "Điểm đến không tồn tại." });
     }
 
-    const { name, slug, summary, description, category, address, images, sources, visitNotes, status } = req.body;
+    const { name, slug, summary, description, category, address, images, sources, visitNotes, status, placeGroup, areaScope, locality, coordinates } = req.body;
+    if (placeGroup !== undefined) destination.placeGroup = placeGroup;
+    if (areaScope !== undefined) destination.areaScope = areaScope;
+    if (locality !== undefined) destination.locality = locality.trim();
+    if (coordinates !== undefined) destination.coordinates = coordinates;
 
     if (name !== undefined) {
       if (typeof name !== "string" || name.trim().length === 0) return res.status(400).json({ message: "Tên không hợp lệ." });

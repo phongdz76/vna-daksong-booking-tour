@@ -45,7 +45,9 @@ export async function sendZaloPayRequest(url, payload, formBody = false) {
 
     return response.data;
   } catch (error) {
-    throw new Error("PAYMENT_RESULT_UNKNOWN");
+    const unknown = new Error("PAYMENT_RESULT_UNKNOWN");
+    unknown.providerHttpStatus = error.response?.status;
+    throw unknown;
   }
 }
 
@@ -606,6 +608,8 @@ export const refundZaloPayOrder = async (req, res, next) => {
       currentTransaction.refundRequestId = moment().utcOffset(420).format("YYMMDD") +
         "_" + config.app_id + "_" + randomBytes(10).toString("hex");
       currentTransaction.refundState = "pending";
+      currentTransaction.providerRefundId = "";
+      currentTransaction.note = "Đã tạo yêu cầu hoàn tiền, đang chờ xác minh kết quả ZaloPay.";
       await currentTransaction.save({ session });
 
       return currentTransaction;
@@ -729,6 +733,11 @@ export const queryZaloPayRefund = async (req, res, next) => {
     if (!transaction.refundRequestId) {
       return res.status(409).json({ message: "Chưa có yêu cầu hoàn tiền." });
     }
+    if (transaction.status === "refunded") {
+      return res.json({ appTransId: transaction.appTransId, status: transaction.status,
+        refundRequestId: transaction.refundRequestId, refundState: "success",
+        message: "ZaloPay đã xác nhận hoàn tiền thành công." });
+    }
 
     const config = getConfig();
     if (!config) {
@@ -750,6 +759,27 @@ export const queryZaloPayRefund = async (req, res, next) => {
     };
     const queryUrl = new URL("query_refund", config.endpoint).toString();
     const providerResult = await sendZaloPayRequest(queryUrl, payload, true);
+
+    // Lỗi truy vấn/MAC/mạng không chứng minh yêu cầu hoàn tiền thất bại.
+    // Chỉ các kết quả thất bại cuối cùng mới cho phép admin gửi lại.
+    const refundFailed = providerResult.return_code === 2 &&
+      [-2, -13, -14, -32].includes(providerResult.sub_return_code);
+    if (refundFailed) {
+      await PaymentTransaction.updateOne({
+        _id: transaction._id, refundRequestId: transaction.refundRequestId,
+        status: "refund_pending", refundState: "pending",
+      }, { $set: { refundState: "failed",
+        note: "ZaloPay xác nhận hoàn tiền không thành công, mã lỗi: " + providerResult.sub_return_code },
+        $inc: { __v: 1 } });
+    } else if (providerResult.return_code === 2 &&
+        ![-1, -16].includes(providerResult.sub_return_code)) {
+      return res.status(502).json({
+        code: "REFUND_QUERY_UNVERIFIED",
+        message: providerResult.sub_return_code === -101
+          ? "ZaloPay chưa tìm thấy mã yêu cầu hoàn tiền. Cần đối soát mã này trước khi gửi yêu cầu mới."
+          : "ZaloPay chưa xác minh được kết quả hoàn tiền (mã " + providerResult.sub_return_code + "). Hãy kiểm tra lại sau.",
+      });
+    }
 
     // 3. Provider xác nhận thành công mới ghi refunded, không lặp lịch sử khi query lại.
     if (providerResult.return_code === 1) {
@@ -797,13 +827,23 @@ export const queryZaloPayRefund = async (req, res, next) => {
       appTransId: transaction.appTransId,
       status: updatedTransaction.status,
       refundRequestId: updatedTransaction.refundRequestId,
+      refundState: updatedTransaction.refundState,
       return_code: providerResult.return_code,
+      sub_return_code: providerResult.sub_return_code,
+      message: updatedTransaction.status === "refunded"
+        ? "ZaloPay đã xác nhận hoàn tiền thành công."
+        : updatedTransaction.refundState === "failed"
+          ? "ZaloPay xác nhận hoàn tiền không thành công. Kiểm tra nguyên nhân trước khi gửi lại yêu cầu."
+          : "ZaloPay chưa hoàn tất hoàn tiền. Yêu cầu vẫn đang chờ xử lý hoặc phê duyệt; hãy kiểm tra lại sau.",
     });
   } catch (error) {
     if (error.message === "PAYMENT_RESULT_UNKNOWN") {
       return res.status(502).json({
-        message: "Chưa xác định được kết quả ZaloPay. Vui lòng truy vấn trạng thái trước khi thử lại.",
-        code: "PAYMENT_RESULT_UNKNOWN",
+        code: "REFUND_QUERY_UNVERIFIED",
+        providerHttpStatus: error.providerHttpStatus,
+        message: error.providerHttpStatus
+          ? "Dịch vụ kiểm tra hoàn tiền ZaloPay đang lỗi (HTTP " + error.providerHttpStatus + "). Chưa xác minh được kết quả; hãy kiểm tra lại sau."
+          : "Chưa kết nối được dịch vụ kiểm tra hoàn tiền ZaloPay. Chưa xác minh được kết quả; hãy kiểm tra lại sau.",
       });
     }
     if (error.message === "REFUND_REQUEST_CHANGED") {

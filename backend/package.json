@@ -20,7 +20,10 @@
     "test:tour-content": "node --test tests/tour-content.test.mjs",
     "update:tour-prices": "node scripts/updateTourReferencePrices.js",
     "update:tour-children": "node scripts/updateSampleTourChildren.js",
-    "test:validation": "node --test tests/input-validation.test.mjs"
+    "test:validation": "node --test tests/input-validation.test.mjs",
+    "add:locations": "node scripts/addDakSongLocations.js",
+    "test:locations": "node --test tests/destination-locations.test.mjs",
+    "test:locations:ui": "node tests/destination-locations.test.mjs --with-ui"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

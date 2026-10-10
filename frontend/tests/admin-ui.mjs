@@ -31,6 +31,7 @@ let reviews = [{ _id: id(70), rating: 5, comment: "Hành trình được chuẩn
 let payment = { _id: id(80), appTransId: "261009_VNATEST", amount: 1600000, status: "refund_pending", refundState: "none", createdAt: future(-24), paidAt: future(-23) };
 let failList = false, expire = false, denyRole = false;
 let customerFlow = false, offerMode = "normal";
+let refundQueryMode = "success";
 const customerOffers = [
   { code: "VNA-AUTO123456", description: "Ưu đãi chuyến đi", discountType: "percentage", discountValue: 10, maxDiscount: 150000, minOrderValue: 500000, validUntil: future(720) },
   { code: "VNA-MINIMUM", description: "Ưu đãi cho nhóm", discountType: "fixed", discountValue: 100000, maxDiscount: null, minOrderValue: 1000000, validUntil: future(720) },
@@ -73,7 +74,14 @@ function respond(request) {
   if (path.startsWith("/reviews/") && method === "DELETE") { reviews = reviews.filter(r => r._id !== path.split("/")[2]); return [200, { message: "Đã xóa." }]; }
   if (/^\/payments\/zalopay\/.+/.test(path)) {
     if (path.endsWith("/refund")) { payment = { ...payment, refundState: "pending", refundRequestId: "fixture-refund" }; return [202, { status: "refund_pending" }]; }
-    if (path.endsWith("/refund/query")) { payment = { ...payment, status: "refunded", refundState: "success", refundedAt: new Date().toISOString() }; bookings[2].paymentStatus = "refunded"; }
+    if (path.endsWith("/refund/query")) {
+      if (refundQueryMode === "unavailable") return [502, { code: "REFUND_QUERY_UNVERIFIED", message: "Dịch vụ kiểm tra hoàn tiền ZaloPay đang lỗi (HTTP 503). Chưa xác minh được kết quả; hãy kiểm tra lại sau." }];
+      if (refundQueryMode === "failed") {
+        payment = { ...payment, refundState: "failed" };
+        return [200, { status: "refund_pending", refundState: "failed", message: "ZaloPay xác nhận hoàn tiền không thành công." }];
+      }
+      payment = { ...payment, status: "refunded", refundState: "success", refundedAt: new Date().toISOString() }; bookings[2].paymentStatus = "refunded";
+    }
     return [200, { appTransId: payment.appTransId, status: payment.status }];
   }
   const [, resource, itemId, action] = path.split("/"); const rows = resources[resource];
@@ -151,8 +159,15 @@ try {
   check("Future trips cannot be marked completed", await evaluate("[...document.querySelectorAll('button')].find(b => b.innerText === 'Hoàn thành chuyến')?.disabled"));
   await click("Hủy đơn"); await fill("Lý do xử lý", "Khách muốn dời lịch trình."); await click("Hủy đơn", "document.querySelector('dialog[open]')"); await waitFor("document.querySelector('.detail-title')?.innerText.includes('Đã hủy')");
   check("Cancellation sends the entered reason", writes.some(w => w.body.status === "cancelled" && w.body.reason === "Khách muốn dời lịch trình."));
-  await visit(`/admin/bookings/${bookings[2]._id}`, "document.querySelector('.payment-card')"); await click("Yêu cầu hoàn tiền"); await click("Gửi yêu cầu hoàn tiền", "document.querySelector('dialog[open]')"); await waitFor("document.querySelector('.payment-card')?.innerText.includes('Đang xử lý hoàn tiền')");
+  await visit(`/admin/bookings/${bookings[2]._id}`, "document.querySelector('.payment-card')"); await click("Yêu cầu hoàn tiền"); await click("Gửi yêu cầu hoàn tiền", "document.querySelector('dialog[open]')"); await waitFor("document.querySelector('.payment-card')?.innerText.includes('chờ xác minh kết quả')");
   check("Accepted refund remains pending until queried", payment.status === "refund_pending" && !(await evaluate("document.querySelector('.payment-card').innerText")).includes("Hoàn tiền thành công"));
+  refundQueryMode = "unavailable"; await click("Kiểm tra hoàn tiền"); await waitFor("document.querySelector('.payment-card')?.innerText.includes('HTTP 503')");
+  check("Refund provider outage is visible and does not offer a duplicate refund", await evaluate("document.querySelector('.payment-card').innerText.includes('Chưa xác minh được kết quả') && ![...document.querySelectorAll('.payment-card button')].some(b => b.innerText === 'Yêu cầu hoàn tiền')"));
+  await screenshot("refund-provider-unavailable");
+  refundQueryMode = "failed"; await click("Kiểm tra hoàn tiền"); await waitFor("[...document.querySelectorAll('.payment-card button')].some(b => b.innerText === 'Yêu cầu hoàn tiền')");
+  check("Confirmed refund failure refreshes the card and allows an explicit retry", payment.refundState === "failed" && (await text()).includes("Yêu cầu hoàn tiền không thành công"));
+  await click("Yêu cầu hoàn tiền"); await click("Gửi yêu cầu hoàn tiền", "document.querySelector('dialog[open]')"); await waitFor("document.querySelector('.payment-card')?.innerText.includes('chờ xác minh kết quả')");
+  refundQueryMode = "success";
   await click("Kiểm tra hoàn tiền"); await waitFor("document.querySelector('.payment-card')?.innerText.includes('Hoàn tiền thành công')"); check("Refund query confirms the result", writes.some(w => w.path.endsWith("/refund/query")));
   for (const [path, heading] of [["tours", "Quản lý tour"], ["departures", "Chuyến khởi hành"], ["destinations", "Điểm đến"], ["articles", "Cẩm nang & bài viết"], ["coupons", "Mã giảm giá"]]) {
     await visit(`/admin/${path}`, ready(heading)); await screenshot(`${path}-desktop`); check(`${path} renders translated labels without overflow`, await noRawStatus() && await noOverflow());

@@ -69,6 +69,9 @@ export function errorMessage(error: unknown): string {
     return "Không tìm thấy dữ liệu. Có thể nội dung đã được thay đổi.";
   if (status === 413)
     return "Ảnh vượt quá dung lượng 5 MB. Hãy chọn ảnh nhỏ hơn.";
+  if (error.response.data?.code === "REFUND_QUERY_UNVERIFIED" &&
+      typeof error.response.data?.message === "string")
+    return error.response.data.message;
   if (status === 502)
     return "Chưa xác định được kết quả từ dịch vụ. Hãy kiểm tra trạng thái trước khi thử lại.";
   if (status === 503)

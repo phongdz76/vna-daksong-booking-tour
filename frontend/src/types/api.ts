@@ -1,3 +1,4 @@
+import type { PlaceLocation } from "./location";
 export interface ImageAsset {
   url: string;
   alt?: string;
@@ -31,7 +32,10 @@ export interface Tour {
   themes: Theme[];
   images: ImageAsset[];
   meetingPoint: string;
-  itinerary: { title: string; description: string }[];
+  meetingDestinationId?: string | null;
+  routeDestinations?: PlaceLocation[];
+  meetingDestination?: PlaceLocation | null;
+  itinerary: { title: string; description: string; destinationId?: string | null }[];
   includes: string[];
   excludes: string[];
   childPolicy: string;
@@ -44,7 +48,7 @@ export interface Tour {
   averageRating?: number | null;
   reviewCount?: number;
 }
-export interface Destination {
+export interface Destination extends PlaceLocation {
   _id: string;
   name: string;
   summary: string;

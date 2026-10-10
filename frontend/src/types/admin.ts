@@ -1,3 +1,4 @@
+import type { PlaceLocation } from "./location";
 export type ContentStatus = "draft" | "published" | "archived";
 export type Theme = "nature" | "culture" | "food" | "history";
 export type BookingStatus =
@@ -38,7 +39,7 @@ export interface BaseContent {
   createdAt?: string;
   updatedAt?: string;
 }
-export interface Destination extends BaseContent {
+export interface Destination extends BaseContent, PlaceLocation {
   name: string;
   description: string;
   category: Theme;
@@ -67,6 +68,9 @@ export interface Tour extends BaseContent {
   destinationIds: string[];
   itinerary: Itinerary[];
   meetingPoint: string;
+  meetingDestinationId?: string | null;
+  routeDestinations?: PlaceLocation[];
+  meetingDestination?: PlaceLocation | null;
   includes: string[];
   excludes: string[];
   childPolicy: string;

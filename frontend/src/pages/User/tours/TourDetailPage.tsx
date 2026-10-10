@@ -6,6 +6,7 @@ import Photo from "../../../components/common/Photo";
 import Icon from "../../../components/common/Icon";
 import RatingStars from "../../../components/tour/RatingStars";
 import TourReviews from "../../../components/tour/TourReviews";
+import TourLocationMap from "../../../components/tour/TourLocationMap";
 import { ErrorState, LoadingState } from "../../../components/common/States";
 import { useAuth } from "../../../context/AuthContext";
 import { usePreview } from "../../../context/PreviewContext";
@@ -291,7 +292,7 @@ export default function TourDetailPage() {
                 </ol>
               </section>
 
-              <section className="section detail-section tour-location">
+              {!isPreview && (tour.routeDestinations?.length || 0) > 0 ? <TourLocationMap tour={tour} /> : <section className="section detail-section tour-location">
                 <div className="tour-location-heading">
                   <h2>
                     <Icon name="map" size={20} />
@@ -329,7 +330,7 @@ export default function TourDetailPage() {
                     {isPreview ? "Cách TP. Gia Nghĩa ~35km" : "Chỉ đường từ TP. Gia Nghĩa"}
                   </a>
                 </div>
-              </section>
+              </section>}
 
               <section className="section detail-section">
                 <h2>

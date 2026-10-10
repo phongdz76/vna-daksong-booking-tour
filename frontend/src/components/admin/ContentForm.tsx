@@ -30,6 +30,7 @@ import {
 } from "./ContentFields";
 import Icon from "./Icon";
 import { validText, validHttpUrl, validDate } from '../../utils/inputValidation';
+import { areaScopeLabels, placeGroupLabels } from '../../utils/tourLocations';
 
 export type Resource = "tours" | "destinations" | "articles";
 export type Content = Tour | Destination | Article;
@@ -53,6 +54,7 @@ export default function ContentForm({
   const article = initial as Article | undefined;
   const form = useAdminForm(onClose);
   const toast = useToast();
+  const locationEnabled = resource === "destinations" && (!initial || destination?.placeGroup !== undefined);
   const [values, setValues] = useState({
     name: initial ? ("title" in initial ? initial.title : initial.name) : "",
     slug: initial?.slug || "",
@@ -66,6 +68,11 @@ export default function ContentForm({
     childPolicy: tour?.childPolicy || "",
     cancellation: tour?.cancellationPolicy || "",
     address: destination?.address || "",
+    placeGroup: destination?.placeGroup || "nature",
+    areaScope: destination?.areaScope || "daksong",
+    locality: destination?.locality || "",
+    latitude: destination?.coordinates ? String(destination.coordinates.latitude) : "",
+    longitude: destination?.coordinates ? String(destination.coordinates.longitude) : "",
     visitNotes: destination?.visitNotes || "",
     category:
       destination?.category || (resource === "articles" ? "culture" : "nature"),
@@ -91,6 +98,7 @@ export default function ContentForm({
   const [destinationIds, setDestinationIds] = useState<string[]>(
     resource === "destinations" ? [] : tour?.destinationIds || [],
   );
+  const [meetingDestinationId, setMeetingDestinationId] = useState(tour?.meetingDestinationId || "");
   const [itinerary, setItinerary] = useState<Itinerary[]>(
     tour?.itinerary?.map((i) => ({
       title: i.title,
@@ -119,6 +127,7 @@ export default function ContentForm({
         onChange={(event) => updateField(key, event.target.value)}
         maxLength={maxLength}
         required={required}
+        readOnly={key === "meeting" && Boolean(meetingDestinationId)}
         rows={rows}
       />
       <small>
@@ -132,13 +141,26 @@ export default function ContentForm({
     form.setError("");
     const limits: Partial<Record<keyof typeof values, number>> = {
       name: 200, slug: 180, summary: 1000, body: resource === 'articles' ? 50000 : 30000,
-      meeting: 1000, childPolicy: 3000, cancellation: 3000, address: 500, visitNotes: 3000,
+      meeting: 1000, childPolicy: 3000, cancellation: 3000, address: 500, visitNotes: 3000, locality: 200,
     };
     if (Object.entries(limits).some(([key, max]) => !validText(values[key as keyof typeof values], max!))) {
       form.setError('Nội dung vượt độ dài cho phép hoặc chứa ký tự điều khiển.'); return;
     }
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug.trim())) {
       form.setError('Đường dẫn chỉ dùng chữ thường, số và dấu gạch nối.'); return;
+    }
+    let coordinates = null;
+    if (locationEnabled && (values.latitude.trim() || values.longitude.trim())) {
+      const latitude = Number(values.latitude);
+      const longitude = Number(values.longitude);
+      if (!values.latitude.trim() || !values.longitude.trim() || !Number.isFinite(latitude) ||
+          !Number.isFinite(longitude) || Math.abs(latitude) > 90 || Math.abs(longitude) > 180) {
+        form.setError("Nhập đủ vĩ độ từ -90 đến 90 và kinh độ từ -180 đến 180, hoặc để trống cả hai."); return;
+      }
+      coordinates = { latitude, longitude };
+    }
+    if (resource === "tours" && meetingDestinationId && !destinationIds.includes(meetingDestinationId)) {
+      form.setError("Điểm tập trung phải thuộc các điểm đã chọn của tour."); return;
     }
     if ([images, sources, itinerary, destinationIds].some(items => items.length > 100)) {
       form.setError('Mỗi danh sách ảnh, nguồn, điểm đến hoặc điểm dừng tối đa 100 mục.'); return;
@@ -250,6 +272,7 @@ export default function ContentForm({
               description: i.description.trim(),
             })),
             meetingPoint: values.meeting.trim(),
+            meetingDestinationId: meetingDestinationId || null,
             includes: lines(values.includes),
             excludes: lines(values.excludes),
             childPolicy: values.childPolicy.trim(),
@@ -262,6 +285,8 @@ export default function ContentForm({
               description: values.body.trim(),
               category: values.category,
               address: values.address.trim(),
+              ...(locationEnabled ? { placeGroup: values.placeGroup, areaScope: values.areaScope,
+                locality: values.locality.trim(), coordinates } : {}),
               visitNotes: values.visitNotes.trim(),
               sources: references,
             }
@@ -463,6 +488,22 @@ export default function ContentForm({
                 )}
               </div>
             </section>
+            {locationEnabled && <section className="form-section">
+              <h3><Icon name="pin" /> Phân nhóm & vị trí bản đồ</h3>
+              <div className="form-grid">
+                <Field label="Nhóm địa điểm"><select aria-label="Nhóm địa điểm" value={values.placeGroup} onChange={event => updateField("placeGroup", event.target.value)}>
+                  {Object.entries(placeGroupLabels).map(([key, title]) => <option key={key} value={key}>{title}</option>)}
+                </select></Field>
+                <Field label="Phạm vi địa điểm"><select aria-label="Phạm vi địa điểm" value={values.areaScope} onChange={event => updateField("areaScope", event.target.value)}>
+                  {Object.entries(areaScopeLabels).map(([key, title]) => <option key={key} value={key}>{title}</option>)}
+                </select></Field>
+                <Field label="Xã/khu vực" full><input aria-label="Xã/khu vực" maxLength={200} value={values.locality} onChange={event => updateField("locality", event.target.value)} /></Field>
+                <Field label="Vĩ độ"><input aria-label="Vĩ độ" type="number" step="any" min={-90} max={90} value={values.latitude} onChange={event => updateField("latitude", event.target.value)} /></Field>
+                <Field label="Kinh độ"><input aria-label="Kinh độ" type="number" step="any" min={-180} max={180} value={values.longitude} onChange={event => updateField("longitude", event.target.value)} /></Field>
+              </div>
+              <p className="inline-note">Trên Google Maps, bấm chuột phải vào đúng địa điểm để lấy vĩ độ và kinh độ. Chỉ điền vị trí đã kiểm tra; để trống cả hai nếu chưa xác định được.</p>
+              {values.latitude.trim() && values.longitude.trim() && <a className="text-link" href={"https://www.google.com/maps/search/?" + new URLSearchParams({ api: "1", query: `${values.latitude},${values.longitude}` })} target="_blank" rel="noopener noreferrer">Kiểm tra vị trí trên Google Maps</a>}
+            </section>}
             <section className="form-section">
               <h3>Nội dung chi tiết</h3>
               {text(
@@ -489,8 +530,17 @@ export default function ContentForm({
                   loading={destinations.loading}
                   error={destinations.error}
                   selected={destinationIds}
+                  ordered={resource === "tours"}
                   onChange={(ids) => {
-                    setDestinationIds(ids);
+                    setDestinationIds(resource === "tours" && meetingDestinationId && ids.includes(meetingDestinationId)
+                      ? [meetingDestinationId, ...ids.filter(id => id !== meetingDestinationId)] : ids);
+                    if (resource === "tours") {
+                      setItinerary(stops => stops.map(stop => stop.destinationId && !ids.includes(stop.destinationId) ? { ...stop, destinationId: null } : stop));
+                      if (meetingDestinationId && !ids.includes(meetingDestinationId)) {
+                        setMeetingDestinationId("");
+                        updateField("meeting", "");
+                      }
+                    }
                     form.touch();
                   }}
                 />
@@ -517,6 +567,22 @@ export default function ContentForm({
                 <section className="form-section">
                   <h3>Điểm tập trung & dịch vụ</h3>
                   <div className="form-grid">
+                    <Field label="Chọn điểm tập trung" full>
+                      <select aria-label="Chọn điểm tập trung" value={meetingDestinationId} onChange={event => {
+                        const id = event.target.value;
+                        setMeetingDestinationId(id);
+                        const place = destinations.data.find(item => item._id === id);
+                        if (place) {
+                          setDestinationIds(ids => [id, ...ids.filter(value => value !== id)]);
+                          updateField("meeting", [place.name, place.address].filter(Boolean).join(", "));
+                        }
+                        form.touch();
+                      }}>
+                        <option value="">Nhập điểm tập trung bằng văn bản</option>
+                        {destinations.data.filter(place => destinationIds.includes(place._id) && place.status !== "archived").map(place => <option key={place._id} value={place._id}>{place.name}</option>)}
+                      </select>
+                      <small>Điểm tập trung đứng đầu cung đường. Chọn một địa điểm đã có tọa độ để đánh dấu đúng vị trí.</small>
+                    </Field>
                     {text("Điểm tập trung", "meeting", 1000, true)}
                     {text(
                       "Dịch vụ bao gồm · mỗi dòng một mục",

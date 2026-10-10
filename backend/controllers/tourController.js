@@ -4,6 +4,7 @@ import Destination from "../models/Destination.js";
 import User from "../models/User.js";
 import mongoose from "mongoose";
 import { getReviewSummary } from "../utils/reviewStats.js";
+import { getTourLocations, getMeetingDestination } from "../utils/tourLocations.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 const ALLOWED_THEMES = ["nature", "culture", "food", "history"];
@@ -171,8 +172,10 @@ export const getTourById = async (req, res) => {
       return res.status(404).json({ message: "Tour không tồn tại." });
     }
 
-    const summary = await getReviewSummary(tour._id);
-    res.json({ ...tour.toObject(), averageRating: summary.averageRating, reviewCount: summary.reviewCount });
+    const [summary, locations] = await Promise.all([
+      getReviewSummary(tour._id), getTourLocations(tour, req.user?.role === "admin"),
+    ]);
+    res.json({ ...tour.toObject(), ...locations, averageRating: summary.averageRating, reviewCount: summary.reviewCount });
   } catch (error) {
     if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
@@ -184,7 +187,7 @@ export const getTourById = async (req, res) => {
 // @access Private (Admin)
 export const createTour = async (req, res) => {
   try {
-    const { name, slug, summary, description, durationHours, themes, destinationIds, itinerary, images, sources, meetingPoint, includes, excludes, childPolicy, cancellationPolicy, status } = req.body;
+    const { name, slug, summary, description, durationHours, themes, destinationIds, itinerary, images, sources, meetingPoint, meetingDestinationId, includes, excludes, childPolicy, cancellationPolicy, status } = req.body;
 
     if (childPolicy !== undefined && typeof childPolicy !== "string") return res.status(400).json({ message: "Chính sách trẻ em không hợp lệ." });
 
@@ -217,6 +220,10 @@ export const createTour = async (req, res) => {
     }
     
     const uniqueDestIds = destinationIds ? [...new Set(destinationIds)] : [];
+    const meetingDestination = await getMeetingDestination(meetingDestinationId, uniqueDestIds, finalStatus);
+    if (meetingDestinationId && !meetingDestination) {
+      return res.status(400).json({ message: "Điểm tập trung phải thuộc các điểm đã chọn và còn khả dụng; tour xuất bản cần điểm tập trung đã xuất bản." });
+    }
     if (itinerary) {
         for (const stop of itinerary) {
            if (stop.destinationId && !uniqueDestIds.includes(String(stop.destinationId))) {
@@ -236,7 +243,8 @@ export const createTour = async (req, res) => {
       itinerary: Array.isArray(itinerary) ? itinerary : [],
       images: Array.isArray(images) ? images : [],
       sources: sources ?? [],
-      meetingPoint: meetingPoint.trim(),
+      meetingPoint: meetingDestination ? [meetingDestination.name, meetingDestination.address].filter(Boolean).join(", ") : meetingPoint.trim(),
+      meetingDestinationId: meetingDestinationId || null,
       includes: Array.isArray(includes) ? includes : [],
       excludes: Array.isArray(excludes) ? excludes : [],
       childPolicy: childPolicy ? childPolicy.trim() : "",
@@ -268,7 +276,8 @@ export const updateTour = async (req, res) => {
       return res.status(404).json({ message: "Tour không tồn tại." });
     }
 
-    const { name, slug, summary, description, durationHours, themes, destinationIds, itinerary, images, sources, meetingPoint, includes, excludes, childPolicy, cancellationPolicy, status } = req.body;
+    const { name, slug, summary, description, durationHours, themes, destinationIds, itinerary, images, sources, meetingPoint, meetingDestinationId, includes, excludes, childPolicy, cancellationPolicy, status } = req.body;
+    if (meetingDestinationId !== undefined) tour.meetingDestinationId = meetingDestinationId;
 
     if (name !== undefined) {
         if (typeof name !== "string" || !name.trim()) return res.status(400).json({ message: "Tên không hợp lệ." });
@@ -338,6 +347,15 @@ export const updateTour = async (req, res) => {
     }
     
     const uniqueDestIds = tour.destinationIds.map(String);
+    if (tour.meetingDestinationId) {
+      const meetingDestination = await getMeetingDestination(tour.meetingDestinationId, uniqueDestIds, tour.status);
+      if (!meetingDestination) {
+        return res.status(400).json({ message: "Điểm tập trung phải thuộc các điểm đã chọn và còn khả dụng; tour xuất bản cần điểm tập trung đã xuất bản." });
+      }
+      if (meetingDestinationId !== undefined) {
+        tour.meetingPoint = [meetingDestination.name, meetingDestination.address].filter(Boolean).join(", ");
+      }
+    }
     if (tour.itinerary) {
         for (const stop of tour.itinerary) {
            if (stop.destinationId && !uniqueDestIds.includes(String(stop.destinationId))) {

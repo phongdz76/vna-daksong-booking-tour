@@ -1,0 +1,18 @@
+.tour-location-canvas { height: 270px; width: 100%; border-radius: 14px; isolation: isolate; z-index: 0; background: #e9f1eb; }
+.tour-location-canvas .leaflet-control-attribution { font-size: 10px; }
+.tour-place-marker span { display: grid; place-items: center; width: 32px; height: 32px; border: 2px solid #fff; border-radius: 50%; color: #fff; background: #245b45; box-shadow: 0 2px 5px #0003; font: 600 13px Inter, sans-serif; }
+.tour-place-marker { display: grid; place-items: center; }
+.tour-meeting-location { font-size: 13px; line-height: 1.6; margin: 12px 0; overflow-wrap: anywhere; }
+.tour-map-empty { padding: 20px; background: #f0f5f1; border: 1px solid #dce7df; border-radius: 14px; color: #52645a; font-size: 13px; line-height: 1.6; }
+.tour-map-empty p { margin: 8px 0 0; }
+.tour-map-places { padding: 0; margin: 14px 0; list-style: none; }
+.tour-map-places li { display: flex; align-items: flex-start; gap: 10px; padding: 12px 0; border-bottom: 1px solid #e5ece7; }
+.tour-map-order { flex-shrink: 0; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #e7f1e9; color: #245b45; font-size: 12px; font-weight: 600; }
+.tour-map-places li>div { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 13px; }
+.tour-map-places a { color: #245b45; }
+.tour-map-places small { display: block; margin-top: 3px; color: #66796c; font-size: 12px; }
+.tour-map-places li>a { display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0; }
+.tour-map-notice { color: #66796c; font-size: 12px; line-height: 1.6; }
+.tour-map-directions { display: grid; gap: 8px; }
+.tour-directions-link { display: flex; align-items: center; gap: 8px; padding: 12px; border-radius: 10px; color: #245b45; background: #e7f1e9; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+.tour-directions-link svg { flex-shrink: 0; }

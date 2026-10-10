@@ -38,6 +38,7 @@ const tourSchema = new mongoose.Schema({
   referencePrice: { type: Number, min: 0, max: 1_000_000_000, default: null, validate: value => value === null || Number.isSafeInteger(value) },
   referencePriceNote: { type: String, maxlength: 1000, default: "" },
   meetingPoint: { type: String, required: true, maxlength: 1000 },
+  meetingDestinationId: { type: mongoose.Schema.Types.ObjectId, ref: "Destination", default: null },
   includes: [{ type: String, maxlength: 500 }],
   excludes: [{ type: String, maxlength: 500 }],
   childPolicy: { type: String, maxlength: 3000, default: "" },

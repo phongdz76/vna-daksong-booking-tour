@@ -25,6 +25,14 @@ const destinationSchema = new mongoose.Schema({
   description: { type: String, required: true, maxlength: 30_000 },
   category: { type: String, enum: ["nature", "culture", "food", "history"], required: true, index: true },
   address: { type: String, trim: true, maxlength: 500, default: "" },
+  // Optional for existing records; adding this feature does not migrate old destinations.
+  placeGroup: { type: String, enum: ["nature", "culture", "rest", "pickup"] },
+  areaScope: { type: String, enum: ["daksong", "nearby", "unspecified"] },
+  locality: { type: String, trim: true, maxlength: 200 },
+  coordinates: { type: new mongoose.Schema({
+    latitude: { type: Number, required: true, min: -90, max: 90, validate: Number.isFinite },
+    longitude: { type: Number, required: true, min: -180, max: 180, validate: Number.isFinite },
+  }, { _id: false, strict: "throw" }), default: undefined },
   images: { type: [imageSchema], default: [] },
   sources: { type: [sourceSchema], default: [] },
   visitNotes: { type: String, maxlength: 3000, default: "" },

@@ -1,0 +1,58 @@
+[
+  {
+    "slug": "vna-map-thac-luu-ly",
+    "name": "Thác Lưu Ly",
+    "category": "nature",
+    "placeGroup": "nature",
+    "areaScope": "daksong",
+    "locality": "Nâm N’Jang",
+    "address": "Nâm N’Jang, khu vực Đắk Song",
+    "coordinates": { "latitude": 12.2260961116544, "longitude": 107.684887300475 },
+    "summary": "Điểm tham quan thác nước trong khu vực Nâm Nung, Nâm N’Jang, Đắk Song.",
+    "description": "Thác Lưu Ly nằm trong khu vực du lịch văn hóa lịch sử Nâm Nung. Dòng thác bắt nguồn từ dãy Nâm Nung, với cảnh quan cây rừng và đá bên suối. Có thể kết hợp địa điểm này với Thiền viện Trúc Lâm Đạo Nguyên trong lịch trình tham quan Đắk Song.\n\nVị trí bản đồ và thông tin địa điểm được đối chiếu với Cổng thông tin du lịch Đắk Nông; tên khu vực được giữ theo nguồn giới thiệu địa điểm.",
+    "visitNotes": "Kiểm tra điều kiện đường đi và thời tiết trước khi khởi hành. Vị trí ghim theo bản đồ của cổng du lịch; điểm đón cụ thể do đơn vị tổ chức xác nhận.",
+    "sources": [{ "title": "Cổng thông tin du lịch Đắk Nông – Thác Lưu Ly (thông tin và tọa độ bản đồ)", "url": "https://dulich.daknong.gov.vn/vi/place/details/thac-luu-ly-25", "checkedAt": "2026-10-11" }]
+  },
+  {
+    "slug": "vna-map-thien-vien-truc-lam-dao-nguyen",
+    "name": "Thiền viện Trúc Lâm Đạo Nguyên",
+    "category": "culture",
+    "placeGroup": "culture",
+    "areaScope": "daksong",
+    "locality": "Nâm N’Jang",
+    "address": "Tỉnh lộ 686, Nâm N’Jang, khu vực Đắk Song",
+    "coordinates": { "latitude": 12.2069119805739, "longitude": 107.704696556693 },
+    "summary": "Điểm tham quan văn hóa và tâm linh bên dãy Nâm Nung, tại Nâm N’Jang.",
+    "description": "Thiền viện Trúc Lâm Đạo Nguyên nằm bên dãy Nâm Nung, trong khung cảnh rừng cây. Khuôn viên có các công trình phục vụ sinh hoạt Phật giáo và vườn Kinh Pháp cú trên đá. Địa điểm phù hợp để tìm hiểu không gian văn hóa tâm linh trong hành trình Đắk Song.\n\nVị trí bản đồ và thông tin địa điểm được đối chiếu với Cổng thông tin du lịch Đắk Nông; tên khu vực được giữ theo nguồn giới thiệu địa điểm.",
+    "visitNotes": "Trang phục lịch sự, giữ yên tĩnh và tuân theo hướng dẫn tại thiền viện. Điểm đón cụ thể do đơn vị tổ chức xác nhận.",
+    "sources": [{ "title": "Cổng thông tin du lịch Đắk Nông – Thiền viện Trúc Lâm Đạo Nguyên (thông tin và tọa độ bản đồ)", "url": "https://dulich.daknong.gov.vn/vi/place/details/thien-vien-truc-lam-dao-nguyen-26", "checkedAt": "2026-10-11" }]
+  },
+  {
+    "slug": "vna-map-dien-gio-dak-song",
+    "name": "Điện gió Đắk Song",
+    "category": "nature",
+    "placeGroup": "nature",
+    "areaScope": "daksong",
+    "locality": "Đắk Hòa",
+    "address": "Đắk Hòa, khu vực Đắk Song",
+    "coordinates": { "latitude": 12.3201866144659, "longitude": 107.656953643905 },
+    "summary": "Điểm ngắm cảnh điện gió tại khu vực Đắk Hòa, Đắk Song.",
+    "description": "Khu vực Đắk Song có cảnh quan các trụ điện gió giữa cao nguyên. Địa điểm bản đồ do Cổng thông tin du lịch Đắk Nông giới thiệu tại Đắk Hòa có thể dùng để lên lịch trình ngắm cảnh và chụp ảnh từ vị trí được phép tiếp cận.\n\nVị trí bản đồ và thông tin địa điểm được đối chiếu với cổng du lịch; không mặc định đây là điểm cho phép vào bên trong công trình điện gió.",
+    "visitNotes": "Chỉ tham quan ở khu vực được phép; xác nhận đường tiếp cận và điểm dừng với đơn vị tổ chức.",
+    "sources": [{ "title": "Cổng thông tin du lịch Đắk Nông – Điện gió Đắk Song (thông tin và tọa độ bản đồ)", "url": "https://dulich.daknong.gov.vn/vi/place/details/dien-gio-dak-song-27", "checkedAt": "2026-10-11" }]
+  },
+  {
+    "slug": "vna-map-di-tich-doi-dao-trung",
+    "name": "Di tích Đồi Đạo Trung",
+    "category": "history",
+    "placeGroup": "culture",
+    "areaScope": "daksong",
+    "locality": "Thôn 9, Nâm N’Jang",
+    "address": "Thôn 9, Nâm N’Jang, khu vực Đắk Song",
+    "coordinates": { "latitude": 12.0042633370926, "longitude": 107.684137274151 },
+    "summary": "Địa điểm ghi dấu trận đánh Đồi Đạo Trung, thuộc nhóm văn hóa và lịch sử Đắk Song.",
+    "description": "Địa điểm ghi dấu trận đánh Đồi Đạo Trung là di tích lịch sử được Cổng thông tin du lịch Đắk Nông giới thiệu ở thôn 9, Nâm N’Jang. Nơi đây gắn với các trận đánh trong thời kỳ kháng chiến và có giá trị tìm hiểu lịch sử địa phương.\n\nGhim bản đồ sử dụng đúng tọa độ do cổng du lịch cung cấp; đơn vị tổ chức cần xác nhận đường vào và vị trí tập trung thực tế trước khi vận hành tour.",
+    "visitNotes": "Liên hệ đơn vị quản lý hoặc hướng dẫn viên địa phương để xác nhận vị trí tiếp cận trước khi khởi hành.",
+    "sources": [{ "title": "Cổng thông tin du lịch Đắk Nông – Di tích Đồi Đạo Trung (thông tin và tọa độ bản đồ)", "url": "https://dulich.daknong.gov.vn/vi/place/details/di-tich-lich-su-dia-diem-ghi-dau-tran-danh-doi-dao-trung-51", "checkedAt": "2026-10-11" }]
+  }
+]
