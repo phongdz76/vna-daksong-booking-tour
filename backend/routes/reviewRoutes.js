@@ -5,5 +5,5 @@ import { updateReview, deleteReview } from "../controllers/reviewController.js";
 
 const router = express.Router();
 router.patch("/:id", protect, validateBody("review", true), updateReview);
-router.delete("/:id", protect, deleteReview);
+router.delete("/:id", protect, validateBody("empty"), deleteReview);
 export default router;

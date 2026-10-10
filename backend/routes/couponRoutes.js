@@ -21,6 +21,6 @@ router.use(protect, adminOnly);
 
 router.route("/").get(getCoupons).post(validateBody('coupon'), createCoupon);
 
-router.route("/:id").put(validateBody('coupon', true), updateCoupon).delete(deleteCoupon);
+router.route("/:id").put(validateBody('coupon', true), updateCoupon).delete(validateBody("empty"), deleteCoupon);
 
 export default router;

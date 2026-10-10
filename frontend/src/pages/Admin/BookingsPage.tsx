@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { validText } from '../../utils/inputValidation';
 import type { FormEvent } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
@@ -120,6 +121,7 @@ export default function BookingsPage() {
             <Icon name="search" size={18} />
             <input
               aria-label="Mã đơn chính xác"
+              maxLength={50}
               value={searchCode}
               onChange={(event) => setSearchCode(event.target.value)}
               placeholder="Nhập mã đơn VNA-…"
@@ -292,6 +294,9 @@ function BookingView({ detail }: { detail: BookingDetail }) {
     (booking.snapshot.durationHours || 0) * 3600000;
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
+    if (!validText(reason, 1000, action === 'cancelled' || action === 'rejected')) {
+      setError('Nhập lý do xử lý hợp lệ, tối đa 1.000 ký tự.'); return;
+    }
     setBusy(true);
     setError("");
     try {

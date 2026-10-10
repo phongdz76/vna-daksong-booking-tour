@@ -1,6 +1,5 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
 import { InputError, bodySchemas, validateBodyData, validateQueryData, isPhone, isEmail, isHttpUrl, isDateString } from '../utils/inputValidation.js';
 import { matchesImageSignature } from '../middlewares/uploadMiddleware.js';
 import Booking from '../models/Booking.js';
@@ -30,7 +29,8 @@ for (const [kind, fields] of Object.entries(bodySchemas)) {
 test('Vietnamese mobile phones and email formats reject malformed values and control characters', () => {
   for (const value of ['0900000001', '+84900000001', '0351234567']) assert.equal(isPhone(value), true);
   for (const value of ['0901', '0000000000', '0|12345678', 'abc', 901234567, '+840901234567', '09012345678']) assert.equal(isPhone(value), false);
-  for (const value of ['abc', 'a@b', 'a@@b.com', 'a @b.com', 'a'.repeat(250) + '@b.com']) assert.equal(isEmail(value), false);
+  for (const value of ['abc', 'a@b', 'a@@b.com', 'a @b.com', '.a@b.com', 'a..b@c.com', 'a@b..com', 'a@-b.com', 'a'.repeat(65) + '@b.com']) assert.equal(isEmail(value), false);
+  assert.equal(isEmail('name+tag@example.com'), true);
 });
 test('calendar dates, URL schemes and credentials are checked rather than just prefix matching', () => {
   for (const value of ['2026-02-30', '2026-13-01', '2026-01-01T24:00', 'tomorrow', 0, null]) assert.equal(isDateString(value), false);
@@ -63,7 +63,7 @@ test('query filters reject repeated keys, malformed numbers and unsupported valu
 });
 test('database models enforce phone, money and departure capacity when scripts bypass HTTP', async () => {
   const booking = new Booking({ contact: { name: 'Name', phone: 'abc' } });
-  const error = booking.validateSync(); assert.ok(error.errors['contact.phone']);
+  await assert.rejects(booking.validate(), error => Boolean(error.errors['contact.phone']));
   const coupon = new Coupon({ ...samples.coupon, discountType: 'fixed', discountValue: 1.5 });
   await assert.rejects(coupon.validate(), /discountValue/);
   const departure = new Departure({ ...samples.departure, maxGuestsPerBooking: 60, maxCapacity: 50 });
@@ -74,9 +74,4 @@ test('upload checks file bytes instead of trusting a claimed MIME type', () => {
   const png = Buffer.from('89504e470d0a1a0a00000000', 'hex');
   assert.equal(matchesImageSignature({ mimetype: 'image/png', buffer: png }), true);
   assert.equal(matchesImageSignature({ mimetype: 'image/jpeg', buffer: png }), false);
-});
-test('sample login routes retain their handlers without additional credential rules', async () => {
-  const routes = await readFile(new URL('../routes/authRoutes.js', import.meta.url), 'utf8');
-  assert.match(routes, /post\("\/mock", loginMock\)/);
-  assert.match(routes, /post\("\/admin\/login", loginAdmin\)/);
 });

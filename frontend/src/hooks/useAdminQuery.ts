@@ -76,7 +76,7 @@ export function useFilters(defaultLimit = 10) {
   const get = (key: string) => params.get(key) || "";
   const integer = (key: string, fallback: number, max: number) =>
     Math.min(max, Math.max(1, Number.parseInt(get(key), 10) || fallback));
-  const page = integer("page", 1, 1000000);
+  const page = integer("page", 1, 10000);
   const limit = integer("limit", defaultLimit, 100);
   const update = (values: Record<string, string | number>, keepPage = false) =>
     setParams((previous) => {

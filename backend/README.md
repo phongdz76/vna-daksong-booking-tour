@@ -982,3 +982,11 @@ Chạy `npm.cmd run update:tour-prices --prefix backend` để kiểm tra, thêm
 ## Bật vé trẻ em cho hai tour mẫu
 
 Chạy `npm run update:tour-children` để kiểm tra, sau đó thêm `-- --apply` để áp dụng. Script sao lưu trước khi cập nhật chính sách và giá trẻ em của các lịch sắp tới đang mở; không sửa đơn hàng đã tạo. Giá tour Gia Nghĩa dựa trên tỷ lệ 70% cho trẻ 6–11 tuổi trong bài nguồn năm 2023. Tour Tà Đùng – Nâm Nung dùng tỷ lệ 70% cho lịch mẫu, ghi rõ trong chính sách vì bài nguồn không có giá trẻ em. Giá tùy chỉnh trong quản trị được giữ lại và script yêu cầu kiểm tra nếu không khớp bộ mẫu.
+
+## Kiểm tra dữ liệu đầu vào
+
+Các API nội dung, chuyến khởi hành, ưu đãi, báo giá, đặt/hủy/duyệt tour, đánh giá và tạo thanh toán kiểm tra dữ liệu trước controller. Trường lạ, kiểu sai, mục lồng nhau sai, văn bản chỉ có khoảng trắng và giá tiền không phải số nguyên đều trả HTTP 400 với `code: VALIDATION_ERROR` và `fields`. Giá vé/số tiền ưu đãi tối đa 1 tỷ đồng; phần trăm giảm tối đa 100%; mỗi mảng nội dung tối đa 100 mục. Số điện thoại liên hệ dùng định dạng di động Việt Nam bắt đầu bằng `0` hoặc `+84`. Hạn nhận đặt phải trước khởi hành và giới hạn khách mỗi yêu cầu không vượt sức chứa chuyến. Backend vẫn kiểm tra quyền, chỗ còn trống và giá tại lúc gửi đơn.
+
+Bộ lọc phân trang nhận một giá trị nguyên: trang 1–10.000 và giới hạn 1–100; không tự ép các giá trị sai như `1abc`, tham số lặp hoặc trang 0. URL ảnh/nguồn cần HTTP(S) hợp lệ, không có tài khoản/mật khẩu. Upload giới hạn 5 MB và kiểm tra MIME cùng chữ ký JPG/PNG/WebP/GIF/AVIF. Callback ZaloPay giữ giao thức phản hồi của nhà cung cấp và xác thực MAC/dữ liệu thanh toán.
+
+Luồng đăng nhập admin và mock giữ nguyên theo yêu cầu, không đổi tài khoản/mật khẩu mẫu. Chạy `npm run test:validation` cho kiểm tra độc lập và `npm run test:api` cho kiểm thử toàn bộ API trên database test riêng, các dịch vụ ngoài được giả lập.

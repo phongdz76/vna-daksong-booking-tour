@@ -1,5 +1,12 @@
 export const validPhone = (value: string) => /^(?:0|\+84)[35789]\d{8}$/.test(value.trim());
-export const validEmail = (value: string) => value.trim().length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+export const validEmail = (value: string) => {
+  if (value.trim().length > 254) return false;
+  const parts = value.trim().split('@');
+  if (parts.length !== 2) return false;
+  const [local, domain] = parts;
+  return local.length >= 1 && local.length <= 64 && !local.startsWith('.') && !local.endsWith('.') && !local.includes('..') &&
+    /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+$/i.test(local) && domain.includes('.') && domain.split('.').every(label => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i.test(label));
+};
 export const validText = (value: string, max: number, required = false) => value.length <= max && (!required || Boolean(value.trim())) && !/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(value);
 export const validHttpUrl = (value: string) => {
   if (value.length > 2000 || /\s/.test(value)) return false;

@@ -334,20 +334,47 @@ export default function ContentForm({
                   />
                 </Field>
                 <Field
-                  label="Đường dẫn"
-                  hint="Chữ thường không dấu, số và dấu gạch ngang."
+                  label="Đường dẫn (URL Slug)"
+                  hint="Chuẩn SEO: chữ thường không dấu, tự động chuẩn hóa."
                 >
-                  <input
-                    aria-label="Đường dẫn nội dung"
-                    required
-                    pattern="[a-z0-9]+(-[a-z0-9]+)*"
-                    maxLength={180}
-                    value={values.slug}
-                    onChange={(event) => {
-                      setSlugEdited(true);
-                      updateField("slug", event.target.value);
-                    }}
-                  />
+                  <div className="input-with-action" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <input
+                      aria-label="Đường dẫn nội dung"
+                      required
+                      pattern="[a-z0-9]+(-[a-z0-9]+)*"
+                      maxLength={180}
+                      placeholder="vd: thac-luu-ly-nam-nung"
+                      value={values.slug}
+                      onChange={(event) => {
+                        setSlugEdited(true);
+                        updateField("slug", event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-'));
+                      }}
+                      onBlur={() => {
+                        if (values.slug) {
+                          updateField("slug", slugify(values.slug));
+                        }
+                      }}
+                      style={{ flex: 1 }}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => {
+                        const newSlug = slugify(values.name);
+                        setSlugEdited(true);
+                        updateField("slug", newSlug);
+                      }}
+                      title="Tự động tạo đường dẫn không dấu từ tên tiêu đề"
+                    >
+                      <Icon name="refresh" size={14} />
+                      Tự động tạo
+                    </Button>
+                  </div>
+                  {values.slug && (
+                    <small className="muted" style={{ marginTop: '4px', display: 'block' }}>
+                      🔗 URL xem trước: <code>/{resource}/{values.slug}</code>
+                    </small>
+                  )}
                 </Field>
                 <Field label="Trạng thái xuất bản">
                   <select

@@ -16,6 +16,6 @@ router.get("/:id", optionalProtect, getArticleById);
 router.post("/", protect, adminOnly, validateBody("article"), createArticle);
 router.put("/:id", protect, adminOnly, validateBody("article", true), updateArticle);
 router.patch("/:id", protect, adminOnly, validateBody("article", true), updateArticle);
-router.delete("/:id", protect, adminOnly, deleteArticle);
+router.delete("/:id", protect, adminOnly, validateBody("empty"), deleteArticle);
 
 export default router;

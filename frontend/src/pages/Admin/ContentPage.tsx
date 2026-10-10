@@ -148,6 +148,7 @@ export default function ContentPage({ resource }: { resource: Resource }) {
             <Icon name="search" size={18} />
             <input
               aria-label="Tìm nội dung"
+              maxLength={200}
               placeholder={
                 resource === "articles"
                   ? "Tiêu đề, nội dung…"

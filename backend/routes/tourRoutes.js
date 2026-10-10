@@ -28,6 +28,6 @@ router.post("/:id/save", protect, validateBody("empty"), toggleSavedTour);
 router.post("/", protect, adminOnly, validateBody("tour"), createTour);
 router.put("/:id", protect, adminOnly, validateBody("tour", true), updateTour);
 router.patch("/:id", protect, adminOnly, validateBody("tour", true), updateTour);
-router.delete("/:id", protect, adminOnly, deleteTour);
+router.delete("/:id", protect, adminOnly, validateBody("empty"), deleteTour);
 
 export default router;

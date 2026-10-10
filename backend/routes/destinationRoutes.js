@@ -16,6 +16,6 @@ router.get("/:id", optionalProtect, getDestinationById);
 router.post("/", protect, adminOnly, validateBody("destination"), createDestination);
 router.put("/:id", protect, adminOnly, validateBody("destination", true), updateDestination);
 router.patch("/:id", protect, adminOnly, validateBody("destination", true), updateDestination);
-router.delete("/:id", protect, adminOnly, deleteDestination);
+router.delete("/:id", protect, adminOnly, validateBody("empty"), deleteDestination);
 
 export default router;

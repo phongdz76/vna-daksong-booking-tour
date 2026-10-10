@@ -16,6 +16,6 @@ router.get("/:id", protect, adminOnly, getDepartureById);
 router.post("/", protect, adminOnly, validateBody("departure"), createDeparture);
 router.put("/:id", protect, adminOnly, validateBody("departure", true), updateDeparture);
 router.patch("/:id", protect, adminOnly, validateBody("departure", true), updateDeparture);
-router.delete("/:id", protect, adminOnly, deleteDeparture);
+router.delete("/:id", protect, adminOnly, validateBody("empty"), deleteDeparture);
 
 export default router;

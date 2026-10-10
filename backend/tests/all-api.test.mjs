@@ -484,6 +484,9 @@ async function runRegressionTests() {
 }
 
 async function runPaymentRecoveryTests() {
+  // This suite deliberately keeps many paid/pending orders on the same fixture.
+  // Reserve sufficient seats in the isolated test DB; application departures stay unchanged.
+  await Departure.updateOne({ _id: state.departure }, { $set: { maxCapacity: 200 } });
   const query = (tx, token=customer()) => http("POST","/api/payments/zalopay/"+tx.appTransId+"/query",{token});
   const refund = (tx, token=admin()) => http("POST","/api/payments/zalopay/"+tx.appTransId+"/refund",{token});
   const queryRefund = (tx, token=admin()) => http("POST","/api/payments/zalopay/"+tx.appTransId+"/refund/query",{token});
@@ -859,6 +862,13 @@ async function runInputValidationTests() {
 }
 
 async function runBookingTests() {
+  await test('Capacity validation rejects a request larger than actual remaining seats', async () => {
+    const departure = await Departure.create({ ...departureBody(), maxGuestsPerBooking: 2, maxCapacity: 2 });
+    try {
+      status(await http('POST', '/api/bookings/quote', { body: { departureId: String(departure._id), adults: 2, children: 1 } }), 400);
+      assert.equal(await Booking.countDocuments({ departureId: departure._id }), 0);
+    } finally { await Departure.deleteOne({ _id: departure._id }); }
+  });
   await test("Quote tính đúng 2 người lớn + 1 trẻ em",async()=>{
     const q=await getQuote();assert.equal(q.subTotal,1350000);assert.equal(q.total,1350000);assert.equal(q.durationHours,4);assert.equal(q.currency,"VND");assert.ok(q.quoteToken);
   });
@@ -1009,9 +1019,10 @@ async function runTests() {
     process.env.ALLOW_MOCK_LOGIN="false";
     try{status(await http("POST","/api/auth/mock",{body:{phone:"0900000001"}}),403);}finally{process.env.ALLOW_MOCK_LOGIN="true";}
   });
-  await test("Mock login bị chặn ở production",async()=>{
+  await test("Mock login bị chặn ở production khi chưa bật rõ ràng",async()=>{
     process.env.NODE_ENV="production";
-    try{status(await http("POST","/api/auth/mock",{body:{phone:"0900000001"}}),403);}finally{process.env.NODE_ENV="test";}
+    delete process.env.ALLOW_MOCK_LOGIN;
+    try{status(await http("POST","/api/auth/mock",{body:{phone:"0900000001"}}),403);}finally{process.env.NODE_ENV="test";process.env.ALLOW_MOCK_LOGIN="true";}
   });
   for(const [label,phone,tokenKey,idKey] of [["A","0900000001","userToken","userId"],["B","0900000002","otherToken","otherId"]]){
     await test("Mock đăng nhập khách "+label,async()=>{

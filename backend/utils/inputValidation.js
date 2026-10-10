@@ -10,7 +10,14 @@ export class InputError extends Error {
 }
 const fail = (field, message) => { throw new InputError(field, message); };
 export const isPhone = value => typeof value === 'string' && /^(?:0|\+84)[35789]\d{8}$/.test(value.trim());
-export const isEmail = value => typeof value === 'string' && value.trim().length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+export const isEmail = value => {
+  if (typeof value !== 'string' || value.trim().length > 254) return false;
+  const parts = value.trim().split('@');
+  if (parts.length !== 2) return false;
+  const [local, domain] = parts;
+  return local.length >= 1 && local.length <= 64 && !local.startsWith('.') && !local.endsWith('.') && !local.includes('..') &&
+    /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+$/i.test(local) && domain.includes('.') && domain.split('.').every(label => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i.test(label));
+};
 export const isHttpUrl = value => {
   if (typeof value !== 'string' || value.length > 2000 || /\s/.test(value)) return false;
   try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) && Boolean(url.hostname) && !url.username && !url.password; }
@@ -119,6 +126,7 @@ export function validateQueryData(query, resource) {
     if (key === 'status') choice(resource === 'departures' ? ['open', 'closed'] : resource === 'bookings' ? ['pending_confirmation', 'confirmed', 'cancelled', 'rejected', 'completed'] : ['draft', 'published', 'archived'])(value, key);
     if (key === 'sort') choice(resource === 'coupons' ? ['newest', 'oldest'] : ['newest', 'duration', 'price_asc', 'price_desc', 'most_bought'])(value, key);
     if (key === 'type') choice(['all', 'article', 'trip', 'payment'])(value, key);
+    if (key === 'code') couponCode(value, key);
   }
   if (query.minPrice !== undefined && query.maxPrice !== undefined && Number(query.minPrice) > Number(query.maxPrice)) fail('giá', 'giá tối thiểu không được lớn hơn giá tối đa.');
   if (query.dateFrom && query.dateTo && Date.parse(query.dateFrom) > Date.parse(query.dateTo)) fail('ngày', 'ngày bắt đầu không được sau ngày kết thúc.');
