@@ -1,3 +1,4 @@
+import { validateBody } from "../middlewares/inputValidation.js";
 import express from "express";
 import { protect, adminOnly } from "../middlewares/authMiddleware.js";
 import {
@@ -12,9 +13,9 @@ const router = express.Router();
 
 router.get("/", protect, adminOnly, getDepartures);
 router.get("/:id", protect, adminOnly, getDepartureById);
-router.post("/", protect, adminOnly, createDeparture);
-router.put("/:id", protect, adminOnly, updateDeparture);
-router.patch("/:id", protect, adminOnly, updateDeparture);
+router.post("/", protect, adminOnly, validateBody("departure"), createDeparture);
+router.put("/:id", protect, adminOnly, validateBody("departure", true), updateDeparture);
+router.patch("/:id", protect, adminOnly, validateBody("departure", true), updateDeparture);
 router.delete("/:id", protect, adminOnly, deleteDeparture);
 
 export default router;

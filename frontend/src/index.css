@@ -4,6 +4,8 @@
 @layer components {
   :root {
     font-family:
+      "Be Vietnam Pro",
+      "Plus Jakarta Sans",
       Inter,
       -apple-system,
       BlinkMacSystemFont,

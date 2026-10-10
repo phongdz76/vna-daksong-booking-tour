@@ -15,6 +15,7 @@ import couponRoutes from "./routes/couponRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import { errorHandler, notFound } from "./middlewares/errorMiddleware.js";
+import { validateQuery } from "./middlewares/inputValidation.js";
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -23,6 +24,7 @@ connectDB();
 
 app.use(cors());
 app.use(express.json());
+app.use('/api', validateQuery);
 
 app.get("/", (req, res) => res.json({ service: "VNA Dak Song Booking API" }));
 

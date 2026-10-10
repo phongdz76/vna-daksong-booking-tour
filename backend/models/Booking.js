@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { isPhone, isEmail } from '../utils/inputValidation.js';
 
 export const bookingStatuses = ["pending_confirmation", "confirmed", "completed", "cancelled", "rejected"];
 export const paymentStatuses = ["unpaid", "paid", "refund_pending", "refunded"];
