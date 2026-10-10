@@ -9,12 +9,12 @@ const bookingSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true, immutable: true },
   tourId: { type: mongoose.Schema.Types.ObjectId, ref: "Tour", required: true, immutable: true },
   departureId: { type: mongoose.Schema.Types.ObjectId, ref: "Departure", required: true, index: true, immutable: true },
-  adults: { type: Number, required: true, min: 1 },
-  children: { type: Number, required: true, min: 0 },
+  adults: { type: Number, required: true, min: 1, max: 100, validate: Number.isSafeInteger },
+  children: { type: Number, required: true, min: 0, max: 100, validate: Number.isSafeInteger },
   contact: {
     name: { type: String, required: true, maxlength: 200 },
-    phone: { type: String, required: true, maxlength: 20 },
-    email: { type: String, maxlength: 254, lowercase: true, trim: true },
+    phone: { type: String, required: true, trim: true, maxlength: 20, validate: isPhone },
+    email: { type: String, maxlength: 254, lowercase: true, trim: true, validate: value => !value || isEmail(value) },
   },
   note: { type: String, maxlength: 2000, default: "" },
   snapshot: {

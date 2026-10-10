@@ -1,3 +1,4 @@
+import { respondInputError } from "../middlewares/inputValidation.js";
 import { randomBytes, createHash } from "node:crypto";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
@@ -155,6 +156,7 @@ function publicBooking(booking) {
       message: "Giá tham khảo để gửi yêu cầu; chỗ được VNA xác nhận sau.",
     });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
@@ -205,6 +207,7 @@ export const createBooking = async (req, res) => {
     try { 
       claims = verifyToken(quoteToken, "quote"); 
     } catch (error) {
+    if (respondInputError(error, res)) return;
       return res.status(409).json({ message: "Báo giá không hợp lệ hoặc đã hết hạn. Vui lòng lấy báo giá mới." });
     }
     
@@ -290,6 +293,7 @@ export const createBooking = async (req, res) => {
         return created;
       });
     } catch (error) {
+    if (respondInputError(error, res)) return;
       if (error.code === 11000) {
         const duplicate = await Booking.findOne(key).select("+requestHash");
         if (duplicate) {
@@ -323,10 +327,12 @@ export const createBooking = async (req, res) => {
     try {
       await sendBookingConfirmation(booking);
     } catch (error) {
+    if (respondInputError(error, res)) return;
       console.error(`[email] Không gửi được email xác nhận cho ${booking.code}:`, error);
     }
     res.status(201).json({ data: publicBooking(booking), replayed: false });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
@@ -359,6 +365,7 @@ export const getMyBookings = async (req, res) => {
       pagination: { page, limit, total, pages: Math.ceil(total / limit) }
     });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
@@ -379,6 +386,7 @@ export const getBookingById = async (req, res) => {
       .sort({ createdAt: -1 }).lean();
     res.json({ data: booking, payments });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
@@ -549,6 +557,7 @@ export const cancelBooking = async (req, res, next) => {
   try {
     return await changeStatus(req, res, false);
   } catch (error) {
+    if (respondInputError(error, res)) return;
     if (error.message === "BOOKING_NOT_FOUND") {
       return res.status(404).json({ message: "Đơn không tồn tại." });
     }
@@ -566,6 +575,7 @@ export const updateBookingStatus = async (req, res, next) => {
   try {
     return await changeStatus(req, res, true);
   } catch (error) {
+    if (respondInputError(error, res)) return;
     if (error.message === "BOOKING_NOT_FOUND") {
       return res.status(404).json({ message: "Đơn không tồn tại." });
     }
@@ -620,6 +630,7 @@ export const getBookings = async (req, res) => {
       pagination: { page, limit, total, pages: Math.ceil(total / limit) }
     });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
@@ -651,6 +662,7 @@ export const getDashboardData = async (req, res) => {
     
     res.json({ bookings: bookingsData, tours, destinations, openDepartures, totalRevenue });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };

@@ -13,6 +13,7 @@ const departureSchema = new mongoose.Schema({
 }, { timestamps: true, optimisticConcurrency: true });
 
 departureSchema.pre("validate", function () {
+  if (this.maxGuestsPerBooking > this.maxCapacity) this.invalidate('maxGuestsPerBooking', 'Giới hạn mỗi yêu cầu không được vượt sức chứa của chuyến.');
   if (this.bookingDeadline >= this.departureAt) this.invalidate("bookingDeadline", "H\u1EA1n \u0111\u1EB7t ph\u1EA3i tr\u01B0\u1EDBc th\u1EDDi \u0111i\u1EC3m kh\u1EDFi h\u00E0nh.");
 });
 

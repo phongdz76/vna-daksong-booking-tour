@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 
 const couponSchema = new mongoose.Schema({
-  code: { type: String, required: true, unique: true, uppercase: true, trim: true },
-  description: { type: String, default: "" },
+  code: { type: String, required: true, unique: true, uppercase: true, trim: true, maxlength: 50, match: /^[A-Z0-9_-]+$/ },
+  description: { type: String, default: "", maxlength: 1000 },
   discountType: { type: String, enum: ["percentage", "fixed"], required: true },
-  discountValue: { type: Number, required: true, min: 0 }, // e.g. 10 (for 10%), or 200000 (for 200k VND)
-  maxDiscount: { type: Number, default: null, min: 0 }, // Maximum discount amount for percentage
-  minOrderValue: { type: Number, default: 0, min: 0 },
+  discountValue: { type: Number, required: true, min: 0, max: 1_000_000_000, validate: Number.isFinite },
+  maxDiscount: { type: Number, default: null, min: 0, max: 1_000_000_000, validate: value => value === null || Number.isSafeInteger(value) },
+  minOrderValue: { type: Number, default: 0, min: 0, max: 1_000_000_000, validate: Number.isSafeInteger },
   validFrom: { type: Date, required: true, default: Date.now },
   validUntil: { type: Date, required: true },
   usageLimit: { type: Number, default: null, validate: { validator: v => v === null || (Number.isSafeInteger(v) && v >= 0), message: "usageLimit phải là số nguyên >= 0 hoặc null." } },
@@ -15,6 +15,9 @@ const couponSchema = new mongoose.Schema({
 }, { timestamps: true, optimisticConcurrency: true });
 
 couponSchema.pre("validate", function () {
+  if (this.discountType === 'fixed' && !Number.isSafeInteger(this.discountValue)) {
+    this.invalidate('discountValue', 'Số tiền giảm phải là số nguyên đồng.');
+  }
   if (this.validFrom && this.validUntil && this.validUntil < this.validFrom) {
     this.invalidate("validUntil", "Ngày hết hạn phải từ ngày bắt đầu trở đi.");
   }

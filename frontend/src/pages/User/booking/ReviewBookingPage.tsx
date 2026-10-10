@@ -15,6 +15,7 @@ import { api, API_PATHS, errorMessage } from "../../../utils/api";
 import { dateTime, duration, money } from "../../../utils/format";
 import useApi from "../../../hooks/useApi";
 import type { Booking, Quote, Tour } from "../../../types/api";
+import { contactError } from '../../../utils/inputValidation';
 
 export default function ReviewBookingPage() {
   const { id } = useParams();
@@ -87,6 +88,8 @@ export default function ReviewBookingPage() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (!selected || !quote || sending.current) return;
+    const validationError = contactError(selected.contact, selected.note);
+    if (validationError) { setError(validationError); return; }
     if (!isPreview && !user) {
       navigate(
         "/login?returnTo=" + encodeURIComponent("/booking/" + id + "/review"),
@@ -362,9 +365,9 @@ export default function ReviewBookingPage() {
                       inputMode="tel"
                       autoComplete="tel"
                       required
-                      minLength={7}
+                      minLength={10}
                       maxLength={20}
-                      pattern="(0|\+84)[3|5|7|8|9][0-9]{8}"
+                      pattern="(0|\+84)[35789][0-9]{8}"
                       value={selected.contact.phone}
                       onChange={(event) =>
                         updateContact("phone", event.target.value)

@@ -1,3 +1,4 @@
+import { respondInputError } from "../middlewares/inputValidation.js";
 import Article from "../models/Article.js";
 import Destination from "../models/Destination.js";
 import mongoose from "mongoose";
@@ -78,6 +79,7 @@ export const getArticles = async (req, res) => {
       }
     });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -103,6 +105,7 @@ export const getArticleById = async (req, res) => {
 
     res.json(article);
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -158,6 +161,7 @@ export const createArticle = async (req, res) => {
 
     res.status(201).json(article);
   } catch (error) {
+    if (respondInputError(error, res)) return;
     if (error.code === 11000) {
       return res.status(400).json({ message: "Slug đã tồn tại" });
     }
@@ -227,6 +231,7 @@ export const updateArticle = async (req, res) => {
     await article.save();
     res.json(article);
   } catch (error) {
+    if (respondInputError(error, res)) return;
     if (error.code === 11000) {
       return res.status(400).json({ message: "Slug đã tồn tại" });
     }
@@ -253,6 +258,7 @@ export const deleteArticle = async (req, res) => {
 
     res.json({ message: "Đã lưu trữ bài viết.", data: article });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };

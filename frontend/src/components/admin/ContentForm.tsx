@@ -29,6 +29,7 @@ import {
   SourceFields,
 } from "./ContentFields";
 import Icon from "./Icon";
+import { validText, validHttpUrl, validDate } from '../../utils/inputValidation';
 
 export type Resource = "tours" | "destinations" | "articles";
 export type Content = Tour | Destination | Article;
@@ -129,6 +130,28 @@ export default function ContentForm({
   async function handleSave(event: FormEvent) {
     event.preventDefault();
     form.setError("");
+    const limits: Partial<Record<keyof typeof values, number>> = {
+      name: 200, slug: 180, summary: 1000, body: resource === 'articles' ? 50000 : 30000,
+      meeting: 1000, childPolicy: 3000, cancellation: 3000, address: 500, visitNotes: 3000,
+    };
+    if (Object.entries(limits).some(([key, max]) => !validText(values[key as keyof typeof values], max!))) {
+      form.setError('Nội dung vượt độ dài cho phép hoặc chứa ký tự điều khiển.'); return;
+    }
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug.trim())) {
+      form.setError('Đường dẫn chỉ dùng chữ thường, số và dấu gạch nối.'); return;
+    }
+    if ([images, sources, itinerary, destinationIds].some(items => items.length > 100)) {
+      form.setError('Mỗi danh sách ảnh, nguồn, điểm đến hoặc điểm dừng tối đa 100 mục.'); return;
+    }
+    if (resource === 'tours' && (!values.duration.trim() || !Number.isFinite(Number(values.duration)) || Number(values.duration) < 1 || Number(values.duration) > 720)) {
+      form.setError('Thời lượng tour phải từ 1 đến 720 giờ.'); return;
+    }
+    if (images.some(image => !validText(image.alt, 300) || !validText(image.credit, 300)) || sources.some(source => !validText(source.title, 300, true) || !validDate(source.checkedAt))) {
+      form.setError('Kiểm tra tên nguồn, ngày kiểm tra và chú thích ảnh.'); return;
+    }
+    if (itinerary.some(stop => !validText(stop.title, 200, true) || !validText(stop.description, 3000, true))) {
+      form.setError('Mỗi điểm dừng cần tiêu đề tối đa 200 và mô tả tối đa 3.000 ký tự.'); return;
+    }
     const lines = (value: string) =>
       value
         .split("\n")
@@ -145,9 +168,9 @@ export default function ContentForm({
       return;
     }
     if (
-      images.some((i) => !/^https?:\/\//i.test(i.url.trim())) ||
+      images.some((i) => !validHttpUrl(i.url.trim())) ||
       sources.some(
-        (s) => !/^https?:\/\//i.test(s.url.trim()) || !s.title.trim(),
+        (s) => !validHttpUrl(s.url.trim()) || !s.title.trim(),
       )
     ) {
       form.setError(
@@ -177,7 +200,7 @@ export default function ContentForm({
       return;
     }
     if (
-      [...lines(values.includes), ...lines(values.excludes)].some(
+      lines(values.includes).length > 100 || lines(values.excludes).length > 100 || [...lines(values.includes), ...lines(values.excludes)].some(
         (s) => s.length > 500,
       )
     ) {

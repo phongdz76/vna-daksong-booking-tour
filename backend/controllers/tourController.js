@@ -1,3 +1,4 @@
+import { respondInputError } from "../middlewares/inputValidation.js";
 import Tour from "../models/Tour.js";
 import Destination from "../models/Destination.js";
 import User from "../models/User.js";
@@ -146,6 +147,7 @@ export const getTours = async (req, res) => {
       }
     });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
@@ -172,6 +174,7 @@ export const getTourById = async (req, res) => {
     const summary = await getReviewSummary(tour._id);
     res.json({ ...tour.toObject(), averageRating: summary.averageRating, reviewCount: summary.reviewCount });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
@@ -242,6 +245,7 @@ export const createTour = async (req, res) => {
 
     res.status(201).json(tour);
   } catch (error) {
+    if (respondInputError(error, res)) return;
     if (error.code === 11000) {
       return res.status(400).json({ message: "Slug đã tồn tại" });
     }
@@ -343,6 +347,7 @@ export const updateTour = async (req, res) => {
     await tour.save();
     res.json(tour);
   } catch (error) {
+    if (respondInputError(error, res)) return;
     if (error.code === 11000) {
       return res.status(400).json({ message: "Slug đã tồn tại" });
     }
@@ -369,6 +374,7 @@ export const deleteTour = async (req, res) => {
 
     res.json({ message: "Đã lưu trữ tour.", data: tour });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
@@ -387,6 +393,7 @@ export const getSavedTours = async (req, res) => {
 
     res.json({ data: user.savedTours || [] });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };
@@ -423,6 +430,7 @@ export const toggleSavedTour = async (req, res) => {
     await user.save();
     res.json({ message: isSaved ? "Đã lưu tour." : "Đã bỏ lưu tour.", isSaved });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Lỗi máy chủ.", error: error.message });
   }
 };

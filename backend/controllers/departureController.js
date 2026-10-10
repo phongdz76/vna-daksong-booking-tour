@@ -1,3 +1,4 @@
+import { respondInputError } from "../middlewares/inputValidation.js";
 import Departure from "../models/Departure.js";
 import Tour from "../models/Tour.js";
 import Booking from "../models/Booking.js";
@@ -91,6 +92,7 @@ export const getTourDepartures = async (req, res) => {
       }
     });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -128,6 +130,7 @@ export const getDepartures = async (req, res) => {
       pagination: { page, limit, total, pages: Math.ceil(total / limit) }
     });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -143,6 +146,7 @@ export const getDepartureById = async (req, res) => {
     const [enriched] = await enrichDeparturesWithBookingInfo([departure]);
     res.json(enriched);
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -195,6 +199,7 @@ export const createDeparture = async (req, res) => {
 
     res.status(201).json(departure);
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -258,6 +263,7 @@ export const updateDeparture = async (req, res) => {
     await departure.save();
     res.json(departure);
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -276,6 +282,7 @@ export const deleteDeparture = async (req, res) => {
     
     res.json({ message: "Đã đóng nhận yêu cầu cho chuyến.", data: departure });
   } catch (error) {
+    if (respondInputError(error, res)) return;
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
