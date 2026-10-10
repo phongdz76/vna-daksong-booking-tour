@@ -1,4 +1,5 @@
 import express from "express";
+import { validateBody } from '../middlewares/inputValidation.js';
 import {
   protect,
   adminOnly,
@@ -18,8 +19,8 @@ router.get("/available", optionalProtect, getAvailableCoupons);
 
 router.use(protect, adminOnly);
 
-router.route("/").get(getCoupons).post(createCoupon);
+router.route("/").get(getCoupons).post(validateBody('coupon'), createCoupon);
 
-router.route("/:id").put(updateCoupon).delete(deleteCoupon);
+router.route("/:id").put(validateBody('coupon', true), updateCoupon).delete(deleteCoupon);
 
 export default router;
