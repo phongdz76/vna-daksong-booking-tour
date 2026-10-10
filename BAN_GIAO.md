@@ -1,8 +1,79 @@
-# Nhận source từ Git và đăng nhập Zalo
+# Hướng dẫn Nhận Source & Chạy Dự Án (Bàn giao Zalo Mini App)
 
-Source có thể chạy trên máy người nhận. Đăng nhập Zalo thật cần Mini App chạy trong
-ứng dụng Zalo, backend HTTPS hoạt động, khóa ứng dụng cha đúng và kết nối MongoDB.
-Chỉ clone source hoặc mở localhost trong trình duyệt chưa đáp ứng các điều kiện này.
+> **Dành cho người mới**: Nếu bạn lần đầu nhận source code này, hãy làm chính xác theo **Hướng dẫn 5 bước (Step-by-Step)** bên dưới. Tất cả câu lệnh có thể copy/paste trực tiếp vào Windows PowerShell.
+
+---
+
+## 🚀 Hướng dẫn 5 Bước Cầm Tay Chỉ Việc (Dành cho người mới bắt đầu)
+
+### 📌 Bước 1: Cài đặt công cụ cần thiết (Chỉ cần làm 1 lần đầu)
+Tải và cài đặt 3 phần mềm sau nếu máy bạn chưa có:
+1. **Node.js** (Phiên bản v20 LTS hoặc v22): Tải tại [nodejs.org](https://nodejs.org/)
+2. **Git**: Tải tại [git-scm.com](https://git-scm.com/)
+3. **VS Code** (Visual Studio Code): Tải tại [code.visualstudio.com](https://code.visualstudio.com/)
+4. Mở VS Code ➔ Nhấn `Ctrl + Shift + X` (mở Extension) ➔ Tìm từ khóa **Zalo Mini App** ➔ Bấm **Install**.
+
+---
+
+### 📌 Bước 2: Tải Source Code & Cài thư viện
+Mở ứng dụng **PowerShell** trên Windows và dán các dòng lệnh sau (nhấn Enter sau mỗi lệnh):
+
+```powershell
+# 1. Tải code về máy
+git clone https://github.com/phongdz76/vna-daksong-booking-tour.git
+
+# 2. Di chuyển vào thư mục dự án
+cd vna-daksong-booking-tour
+
+# 3. Cài thư viện cho backend
+npm.cmd ci --prefix backend
+
+# 4. Cài thư viện cho frontend
+npm.cmd ci --prefix frontend
+```
+
+---
+
+### 📌 Bước 3: Tạo file cấu hình môi trường (.env)
+Vẫn ở cửa sổ PowerShell đó, chạy 2 lệnh sau để tạo file cấu hình từ file mẫu:
+
+```powershell
+Copy-Item backend/.env.example backend/.env
+Copy-Item frontend/.env.example frontend/.env.local
+```
+
+Mở file `backend/.env` bằng VS Code và điền các thông tin được bàn giao:
+- `MONGO_URI`: Chuỗi kết nối MongoDB (ví dụ: MongoDB Atlas).
+- `JWT_SECRET`: Chuỗi mã hóa bí mật ngẫu nhiên.
+- `ZALO_APP_ID` & `ZALO_APP_SECRET`: Khóa ứng dụng Zalo (lấy từ trang Zalo Developers).
+
+---
+
+### 📌 Bước 4: Khởi chạy dự án tự động (HTTPS + Backend)
+Chạy lệnh khởi động duy nhất dưới đây từ thư mục gốc của dự án:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-zalo-local.ps1
+```
+*(Script này sẽ tự động bật Backend, tự mở đường truyền HTTPS bằng Cloudflare Tunnel và tự kết nối tới Frontend).*
+
+Sau đó build bàn giao frontend cho Zalo:
+```powershell
+npm.cmd run build:zalo --prefix frontend
+```
+
+---
+
+### 📌 Bước 5: Mở Zalo Mini App trên điện thoại
+1. Mở thư mục `frontend` trong VS Code.
+2. Bấm vào biểu tượng **Zalo Mini App Extension** ở thanh bên trái VS Code.
+3. Chọn **Deploy** ➔ **Development**.
+4. Mở ứng dụng Zalo trên điện thoại ➔ Bật máy quét QR ➔ **Quét mã QR trên màn hình** để trải nghiệm ứng dụng!
+
+---
+
+## 📋 Ghi chú Kỹ thuật Chi tiết & Lưu ý Bàn giao
+
 
 ## 1. Chọn môi trường backend
 
