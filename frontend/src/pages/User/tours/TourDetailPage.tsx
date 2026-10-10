@@ -427,7 +427,7 @@ export default function TourDetailPage() {
 
             <div className="action-bar detail-action">
               <div>
-                <small>{!departures.loading && openDepartures.length === 0 && tour.referencePrice != null ? "Giá tham khảo" : "Từ"}</small>
+                <small>Từ</small>
                 <strong>
                   {departures.loading ? "Đang tải…" : money(priceFrom)}
                 </strong>

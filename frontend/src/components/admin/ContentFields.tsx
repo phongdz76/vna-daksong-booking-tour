@@ -280,7 +280,7 @@ export function DestinationPicker({
                   boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
                 }}
               >
-                📍 {item.name}
+                {item.name}
                 <button
                   type="button"
                   aria-label={`Bỏ ${item.name}`}
@@ -310,7 +310,7 @@ export function DestinationPicker({
       <div style={{ position: "relative", marginBottom: "8px" }}>
         <input
           aria-label="Tìm điểm đến để liên kết"
-          placeholder="🔍 Gõ từ khóa để tìm điểm đến..."
+          placeholder="Gõ từ khóa để tìm điểm đến..."
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           style={{ width: "100%" }}
