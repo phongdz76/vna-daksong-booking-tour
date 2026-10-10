@@ -75,9 +75,16 @@ backend/
 │   ├── reviewRoutes.js      # Route API đánh giá tour
 │   ├── tourRoutes.js        # Route API tour du lịch
 │   └── uploadRoutes.js      # Route API upload ảnh lên Cloudinary
-├── scripts/                 # Kịch bản hỗ trợ phát triển & khởi tạo dữ liệu
-│   ├── seed.js              # Dữ liệu mẫu (Tours, Destinations, Articles, Departures)
-│   └── seedTestUsers.js     # Khởi tạo 3 user test theo các hạng thành viên
+├── scripts/                 # Kịch bản khởi tạo, cập nhật & migration dữ liệu MongoDB
+│   ├── importPortalContent.js# Cào / nhập dữ liệu từ cổng du lịch Đắk Song
+│   ├── repairPortalCaptions.js# Sửa chú thích ảnh cho bài viết portal
+│   ├── seed.js              # Dữ liệu mẫu khởi tạo (Local dev only, gitignored)
+│   ├── seedTestUsers.js     # Khởi tạo user test theo hạng thành viên (gitignored)
+│   ├── updateSampleArticles.js# Cập nhật bài viết mẫu vào database
+│   ├── updateSampleDestinations.js# Cập nhật điểm đến mẫu vào database
+│   ├── updateSampleTourChildren.js# Cập nhật chính sách trẻ em cho tour
+│   ├── updateTourContent.js # Cập nhật nội dung & lịch trình chi tiết cho tour
+│   └── updateTourReferencePrices.js# Cập nhật bảng giá tham khảo tour
 ├── tests/                   # Kịch bản kiểm thử API tự động
 │   ├── all-api.test.mjs     # Test suite tổng hợp toàn bộ API
 │   └── notifications.test.mjs# Test suite kiểm tra chức năng thông báo
