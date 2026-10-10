@@ -19,6 +19,7 @@ export default function TourCard({
 }) {
   const { isPreview } = usePreview();
   const displayedPrice = tour.priceFrom ?? tour.referencePrice;
+  const isReferencePrice = tour.priceFrom == null && tour.referencePrice != null;
   const photo =
     isPreview && compact && tour._id === "preview-trekking"
       ? previewImages.trekking
@@ -59,7 +60,7 @@ export default function TourCard({
           {duration(tour.durationHours)}
         </span>
         <div className="tour-card-price">
-          <span>{displayedPrice != null ? "Từ " : ""}</span>
+          <span>{isReferencePrice ? "Tham khảo " : displayedPrice != null ? "Từ " : ""}</span>
           <strong>{money(displayedPrice)}</strong>
           {!compact && <Icon name="arrow" size={18} />}
         </div>

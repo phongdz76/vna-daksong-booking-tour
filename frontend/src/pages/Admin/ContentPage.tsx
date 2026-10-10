@@ -15,6 +15,7 @@ import {
   Stat,
 } from "../../components/admin/ui";
 import Icon from "../../components/admin/Icon";
+import { duration } from "../../utils/format";
 import ContentForm, { resourceNames } from "../../components/admin/ContentForm";
 import type { Content, Resource } from "../../components/admin/ContentForm";
 import { useFilters, useOptions, useQuery } from "../../hooks/useAdminQuery";
@@ -320,7 +321,7 @@ export default function ContentPage({ resource }: { resource: Resource }) {
                         <td>
                           {"durationHours" in item ? (
                             <>
-                              <strong>{item.durationHours} giờ</strong>
+                              <strong>{duration(item.durationHours)}</strong>
                               <small>
                                 {item.themes
                                   .map((t) => label(themeLabels, t))
@@ -342,10 +343,13 @@ export default function ContentPage({ resource }: { resource: Resource }) {
                           {"durationHours" in item ? (
                             <>
                               <strong className="price">
-                                {item.priceFrom == null
+                                {(item.priceFrom ?? item.referencePrice) == null
                                   ? "Chưa có giá mở bán"
-                                  : money(item.priceFrom)}
+                                  : money((item.priceFrom ?? item.referencePrice)!)}
                               </strong>
+                              {item.priceFrom == null && item.referencePrice != null && (
+                                <small title={item.referencePriceNote}>Giá tham khảo · chưa có lịch mở bán</small>
+                              )}
                               <small>
                                 {item.soldCount || 0} khách xác nhận / hoàn
                                 thành

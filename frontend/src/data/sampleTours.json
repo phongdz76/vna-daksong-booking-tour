@@ -63,6 +63,8 @@
     "mode": "update",
     "previewId": "preview-trekking",
     "priceFrom": 1250000,
+    "referencePrice": 1250000,
+    "referencePriceNote": "Giá tham khảo từ lịch khởi hành mẫu đã cấu hình. VNA xác nhận giá theo chuyến trước khi đặt.",
     "previewChildPrice": 625000,
     "destinationSlugs": [
       "vna-portal-0e9b319e-c888-40c6-9c70-14f4f2d94579",
@@ -137,6 +139,8 @@
     "mode": "update",
     "previewId": "preview-coffee",
     "priceFrom": 550000,
+    "referencePrice": 550000,
+    "referencePriceNote": "Giá tham khảo từ lịch khởi hành mẫu đã cấu hình. VNA xác nhận giá theo chuyến trước khi đặt.",
     "previewChildPrice": 150000,
     "destinationSlugs": [
       "vna-portal-0e9b319e-c888-40c6-9c70-14f4f2d94579",
@@ -216,6 +220,8 @@
     "mode": "update",
     "previewId": "preview-camping",
     "priceFrom": 850000,
+    "referencePrice": 850000,
+    "referencePriceNote": "Giá tham khảo từ lịch khởi hành mẫu đã cấu hình. VNA xác nhận giá theo chuyến trước khi đặt.",
     "previewChildPrice": 425000,
     "destinationSlugs": [],
     "sources": [
@@ -280,6 +286,8 @@
     "mode": "update",
     "previewId": "preview-culture",
     "priceFrom": 150000,
+    "referencePrice": 150000,
+    "referencePriceNote": "Giá tham khảo từ lịch khởi hành mẫu đã cấu hình. VNA xác nhận giá theo chuyến trước khi đặt.",
     "previewChildPrice": 75000,
     "destinationSlugs": [
       "thien-vien-truc-lam-dao-nguyen"

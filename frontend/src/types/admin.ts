@@ -73,6 +73,8 @@ export interface Tour extends BaseContent {
   cancellationPolicy: string;
   soldCount: number;
   priceFrom?: number | null;
+  referencePrice?: number | null;
+  referencePriceNote?: string;
   averageRating?: number | null;
   reviewCount?: number;
 }
