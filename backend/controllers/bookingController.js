@@ -327,7 +327,6 @@ export const createBooking = async (req, res) => {
     try {
       await sendBookingConfirmation(booking);
     } catch (error) {
-    if (respondInputError(error, res)) return;
       console.error(`[email] Không gửi được email xác nhận cho ${booking.code}:`, error);
     }
     res.status(201).json({ data: publicBooking(booking), replayed: false });

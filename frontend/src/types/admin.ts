@@ -84,6 +84,7 @@ export interface Departure {
   adultPrice: number;
   childPrice: number | null;
   maxGuestsPerBooking: number;
+  maxCapacity?: number;
   status: "open" | "closed";
 }
 export interface Coupon {

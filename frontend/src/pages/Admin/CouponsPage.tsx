@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { validDate, validIntegerInput, validText } from '../../utils/inputValidation';
 import type { FormEvent } from "react";
 import Icon from "../../components/admin/Icon";
 import {
@@ -333,6 +334,18 @@ function CouponForm({
   async function handleSave(event: FormEvent) {
     event.preventDefault();
     form.setError("");
+    if (!validDate(value.from) || !validDate(value.until)) {
+      form.setError('Chọn ngày giờ bắt đầu và hết hạn hợp lệ.'); return;
+    }
+    if (!validText(value.description, 1000)) {
+      form.setError('Mô tả tối đa 1.000 ký tự, không chứa ký tự điều khiển.'); return;
+    }
+    if (!validIntegerInput(value.discount, 0, value.type === 'percentage' ? 100 : 1000000000) ||
+        !validIntegerInput(value.min, 0, 1000000000) ||
+        (value.type === 'percentage' && value.max !== '' && !validIntegerInput(value.max, 0, 1000000000)) ||
+        (value.limit !== '' && !validIntegerInput(value.limit, 0, 1000000000))) {
+      form.setError('Nhập số nguyên hợp lệ; phần trăm tối đa 100%, các số tiền và lượt dùng tối đa 1.000.000.000.'); return;
+    }
     if (value.until < value.from) {
       form.setError("Ngày hết hạn phải từ ngày bắt đầu trở đi.");
       return;
@@ -368,7 +381,7 @@ function CouponForm({
     title: string,
     key: "discount" | "max" | "min" | "limit",
     required = false,
-    max = Number.MAX_SAFE_INTEGER,
+    max = 1000000000,
   ) => (
     <Field label={title}>
       <input

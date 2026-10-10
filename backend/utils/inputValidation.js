@@ -19,6 +19,7 @@ export const isHttpUrl = value => {
 export const isDateString = value => {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})?)?$/.test(value)) return false;
   const day = value.slice(0, 10);
+  if (value.length > 10 && (Number(value.slice(11, 13)) > 23 || Number(value.slice(14, 16)) > 59 || (value[16] === ':' && Number(value.slice(17, 19)) > 59))) return false;
   const calendar = new Date(day + 'T00:00:00Z');
   return Number.isFinite(calendar.getTime()) && calendar.toISOString().slice(0, 10) === day && Number.isFinite(Date.parse(value));
 };
@@ -84,6 +85,7 @@ export function validateBodyData(kind, data, update = false) {
   if (update && !Object.keys(data).length) fail('dữ liệu', 'cần ít nhất một trường để cập nhật.');
   if (kind === 'coupon' && data.discountType === 'percentage' && data.discountValue > 100) fail('discountValue', 'phần trăm không vượt quá 100%.');
   if (kind === 'coupon' && data.discountType === 'fixed' && data.discountValue !== undefined) money(data.discountValue, 'discountValue');
+  if (kind === 'bookingStatus' && ['cancelled', 'rejected'].includes(data.status) && !data.reason?.trim()) fail('reason', 'cần lý do khi hủy hoặc từ chối đơn.');
   const [start, end] = kind === 'departure' ? [data.bookingDeadline, data.departureAt] : kind === 'coupon' ? [data.validFrom, data.validUntil] : [];
   if (start && end && (kind === 'departure' ? Date.parse(start) >= Date.parse(end) : Date.parse(start) > Date.parse(end))) fail('ngày giờ', 'thứ tự thời gian không hợp lệ.');
 }

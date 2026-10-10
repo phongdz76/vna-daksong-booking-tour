@@ -184,7 +184,7 @@ export const getTourById = async (req, res) => {
 // @access Private (Admin)
 export const createTour = async (req, res) => {
   try {
-    const { name, slug, summary, description, durationHours, themes, destinationIds, itinerary, images, meetingPoint, includes, excludes, childPolicy, cancellationPolicy, status } = req.body;
+    const { name, slug, summary, description, durationHours, themes, destinationIds, itinerary, images, sources, meetingPoint, includes, excludes, childPolicy, cancellationPolicy, status } = req.body;
 
     if (childPolicy !== undefined && typeof childPolicy !== "string") return res.status(400).json({ message: "Chính sách trẻ em không hợp lệ." });
 
@@ -235,6 +235,7 @@ export const createTour = async (req, res) => {
       destinationIds: uniqueDestIds,
       itinerary: Array.isArray(itinerary) ? itinerary : [],
       images: Array.isArray(images) ? images : [],
+      sources: sources ?? [],
       meetingPoint: meetingPoint.trim(),
       includes: Array.isArray(includes) ? includes : [],
       excludes: Array.isArray(excludes) ? excludes : [],
@@ -267,7 +268,7 @@ export const updateTour = async (req, res) => {
       return res.status(404).json({ message: "Tour không tồn tại." });
     }
 
-    const { name, slug, summary, description, durationHours, themes, destinationIds, itinerary, images, meetingPoint, includes, excludes, childPolicy, cancellationPolicy, status } = req.body;
+    const { name, slug, summary, description, durationHours, themes, destinationIds, itinerary, images, sources, meetingPoint, includes, excludes, childPolicy, cancellationPolicy, status } = req.body;
 
     if (name !== undefined) {
         if (typeof name !== "string" || !name.trim()) return res.status(400).json({ message: "Tên không hợp lệ." });
@@ -311,6 +312,7 @@ export const updateTour = async (req, res) => {
     }
     
     if (images !== undefined) tour.images = Array.isArray(images) ? images : [];
+    if (sources !== undefined) tour.sources = sources;
     if (meetingPoint !== undefined) {
       if (typeof meetingPoint !== "string") return res.status(400).json({ message: "Điểm hẹn không hợp lệ." });
       tour.meetingPoint = meetingPoint.trim();

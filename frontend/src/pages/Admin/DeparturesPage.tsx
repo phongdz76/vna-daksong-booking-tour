@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { validDate, validIntegerInput } from '../../utils/inputValidation';
 import type { FormEvent } from "react";
 import { Link } from "react-router-dom";
 import Icon from "../../components/admin/Icon";
@@ -325,6 +326,15 @@ function DepartureForm({
   async function handleSave(event: FormEvent) {
     event.preventDefault();
     form.setError("");
+    if (!validDate(value.departureAt) || !validDate(value.deadline)) {
+      form.setError('Chọn ngày giờ khởi hành và hạn nhận đặt hợp lệ.'); return;
+    }
+    if (!validIntegerInput(value.adultPrice, 0, 1000000000) || (value.childPrice !== '' && !validIntegerInput(value.childPrice, 0, 1000000000))) {
+      form.setError('Giá vé phải là số nguyên từ 0 đến 1.000.000.000 đồng.'); return;
+    }
+    if (!validIntegerInput(value.guests, 1, initial?.maxCapacity ?? 50)) {
+      form.setError(`Giới hạn mỗi yêu cầu phải từ 1 đến ${initial?.maxCapacity ?? 50} khách.`); return;
+    }
     if (value.deadline >= value.departureAt) {
       form.setError("Hạn nhận đặt phải trước thời điểm khởi hành.");
       return;

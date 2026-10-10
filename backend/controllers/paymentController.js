@@ -516,7 +516,7 @@ export const zaloPayWebhook = async (req, res) => {
     }
 
     // 1. Kiểm tra định dạng và chữ ký callback.
-    const { data, mac } = req.body;
+    const { data, mac } = req.body || {};
     if (typeof data !== "string" || typeof mac !== "string" || !/^[a-f0-9]{64}$/i.test(mac)) {
       return res.json({ return_code: -1, return_message: "Invalid callback" });
     }
@@ -536,9 +536,10 @@ export const zaloPayWebhook = async (req, res) => {
       return res.json({ return_code: -1, return_message: "Invalid callback JSON" });
     }
 
-    if (!callbackData ||
+    if (!callbackData || Array.isArray(callbackData) ||
         String(callbackData.app_id) !== String(config.app_id) ||
-        typeof callbackData.app_trans_id !== "string") {
+        typeof callbackData.app_trans_id !== "string" || !/^[a-z0-9_-]{1,100}$/i.test(callbackData.app_trans_id) ||
+        !Number.isSafeInteger(callbackData.amount) || callbackData.amount < 0) {
       return res.json({ return_code: -1, return_message: "Invalid app_id/app_trans_id" });
     }
 

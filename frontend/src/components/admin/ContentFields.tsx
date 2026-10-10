@@ -93,7 +93,7 @@ export function ImageFields({
       <div className="upload-bar">
         <input
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
           aria-label="Tải ảnh lên"
           disabled={busy}
           onChange={async (event) => {
@@ -101,10 +101,10 @@ export function ImageFields({
             event.target.value = "";
             if (!file) return;
             if (
-              !file.type.startsWith("image/") ||
+              !['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'].includes(file.type) || file.size === 0 ||
               file.size > 5 * 1024 * 1024
             ) {
-              setError("Chọn tập tin ảnh có dung lượng tối đa 5 MB.");
+              setError("Chọn JPG, PNG, WebP, GIF hoặc AVIF có dung lượng tối đa 5 MB.");
               return;
             }
             setBusy(true);

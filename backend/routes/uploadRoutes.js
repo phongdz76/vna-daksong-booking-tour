@@ -1,6 +1,6 @@
 import express from 'express';
 import { protect, adminOnly } from '../middlewares/authMiddleware.js';
-import { upload } from '../middlewares/uploadMiddleware.js';
+import { upload, matchesImageSignature } from '../middlewares/uploadMiddleware.js';
 import cloudinary from '../config/cloudinary.js';
 
 const router = express.Router();
@@ -10,6 +10,7 @@ router.post('/', protect, adminOnly, upload.single('image'), async (req, res, ne
     if (!req.file) {
       return res.status(400).json({ message: 'Vui lòng chọn ảnh để upload.', code: 'NO_FILE_PROVIDED' });
     }
+    if (!matchesImageSignature(req.file)) return res.status(400).json({ message: 'Nội dung tập tin không khớp định dạng ảnh. Chọn JPG, PNG, WebP, GIF hoặc AVIF hợp lệ.', code: 'INVALID_FILE_TYPE' });
 
     // Upload to Cloudinary using a stream from memory
     const b64 = Buffer.from(req.file.buffer).toString('base64');

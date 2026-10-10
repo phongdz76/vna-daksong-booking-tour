@@ -57,6 +57,9 @@ export default function BookingDetailPage() {
 
   async function handleCancel(event: React.FormEvent) {
     event.preventDefault();
+    if (reason.trim().length === 0 || reason.length > 1000 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(reason)) {
+      setError('Nhập lý do hủy hợp lệ, tối đa 1.000 ký tự.'); return;
+    }
     if (!booking || sending.current || !reason.trim()) return;
     sending.current = true;
     setBusy(true);

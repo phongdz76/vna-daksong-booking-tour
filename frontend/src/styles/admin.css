@@ -613,12 +613,14 @@ html[data-vna-admin] body {
 }
 
 .vna-admin .eyebrow {
-  font-size: 10px;
-  letter-spacing: 1.25px;
+  font-size: 11px;
+  letter-spacing: 0.75px;
   font-weight: 600;
-  color: var(--earth);
+  text-transform: uppercase;
+  color: #8c4322;
   display: block;
-  margin-bottom: 7px;
+  margin-bottom: 6px;
+  line-height: 1.4;
 }
 
 .vna-admin .header-actions {

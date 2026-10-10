@@ -11,6 +11,7 @@ import { usePreview } from "../../context/PreviewContext";
 import { previewReviewEligibility } from "../../data/previewReviews";
 import { api, API_PATHS, errorMessage } from "../../utils/api";
 import { dateTime } from "../../utils/format";
+import { validText } from '../../utils/inputValidation';
 import type {
   OwnReview,
   ReviewEligibility,
@@ -105,6 +106,9 @@ export default function TourReviews({
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5 || !validText(comment, 2000, true)) {
+      setError('Chọn từ 1 đến 5 sao và nhập đánh giá tối đa 2.000 ký tự.'); return;
+    }
     if (
       sending.current ||
       isPreview ||

@@ -19,7 +19,8 @@
     "update:tour-content": "node scripts/updateTourContent.js",
     "test:tour-content": "node --test tests/tour-content.test.mjs",
     "update:tour-prices": "node scripts/updateTourReferencePrices.js",
-    "update:tour-children": "node scripts/updateSampleTourChildren.js"
+    "update:tour-children": "node scripts/updateSampleTourChildren.js",
+    "test:validation": "node --test tests/input-validation.test.mjs"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

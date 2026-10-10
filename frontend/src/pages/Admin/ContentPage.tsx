@@ -94,8 +94,8 @@ export default function ContentPage({ resource }: { resource: Resource }) {
       <PageHeader
         eyebrow={
           resource === "tours"
-            ? "HÀNH TRÌNH & TRẢI NGHIỆM"
-            : "NỘI DUNG ĐỊA PHƯƠNG"
+            ? "Hành trình & Trải nghiệm"
+            : "Nội dung địa phương"
         }
         title={titles[resource]}
         description={descriptions[resource]}

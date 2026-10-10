@@ -149,6 +149,7 @@ export default function ToursPage() {
         <Icon name="search" size={20} />
         <input
           aria-label="Tìm tên tour"
+          maxLength={200}
           placeholder="Tìm hành trình của bạn…"
           value={search}
           onChange={(event) => setSearch(event.target.value)}

@@ -14,7 +14,7 @@ export const validateBody = (kind, update = false) => (req, res, next) => {
   try {
     // Endpoints without payload accept an absent body, but reject unexpected fields.
     validateBodyData(kind, kind === 'empty' ? req.body ?? {} : req.body, update);
-    if (req.params.id && !/^[a-f0-9]{24}$/i.test(req.params.id)) throw new InputError('id', 'ID không hợp lệ.');
+    if (req.params.id && !req.baseUrl.endsWith('/notifications') && !/^[a-f0-9]{24}$/i.test(req.params.id)) throw new InputError('id', 'ID không hợp lệ.');
     if (req.params.appTransId && !/^[a-z0-9_-]{1,100}$/i.test(req.params.appTransId)) throw new InputError('appTransId', 'mã giao dịch không hợp lệ.');
     if (kind === 'booking') {
       const key = req.get('Idempotency-Key');

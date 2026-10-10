@@ -804,6 +804,60 @@ async function runDeleteTests() {
   }
 }
 
+async function runInputValidationTests() {
+  const before = await Promise.all([Booking.countDocuments(), Tour.countDocuments(), Departure.countDocuments(), Article.countDocuments(), Destination.countDocuments(), Coupon.countDocuments()]);
+  const cases = [
+    ['tour arrays', 'tours', tourBody({ images: 'wrong' })],
+    ['tour themes', 'tours', tourBody({ themes: true })],
+    ['tour includes', 'tours', tourBody({ includes: [5] })],
+    ['tour blank stop', 'tours', tourBody({ itinerary: [{ title: ' ', description: 'Text' }] })],
+    ['tour null stop', 'tours', tourBody({ itinerary: [null] })],
+    ['tour oversized title', 'tours', tourBody({ name: 'a'.repeat(201) })],
+    ['tour unknown field', 'tours', tourBody({ secretField: 'value' })],
+    ['destination wrong source date', 'destinations', destinationBody({ sources: [{ title: 'Source', url: 'https://example.com', checkedAt: '2026-02-30' }] })],
+    ['destination credentials URL', 'destinations', destinationBody({ images: [{ url: 'https://user:pass@example.com/x.jpg' }] })],
+    ['destination null array', 'destinations', destinationBody({ images: null })],
+    ['article invalid nested alt', 'articles', articleBody({ images: [{ url: 'https://example.com/x.jpg', alt: true }] })],
+    ['article blank content', 'articles', articleBody({ content: '  ' })],
+    ['departure price overflow', 'departures', departureBody({ adultPrice: 1000000001 })],
+    ['departure fractional price', 'departures', departureBody({ childPrice: 1.5 })],
+    ['departure invalid calendar', 'departures', departureBody({ departureAt: '2026-02-30T07:30:00Z' })],
+    ['departure numeric date', 'departures', departureBody({ departureAt: 1792000000000 })],
+    ['departure fractional guests', 'departures', departureBody({ maxGuestsPerBooking: 1.5 })],
+    ['departure capacity overflow', 'departures', departureBody({ maxGuestsPerBooking: 60 })],
+    ['coupon string boolean', 'coupons', couponBody({ isActive: 'false' })],
+    ['coupon fractional VND', 'coupons', couponBody({ discountType: 'fixed', discountValue: 1.5 })],
+    ['coupon overflow', 'coupons', couponBody({ maxDiscount: 1000000001 })],
+    ['coupon too long description', 'coupons', couponBody({ description: 'a'.repeat(1001) })],
+  ];
+  for (const [label, route, body] of cases) await test('Raw validation: ' + label, async () => {
+    const result = status(await http('POST', '/api/' + route, { token: admin(), body }), 400);
+    assert.equal(result.code, 'VALIDATION_ERROR');
+  });
+  for (const [label, body] of [
+    ['bad phone', { contact: { name: 'Test', phone: 'abc', email: 'test@example.com' } }],
+    ['bad email', { contact: { name: 'Test', phone: '0900000001', email: 'bad' } }],
+    ['blank name', { contact: { name: ' ', phone: '0900000001', email: 'test@example.com' } }],
+    ['wrong note type', { contact: { name: 'Test', phone: '0900000001', email: 'test@example.com' }, note: true }],
+  ]) await test('Direct booking validation: ' + label, async () => {
+    const result = status(await http('POST', '/api/bookings', { token: customer(), body: { quoteToken: 'token', ...body }, headers: { 'Idempotency-Key': randomUUID() } }), 400);
+    assert.equal(result.code, 'VALIDATION_ERROR');
+  });
+  for (const query of ['page=1x', 'page=1&page=2', 'limit=1000', 'q=a&q=b', 'isActive=bad']) await test('Raw query validation: ' + query, async () => status(await http('GET', '/api/coupons?' + query, { token: admin() }), 400));
+  await test('Update rejects malformed images without clearing existing photos', async () => {
+    const original = await Tour.findById(state.tour).lean();
+    status(await http('PATCH', '/api/tours/' + state.tour, { token: admin(), body: { images: 'broken' } }), 400);
+    assert.deepEqual((await Tour.findById(state.tour).lean()).images, original.images);
+  });
+  await test('Fake PNG MIME rejected before external image upload', async () => {
+    const form = new FormData(); form.append('image', new Blob(['not a real PNG image'], { type: 'image/png' }), 'fake.png');
+    status(await http('POST', '/api/upload', { token: admin(), form }), 400);
+  });
+  await test('Invalid requests do not create data', async () => {
+    assert.deepEqual(await Promise.all([Booking.countDocuments(), Tour.countDocuments(), Departure.countDocuments(), Article.countDocuments(), Destination.countDocuments(), Coupon.countDocuments()]), before);
+  });
+}
+
 async function runBookingTests() {
   await test("Quote tính đúng 2 người lớn + 1 trẻ em",async()=>{
     const q=await getQuote();assert.equal(q.subTotal,1350000);assert.equal(q.total,1350000);assert.equal(q.durationHours,4);assert.equal(q.currency,"VND");assert.ok(q.quoteToken);
@@ -845,7 +899,7 @@ async function runBookingTests() {
     const a=state.bookingA;status(await http("POST","/api/bookings",{token:customer(),body:{...a.payload,note:"Đã đổi note"},headers:{"Idempotency-Key":a.key}}),409);
   });
   await test("Thứ tự khóa contact không gây conflict",async()=>{
-    const a=state.bookingA;const payload={...a.payload,contact:{phone:a.payload.contact.phone,name:a.payload.contact.name}};
+    const a=state.bookingA;const payload={...a.payload,contact:{email:a.payload.contact.email,phone:a.payload.contact.phone,name:a.payload.contact.name}};
     assert.equal(status(await http("POST","/api/bookings",{token:customer(),body:payload,headers:{"Idempotency-Key":a.key}}),200).replayed,true);
   });
   await test("5 request đồng thời cùng key chỉ tạo một booking",async()=>{
@@ -1023,7 +1077,7 @@ async function runTests() {
       {code:"EXPIRED",validFrom:future(-5),validUntil:future(-1)},
       {code:"EXHAUSTED",usageLimit:1,usedCount:1},{code:"ZERO",usageLimit:0}];
     for(const fields of cases)await Coupon.create(couponBody({...fields,code:fields.code+"-"+runId}));
-    const result=status(await http("GET","/api/coupons/available?limit=1000"),200);
+    const result=status(await http("GET","/api/coupons/available?limit=100"),200);
     assert.equal(result.pagination.limit,100);
     const codes=result.data.map(c=>c.code);
     for(const name of ["AVAILABLE","MINIMUM"])assert.ok(codes.includes(name+"-"+runId.toUpperCase()));
@@ -1079,8 +1133,9 @@ async function runTests() {
   for(const [method,url] of [["GET","/api/coupons"],["POST","/api/coupons"],["PUT","/api/coupons/"+state.coupon],["DELETE","/api/coupons/"+state.coupon]]){
     await test("Khách bị chặn Coupon "+method,async()=>status(await http(method,url,{token:customer(),body:["POST","PUT"].includes(method)?{}:undefined}),403));
   }
-  await test("Danh sách phân trang giới hạn tối đa 100",async()=>{
-    const b=status(await http("GET","/api/destinations?page=0&limit=1000"),200);assert.equal(b.pagination.page,1);assert.equal(b.pagination.limit,100);
+  await test("Danh sách phân trang từ chối trang 0 và giới hạn trên 100",async()=>{
+    status(await http("GET","/api/destinations?page=0&limit=1000"),400);
+    const b=status(await http("GET","/api/destinations?page=1&limit=100"),200);assert.equal(b.pagination.page,1);assert.equal(b.pagination.limit,100);
   });
   for(const route of ["destinations","articles","tours"]){
     await test("Text search có index: "+route,async()=>{
@@ -1123,6 +1178,7 @@ async function runTests() {
   });
   await test("Saved tour không token trả 401",async()=>status(await http("GET","/api/tours/saved"),401));
 
+  await runInputValidationTests();
   await runBookingTests();
   await runPaymentTests();
   await runUploadTests();
