@@ -194,7 +194,7 @@ function installExternalStubs() {
       picture:{data:{url:"https://example.com/demo-avatar.png"}}}),{status:200});
   };
   axios.post=async(url,data,options={})=>{
-    const order=options.params;
+    const order=data instanceof URLSearchParams ? Object.fromEntries(data) : options.params;
     const base=process.env.ZALOPAY_ENDPOINT;
     if(url===new URL("query",base).href){
       externalCalls.push({provider:"ZaloPay Query",mode:queryMode,mocked:true});
@@ -203,6 +203,9 @@ function installExternalStubs() {
       return {data:providerOrders.get(order.app_trans_id)||{return_code:2,sub_return_code:-101,is_processing:false}};
     }
     if(url===new URL("refund",base).href){
+      assert.ok(data instanceof URLSearchParams);
+      assert.equal(options.params,undefined);
+      assert.equal(options.headers["Content-Type"],"application/x-www-form-urlencoded");
       externalCalls.push({provider:"ZaloPay Refund",mode:refundMode,mocked:true});
       assert.equal(order.mac,createHmac("sha256",process.env.ZALOPAY_KEY1).update([order.app_id,order.zp_trans_id,order.amount,order.description,order.timestamp].join("|")).digest("hex"));
       assert.match(order.m_refund_id,new RegExp("^\\d{6}_"+process.env.ZALOPAY_APP_ID+"_"));
@@ -212,6 +215,9 @@ function installExternalStubs() {
       return {data:{return_code:3,refund_id:"900000001"}};
     }
     if(url===new URL("query_refund",base).href){
+      assert.ok(data instanceof URLSearchParams);
+      assert.equal(options.params,undefined);
+      assert.equal(options.headers["Content-Type"],"application/x-www-form-urlencoded");
       externalCalls.push({provider:"ZaloPay Query Refund",mode:refundQueryMode,mocked:true});
       assert.equal(order.mac,createHmac("sha256",process.env.ZALOPAY_KEY1).update([order.app_id,order.m_refund_id,order.timestamp].join("|")).digest("hex"));
       if(refundQueryMode==="network-error")throw new Error("SIMULATED_REFUND_QUERY_NETWORK_ERROR");

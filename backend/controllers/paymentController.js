@@ -28,12 +28,16 @@ function getConfig() {
 
 // Dùng chung cho tạo giao dịch, đối soát và hoàn tiền.
 // Timeout chưa chứng minh provider chưa thu/hoàn tiền.
-async function sendZaloPayRequest(url, payload) {
+export async function sendZaloPayRequest(url, payload, formBody = false) {
   try {
-    const response = await axios.post(url, null, {
-      params: payload,
-      timeout: 10000,
-    });
+    const response = formBody
+      ? await axios.post(url, new URLSearchParams(
+          Object.entries(payload).map(([key, value]) => [key, String(value)]),
+        ), {
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          timeout: 10000,
+        })
+      : await axios.post(url, null, { params: payload, timeout: 10000 });
 
     if (!response.data || ![1, 2, 3].includes(response.data.return_code)) {
       throw new Error("INVALID_PROVIDER_RESPONSE");
@@ -629,7 +633,7 @@ export const refundZaloPayOrder = async (req, res, next) => {
 
     // 4. Gửi yêu cầu; chỉ API query refund mới xác nhận đã hoàn thành.
     const refundUrl = new URL("refund", config.endpoint).toString();
-    const providerResult = await sendZaloPayRequest(refundUrl, payload);
+    const providerResult = await sendZaloPayRequest(refundUrl, payload, true);
     if (providerResult.refund_id) {
       await PaymentTransaction.updateOne(
         {
@@ -654,13 +658,15 @@ export const refundZaloPayOrder = async (req, res, next) => {
         {
           $set: {
             refundState: "failed",
-            note: "Provider từ chối yêu cầu hoàn tiền.",
+            note: "ZaloPay từ chối hoàn tiền, mã lỗi: " + providerResult.sub_return_code,
           },
           $inc: { __v: 1 },
         }
       );
       return res.status(400).json({
-        message: "ZaloPay từ chối hoàn tiền.",
+        message: providerResult.sub_return_code === -401
+          ? "ZaloPay từ chối hoàn tiền: dữ liệu yêu cầu không hợp lệ (mã -401)."
+          : "ZaloPay từ chối hoàn tiền (mã " + providerResult.sub_return_code + ").",
         details: providerResult,
       });
     }
@@ -743,7 +749,7 @@ export const queryZaloPayRefund = async (req, res, next) => {
       mac: CryptoJS.HmacSHA256(signatureData, config.key1).toString(),
     };
     const queryUrl = new URL("query_refund", config.endpoint).toString();
-    const providerResult = await sendZaloPayRequest(queryUrl, payload);
+    const providerResult = await sendZaloPayRequest(queryUrl, payload, true);
 
     // 3. Provider xác nhận thành công mới ghi refunded, không lặp lịch sử khi query lại.
     if (providerResult.return_code === 1) {
