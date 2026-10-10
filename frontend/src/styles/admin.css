@@ -2007,6 +2007,21 @@ html[data-vna-admin] body {
   background: #c25043;
 }
 
+.vna-admin .timeline li strong {
+  font-weight: 600;
+}
+
+.vna-admin .timeline li:last-child .timeline-dot {
+  width: 12px;
+  height: 12px;
+  left: -6.5px;
+  top: 2px;
+}
+
+.vna-admin .timeline li:last-child strong {
+  font-weight: 700;
+}
+
 .vna-admin .timeline li small {
   display: block;
   color: #8b968e;

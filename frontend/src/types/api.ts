@@ -36,7 +36,11 @@ export interface Tour {
   excludes: string[];
   childPolicy: string;
   cancellationPolicy: string;
+  sources?: { title: string; url: string }[];
+  destinationIds?: string[];
   priceFrom?: number | null;
+  referencePrice?: number | null;
+  referencePriceNote?: string;
   averageRating?: number | null;
   reviewCount?: number;
 }

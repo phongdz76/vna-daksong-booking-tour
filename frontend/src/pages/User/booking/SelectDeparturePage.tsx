@@ -284,11 +284,8 @@ export default function SelectDeparturePage() {
                       />
                     </fieldset>
                     <p className="helper">
-                      Tối đa {maxGuests} khách mỗi yêu cầu.
+                      Mỗi khách được đặt tối đa {maxGuests} chỗ trong một yêu cầu.
                     </p>
-                    {tour.childPolicy && (
-                      <p className="helper">{tour.childPolicy}</p>
-                    )}
                   </section>
                   <CouponPicker value={coupon} onChange={setCoupon} orderTotal={estimated ?? 0} disabled={busy || Boolean(attempt)} />
                   <div className="notice">

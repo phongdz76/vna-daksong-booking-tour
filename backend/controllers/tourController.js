@@ -106,8 +106,8 @@ export const getTours = async (req, res) => {
     if (!ALLOWED_SORTS.includes(sortBy)) return res.status(400).json({ message: "Tùy chọn sắp xếp không hợp lệ." });
     
     const sortCriteria = sortBy === "duration" ? { durationHours: 1, _id: 1 }
-      : sortBy === "price_asc" ? { priceFrom: 1, _id: 1 }
-      : sortBy === "price_desc" ? { priceFrom: -1, _id: 1 }
+      : sortBy === "price_asc" ? { displayPrice: 1, _id: 1 }
+      : sortBy === "price_desc" ? { displayPrice: -1, _id: 1 }
       : sortBy === "most_bought" ? { soldCount: -1, _id: 1 } : { createdAt: -1, _id: 1 };
       
     const currentPage = Math.max(parseInt(page, 10) || 1, 1);
@@ -118,6 +118,7 @@ export const getTours = async (req, res) => {
       { $match: filter },
       { $lookup: { from: "departures", localField: "_id", foreignField: "tourId", pipeline: [{ $match: departuresFilter }], as: "availableDepartures" } },
       { $set: { priceFrom: { $min: "$availableDepartures.adultPrice" }, hasUpcomingDeparture: { $gt: [{ $size: "$availableDepartures" }, 0] } } },
+      { $set: { displayPrice: { $ifNull: ["$priceFrom", "$referencePrice"] } } },
     ];
     
     if (Object.keys(priceFilter).length || dateFrom || dateTo) {
@@ -129,7 +130,7 @@ export const getTours = async (req, res) => {
       { $sort: sortCriteria }, { $skip: skip }, { $limit: pageLimit },
       { $lookup: { from: "reviews", localField: "_id", foreignField: "tourId", pipeline: [{ $group: { _id: null, averageRating: { $avg: "$rating" }, reviewCount: { $sum: 1 } } }], as: "reviewSummary" } },
       { $set: { averageRating: { $ifNull: [{ $first: "$reviewSummary.averageRating" }, null] }, reviewCount: { $ifNull: [{ $first: "$reviewSummary.reviewCount" }, 0] } } },
-      { $unset: "reviewSummary" },
+      { $unset: ["reviewSummary", "displayPrice"] },
     ], count: [{ $count: "total" }] } });
     
     const [result] = await Tour.aggregate(pipeline);

@@ -256,9 +256,6 @@
     line-height: 20px;
     white-space: pre-line;
   }
-  .explore-guide-body > p.expanded {
-    display: block;
-  }
   .explore-guide-footer {
     display: flex;
     align-items: center;
@@ -274,20 +271,6 @@
     font-size: 11px;
     line-height: 14px;
   }
-  .explore-guide-footer button,
-  .explore-guide-footer a {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    border: 0;
-    padding: 6px 12px;
-    border-radius: 8px;
-    background: #edf6ef;
-    color: #245b45;
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: 600;
-  }
   .explore-weather {
     display: flex;
     align-items: center;
@@ -297,6 +280,18 @@
     border-radius: 12px;
     background: linear-gradient(110deg, #04432f, #245b45);
     color: white;
+  }
+  .explore-guide-footer a {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #edf6ef;
+    color: #245b45;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
   }
   .explore-weather small {
     font-size: 11px;
@@ -322,5 +317,30 @@
     border-radius: 50%;
     background: #ffffff1a;
     color: #ffdbcd;
+  }
+  .destination-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 24px 0 28px;
+  }
+  .destination-gallery-item {
+    margin: 0;
+    padding: 0;
+  }
+  .destination-gallery-photo {
+    aspect-ratio: 16 / 9;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(4, 67, 47, 0.08);
+    border: 1px solid rgba(4, 67, 47, 0.06);
+  }
+  .destination-gallery-caption {
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 16px;
+    color: #6c7770;
+    text-align: center;
+    font-style: italic;
   }
 }

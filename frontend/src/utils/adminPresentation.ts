@@ -62,6 +62,7 @@ export function tone(value: string): string {
       "confirmed",
       "completed",
       "paid",
+      "payment_received",
       "published",
       "open",
       "success",

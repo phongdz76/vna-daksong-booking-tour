@@ -617,22 +617,56 @@
   }
   .tour-card {
     background: #fff;
-    border-radius: 16px;
+    border-radius: 18px;
     overflow: hidden;
-    border: 1px solid #e8f0e9;
-    box-shadow: 0 2px 3px #23462d03;
+    border: 1px solid #e2ece4;
+    box-shadow: 0 4px 14px rgba(4, 67, 47, 0.05);
     display: block;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .tour-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(4, 67, 47, 0.1);
+    border-color: #c5d8cb;
   }
   .tour-card > .photo {
-    height: 190px;
+    height: 195px;
+    position: relative;
+    overflow: hidden;
+  }
+  .tour-card > .photo img {
+    transition: transform 0.4s ease;
+  }
+  .tour-card:hover > .photo img {
+    transform: scale(1.04);
   }
   .tour-card-body {
-    padding: 15px;
+    padding: 16px;
     min-width: 0;
   }
   .tour-card h3 {
-    font-size: 18px;
-    margin: 5px 0 9px;
+    font-size: 17px;
+    line-height: 1.35;
+    margin: 4px 0 8px;
+    color: #04432f;
+    font-weight: 700;
+  }
+  .tour-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #edf6ef;
+    color: #245b45;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.4;
   }
   .meta {
     display: flex;
@@ -652,7 +686,7 @@
     display: flex;
     align-items: baseline;
     gap: 4px;
-    margin-top: 13px;
+    margin-top: 12px;
   }
   .tour-card-price > span {
     color: var(--muted);
@@ -660,13 +694,23 @@
   }
   .tour-card-price strong {
     color: var(--clay);
-    font-size: 17px;
+    font-size: 18px;
+    font-weight: 750;
     letter-spacing: -0.3px;
   }
   .tour-card-price svg {
     margin-left: auto;
     color: var(--primary);
     align-self: center;
+    transition: transform 0.2s ease;
+  }
+  .tour-card:hover .tour-card-price svg {
+    transform: translateX(4px);
+  }
+  .tour-card-rating {
+    margin-top: 8px;
+    color: #b77028;
+    font-weight: 600;
   }
   .tour-card-compact {
     display: flex;

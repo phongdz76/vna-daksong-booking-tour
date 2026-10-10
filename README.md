@@ -3,11 +3,12 @@
 Ứng dụng khám phá du lịch và gửi yêu cầu đặt tour của VNA Group, gồm Zalo Mini App cho khách hàng, Cổng Web Quản trị Điều hành (Executive Admin Portal) và RESTful API Backend.
 
 * Tài liệu Báo cáo và Hướng dẫn Thuyết trình Chi tiết: [PRESENTATION_GUIDE.md](PRESENTATION_GUIDE.md)
+* Nhận source từ Git và thử đăng nhập Zalo: [BAN_GIAO.md](BAN_GIAO.md). Người nhận cần cấu hình backend và quyền Zalo; clone source không tự tạo môi trường đăng nhập.
 
 ## ĐƯỜNG DẪN TRỰC TUYẾN (LIVE DEMO ON VERCEL)
 
 * App Khách hàng (User App): https://vna-daksong-frontend.vercel.app
-* Cổng Quản trị Admin (Admin Portal): https://vna-daksong-frontend.vercel.app/admin (Tài khoản Admin: `vna@gmail.com` / Mật khẩu: `vna@1234`)
+* Cổng Quản trị Admin (Admin Portal): https://vna-daksong-frontend.vercel.app/admin (tài khoản được cấp riêng; không ghi mật khẩu vào Git)
 * Máy chủ API Backend: https://vna-daksong-backend.vercel.app
 
 ---
@@ -64,7 +65,7 @@ npm.cmd run dev
 
 * Backend chạy tại: `http://localhost:8000`
 * Khởi tạo tài khoản Admin: Điền `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` trong `.env` rồi chạy `npm.cmd run create:admin`.
-* Khởi tạo dữ liệu mẫu: `node scripts/seed.js`
+* Dùng database đã có dữ liệu thì khởi động backend trực tiếp. Script seed có thể xóa nội dung đã biên tập; chỉ dùng `node scripts/seed.js --reset-demo-data` khi chủ động muốn xóa và tạo lại bộ mẫu.
 
 ### 2. Khởi chạy Frontend
 

@@ -2,13 +2,15 @@ import type { Booking } from "../types/api";
 import { previewTours } from "./preview";
 
 const createdAt = new Date(Date.now() - 86400000).toISOString();
+const tour = previewTours[0];
+const adultPrice = tour.priceFrom ?? 0;
 export const previewBookingDetail: Booking = {
   _id: "preview-order",
   code: "VNA-DS8829",
   tourId: "preview-trekking",
   departureId: "preview-departure-1",
   adults: 2,
-  children: 1,
+  children: 0,
   contact: { name: "Nguyễn Văn An", phone: "0900000000", email: "an.nguyen@example.com" },
   note: "",
   status: "pending_confirmation",
@@ -16,16 +18,16 @@ export const previewBookingDetail: Booking = {
   paymentMethod: "cash_on_arrival",
   createdAt,
   snapshot: {
-    tourName: "Trekking Đồi Thông Săn Mây & Cắm Trại Đại Ngàn",
+    tourName: tour.name,
     departureAt: new Date(Date.now() + 86400000 * 7).toISOString(),
-    durationHours: 48,
-    meetingPoint: "Văn phòng VNA Đắk Song, TT. Đức An",
-    adultPrice: 1500000,
-    childPrice: 750000,
-    subTotal: 3750000,
+    durationHours: tour.durationHours,
+    meetingPoint: tour.meetingPoint,
+    adultPrice,
+    childPrice: null,
+    subTotal: adultPrice * 2,
     discountAmount: 0,
     appliedCoupon: null,
-    total: 3750000,
+    total: adultPrice * 2,
     childPolicy: previewTours[0].childPolicy,
     cancellationPolicy: previewTours[0].cancellationPolicy,
   },

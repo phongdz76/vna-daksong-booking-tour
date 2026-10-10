@@ -709,7 +709,7 @@ Script không ghi đè admin đã tồn tại.
 `backend/scripts/seed.js` xóa các departure, tour, article và destination hiện có rồi tạo dữ liệu mẫu. Chỉ chạy trên database development:
 
 ```powershell
-node scripts/seed.js
+node scripts/seed.js --reset-demo-data
 ```
 
 Không chạy script này trên production.
@@ -896,3 +896,89 @@ với dữ liệu minh họa và ảnh nhúng; không gửi email. Chạy `npm r
 - Secret chỉ nằm trong .env hoặc môi trường hosting. Giữ .env.example và package-lock.json trong Git. Với production dùng npm ci --omit=dev, npm start, NODE_ENV=production và ALLOW_MOCK_LOGIN=false.
 
 Đợt cập nhật này chỉ push source lên GitHub, chưa triển khai hosting, chưa thử SMTP/ZaloPay thật hoặc xác minh Zalo trên thiết bị.
+
+## Nhập bài từ Cổng Văn hóa Du lịch Đắk Song
+
+Từ thư mục gốc dự án:
+
+```powershell
+npm.cmd run import:portal --prefix backend
+npm.cmd run import:portal --prefix backend -- --apply --from-snapshot ../tmp/portal-import/content-snapshot.json
+```
+
+Lệnh đầu chỉ đọc API công khai của `dulichdaksong.vnasw.vn` và kiểm tra schema.
+Lệnh sau thêm bản ghi mới vào database trong `backend/.env`; giữ nguyên bản ghi
+trùng nguồn, trùng tên và nội dung đã chỉnh sửa. Không chạy seed hay xóa dữ liệu.
+Nhập danh lam, di tích lịch sử và địa điểm giải trí vào Điểm đến; lễ hội,
+trải nghiệm, làng nghề, ẩm thực và đặc sản vào Cẩm nang. Nội dung HTML được chuyển thành văn bản có đoạn,
+ảnh và link nguồn; giữ ngày xuất bản của bài nguồn nếu có.
+
+Hai bài trong chuyên mục Tour du lịch được xuất **riêng** tại
+`tmp/portal-import/tours-separate.json`, không nhập vào Article/Tour/Departure.
+File này giữ ID nguồn, tiêu đề, tóm tắt, nội dung HTML, ảnh và URL để xử lý riêng.
+`tmp/` bị Git bỏ qua; gửi file xuất riêng nếu người nhận cần dùng.
+
+Theo yêu cầu mới, hai tuyến đã được biên tập thành Tour bằng công cụ riêng bên dưới.
+Importer bài viết vẫn chỉ xuất riêng tour, tránh tự nhập lại hoặc đổi lịch/giá.
+
+API nguồn sử dụng `X-Department-Code: DAKNONG-2-29`; importer chỉ gọi các đường
+đọc danh mục, tìm bài và đọc chi tiết. `test:portal` kiểm tra phân trang, chống trùng,
+xử lý HTML và việc tách tour với phản hồi giả lập, không ghi database.
+Muốn nhập nội dung mới, chạy lại bước đọc nguồn rồi bước `--apply`.
+
+Bốn bài văn hóa mẫu cũ dùng bản biên soạn đầy đủ trong
+`frontend/src/data/sampleArticles.json`, cũng là dữ liệu bài viết của bản xem mẫu.
+Từ checkout đầy đủ, chạy `npm.cmd run update:sample-articles --prefix backend`
+để xem thay đổi; thêm `-- --apply` để cập nhật nội dung, tóm tắt và nguồn của đúng
+bốn bài theo slug và tên. Lệnh giữ ID, ảnh, trạng thái và đường dẫn; sao lưu nội dung
+cũ vào `tmp/sample-articles/` trước khi cập nhật và dừng nếu bản ghi vừa đổi.
+Không chạy seed để cập nhật nội dung vì seed xóa các collection cũ.
+
+`frontend/src/data/sampleDestinations.json` giữ bản nội dung sáu điểm đến dùng cho
+preview. `npm.cmd run update:sample-destinations --prefix backend` kiểm tra nội dung
+mới của ba điểm đến mẫu ban đầu (Thác Lưu Ly, Thiền viện Trúc Lâm Đạo Nguyên và
+Đồi Điện Gió); thêm `-- --apply` để cập nhật tóm tắt, mô tả và nguồn. Lệnh sao lưu
+bản cũ vào `tmp/sample-destinations/`, giữ nguyên ID, tên, ảnh và địa chỉ.
+
+Importer ghép lại chú thích nguồn bị HTML tách chữ, ví dụ `Ản / h: / Interne / t`
+thành `Ảnh: Internet`. Với dữ liệu đã nhập, từ thư mục `backend` chạy
+`node scripts/repairPortalCaptions.js` để kiểm tra và thêm `--apply` để sửa.
+Công cụ chỉ sửa văn bản trong bản ghi có slug `vna-portal-`, sao lưu bản cũ trong
+`tmp/portal-caption-repair/` và giữ nguyên ảnh, ID và các trường khác.
+
+## Biên tập 6 tour từ các tuyến tham khảo
+
+`frontend/src/data/sampleTours.json` chứa nội dung đã chọn lọc cho 4 tour hiện có
+và 2 tour mới: Gia Nghĩa – Tà Đùng – cồng chiêng – Lưu Ly, và Tà Đùng – Nâm Nung
+– Đạo Nguyên – Lưu Ly. Bản xem mẫu và công cụ cập nhật cùng dùng dữ liệu này.
+
+```powershell
+npm.cmd run update:tour-content --prefix backend
+npm.cmd run update:tour-content --prefix backend -- --apply
+npm.cmd run test:tour-content --prefix backend
+```
+
+Lệnh kiểm tra tất cả tour và điểm dừng trước khi ghi. Khi áp dụng, công cụ sao lưu
+tour cũ vào `tmp/tour-content/` rồi cập nhật trong một transaction MongoDB; cần
+Atlas hoặc replica set. Giữ nguyên ID/slug của 4 tour cũ, lịch khởi hành, giá chuyến,
+ảnh, điểm đón, dịch vụ, chính sách và các booking đã lưu. Chỉ sửa tên hiển thị,
+tóm tắt, mô tả, chủ đề, điểm đến liên quan, lịch trình và nguồn tham khảo.
+
+Hai tour mới xuất bản để xem nhưng chưa tạo Departure; chưa có giá bán hoặc nút đặt
+cho đến khi admin cấu hình chuyến. Không lấy bảo hiểm, điều kiện ghép đoàn hay
+yêu cầu cũ năm 2023 của đơn vị khác làm chính sách VNA. Bài Tà Đùng thiếu phần
+ngày đầu, nên không tự tạo giờ đón hoặc dịch vụ cụ thể. Chạy lại sẽ bỏ qua hai
+slug đã thêm để giữ chỉnh sửa admin; bốn tour cũ chỉ cập nhật nếu đúng tên cũ hoặc
+tên đã biên tập và dữ liệu chưa bị sửa đồng thời.
+
+Giá trong bài nguồn được hiển thị riêng là **giá tham khảo năm 2023**:
+2.120.000đ/khách cho tuyến Gia Nghĩa – Tà Đùng – cồng chiêng và 1.490.000đ/khách
+cho tuyến Tà Đùng – Nâm Nung. Trường `referencePrice` và `referencePriceNote`
+không tham gia báo giá booking. Khi có Departure đang mở, giao diện ưu tiên giá
+thực của chuyến; không tạo chuyến hay bật đặt tour chỉ vì có giá tham khảo.
+Chạy `npm.cmd run update:tour-prices --prefix backend` để kiểm tra, thêm
+`-- --apply` để cập nhật đúng hai trường này, có sao lưu và transaction.
+
+## Bật vé trẻ em cho hai tour mẫu
+
+Chạy `npm run update:tour-children` để kiểm tra, sau đó thêm `-- --apply` để áp dụng. Script sao lưu trước khi cập nhật chính sách và giá trẻ em của các lịch sắp tới đang mở; không sửa đơn hàng đã tạo. Giá tour Gia Nghĩa dựa trên tỷ lệ 70% cho trẻ 6–11 tuổi trong bài nguồn năm 2023. Tour Tà Đùng – Nâm Nung dùng tỷ lệ 70% cho lịch mẫu, ghi rõ trong chính sách vì bài nguồn không có giá trẻ em. Giá tùy chỉnh trong quản trị được giữ lại và script yêu cầu kiểm tra nếu không khớp bộ mẫu.

@@ -11,7 +11,15 @@
     "test:auth": "node --test tests/zalo-auth.test.mjs",
     "test:notifications": "node tests/notifications.test.mjs",
     "test:email": "node --test tests/booking-email.test.mjs",
-    "preview:email": "node tests/preview-booking-email.mjs"
+    "preview:email": "node tests/preview-booking-email.mjs",
+    "import:portal": "node scripts/importPortalContent.js",
+    "test:portal": "node --test tests/portal-content.test.mjs",
+    "update:sample-articles": "node scripts/updateSampleArticles.js",
+    "update:sample-destinations": "node scripts/updateSampleDestinations.js",
+    "update:tour-content": "node scripts/updateTourContent.js",
+    "test:tour-content": "node --test tests/tour-content.test.mjs",
+    "update:tour-prices": "node scripts/updateTourReferencePrices.js",
+    "update:tour-children": "node scripts/updateSampleTourChildren.js"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
@@ -24,6 +32,7 @@
     "crypto-js": "^4.2.0",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "htmlparser2": "^12.0.0",
     "jsonwebtoken": "^9.0.3",
     "moment": "^2.31.0",
     "mongoose": "^9.11.0",

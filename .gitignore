@@ -13,6 +13,7 @@ coverage/
 .vite/
 *.tsbuildinfo
 .browser-cache/
+/portal-chrome-*/
 test-results/
 *.log
 logs/
@@ -40,7 +41,9 @@ temp/
 /backend/scripts/seedTestUsers.js
 
 # Local helper tools and design scripts
-/scripts/
+/scripts/*
+!/scripts/start-zalo-local.ps1
+!/scripts/stop-zalo-local.ps1
 /frontend/scripts/*
 !/frontend/scripts/check-ui.mjs
 !/frontend/scripts/check-notifications-ui.mjs

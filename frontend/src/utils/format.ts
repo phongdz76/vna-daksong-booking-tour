@@ -15,9 +15,13 @@ export function money(value: number | null | undefined) {
   }).format(value);
 }
 export function duration(hours: number) {
-  if (hours < 24) return `${hours} giờ`;
-  if (hours % 24 === 0) return `${hours / 24} ngày`;
-  return `${Math.floor(hours / 24)} ngày ${hours % 24} giờ`;
+  if (!hours || hours <= 0) return "Đang cập nhật";
+  if (hours <= 12) return `${hours} giờ`;
+  if (hours > 12 && hours < 24) return `${hours} giờ`;
+  if (hours >= 24 && hours <= 48) return "2 ngày 1 đêm";
+  const days = Math.floor(hours / 24);
+  const nights = days - 1;
+  return `${days} ngày ${nights > 0 ? `${nights} đêm` : ""}`.trim();
 }
 export function dateTime(value: string, withTime = true) {
   return new Intl.DateTimeFormat("vi-VN", {

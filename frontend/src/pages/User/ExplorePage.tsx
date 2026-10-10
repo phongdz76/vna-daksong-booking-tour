@@ -42,7 +42,6 @@ export default function ExplorePage() {
     readDestinationBookmarks(bookmarkKey),
   );
   const [bookmarkMessage, setBookmarkMessage] = useState("");
-  const [expandedGuide, setExpandedGuide] = useState("");
   const previewData = useMemo(
     () =>
       previewList(
@@ -228,7 +227,7 @@ export default function ExplorePage() {
               <h2>Cẩm nang du lịch</h2>
               <p>
                 {isPreview
-                  ? "Bí kíp vi vu bản địa từ thiết kế Stitch"
+                  ? "Tìm hiểu văn hóa và chuẩn bị trước chuyến đi"
                   : "Thông tin chuẩn bị trước khi ghé điểm đến"}
               </p>
             </div>
@@ -257,10 +256,7 @@ export default function ExplorePage() {
                 </div>
                 <div className="explore-guide-body">
                   <h3>{guide.title}</h3>
-                  <p
-                    id={`guide-content-${guide.id}`}
-                    className={expandedGuide === guide.id ? "expanded" : ""}
-                  >
+                  <p>
                     {guide.description}
                   </p>
                   <div className="explore-guide-footer">
@@ -272,25 +268,9 @@ export default function ExplorePage() {
                         </>
                       )}
                     </span>
-                    {guide.href ? (
-                      <AppLink to={guide.href}>
-                        Đọc tiếp <Icon name="arrow" size={16} />
-                      </AppLink>
-                    ) : (
-                      <button
-                        type="button"
-                        aria-expanded={expandedGuide === guide.id}
-                        aria-controls={`guide-content-${guide.id}`}
-                        onClick={() =>
-                          setExpandedGuide(
-                            expandedGuide === guide.id ? "" : guide.id,
-                          )
-                        }
-                      >
-                        {expandedGuide === guide.id ? "Thu gọn" : "Đọc tiếp"}
-                        <Icon name="arrow" size={16} />
-                      </button>
-                    )}
+                    <AppLink to={guide.href}>
+                      Đọc tiếp <Icon name="arrow" size={16} />
+                    </AppLink>
                   </div>
                 </div>
               </article>

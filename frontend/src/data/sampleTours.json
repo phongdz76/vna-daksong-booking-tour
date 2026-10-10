@@ -1,0 +1,444 @@
+[
+  {
+    "name": "Nâm Nung – cắm trại giữa đại ngàn (2 ngày 1 đêm)",
+    "slug": "tour-tham-quan-trai-nghiem-day-nam-nung",
+    "summary": "Dạo bước giữa rừng Nâm Nung, nghỉ một đêm bên lều trại và khám phá thác Lưu Ly cùng Thiền viện Trúc Lâm Đạo Nguyên.",
+    "description": "Một đêm giữa đại ngàn là dịp để chậm lại, nghe âm thanh của rừng và cảm nhận không khí cao nguyên. Hành trình giữ trải nghiệm trekking, cắm trại và tiệc BBQ của tour hiện có, đồng thời kết nối các điểm dừng Nâm Nung, thác Lưu Ly và Thiền viện Trúc Lâm Đạo Nguyên trong tuyến tham khảo Tà Đùng.\n\nNgày đầu dành cho việc làm quen cung đường, đi bộ theo hướng dẫn viên và chuẩn bị khu nghỉ đêm. Đoàn chỉ sử dụng tuyến và vị trí cắm trại được phép; không tự ý đi sâu vào rừng hoặc tổ chức lửa trại ở khu vực cấm. Bữa tối là khoảng thời gian cùng trò chuyện, dùng tiệc BBQ theo gói đã chọn và nghỉ ngơi để chuẩn bị cho ngày tiếp theo.\n\nNgày thứ hai kết hợp thiên nhiên và không gian văn hóa: ghé thác Lưu Ly để ngắm dòng nước giữa cây rừng, sau đó tham quan thiền viện với trang phục lịch sự và giữ yên tĩnh. Hướng dẫn viên điều chỉnh thứ tự các điểm dừng theo thời tiết, sức khỏe đoàn và điều kiện tiếp cận thực tế.\n\nBạn nên mang giày có độ bám, áo khoác nhẹ, đồ chống mưa và hành lý gọn. Chương trình phù hợp với khách muốn đi bộ và nghỉ ngoài trời; hãy trao đổi trước với VNA nếu đi cùng trẻ nhỏ hoặc cần hỗ trợ vận động. Việc săn mây, đốt lửa và các hoạt động ngoài trời phụ thuộc điều kiện thực tế.",
+    "durationHours": 32,
+    "themes": [
+      "nature",
+      "culture"
+    ],
+    "itinerary": [
+      {
+        "title": "Ngày 1 · Tập trung và làm quen cung đường",
+        "description": "Gặp đoàn tại điểm hẹn, kiểm tra hành lý và nghe hướng dẫn an toàn. Hướng dẫn viên giới thiệu khu vực Nâm Nung, quy tắc bảo vệ rừng và tuyến đi bộ phù hợp.",
+        "destinationSlug": "vna-portal-0e9b319e-c888-40c6-9c70-14f4f2d94579"
+      },
+      {
+        "title": "Ngày 1 · Đi bộ khám phá đại ngàn",
+        "description": "Di chuyển theo cung đường được phép, dừng ngắm cảnh và nghỉ chân theo sức khỏe của đoàn. Không rời nhóm hoặc tự ý vượt suối khi chưa có hướng dẫn.",
+        "destinationSlug": "vna-portal-0e9b319e-c888-40c6-9c70-14f4f2d94579"
+      },
+      {
+        "title": "Ngày 1 · Hạ trại và tiệc BBQ",
+        "description": "Nhận lều tại khu vực được bố trí, sắp xếp đồ dùng và cùng dùng tiệc BBQ trong gói. Hoạt động dùng lửa chỉ thực hiện khi được cho phép và bảo đảm an toàn."
+      },
+      {
+        "title": "Ngày 2 · Đón buổi sớm và thu dọn trại",
+        "description": "Thức dậy giữa không khí cao nguyên, nghỉ ngơi và thu dọn khu trại. Gom rác, kiểm tra đồ dùng trước khi tiếp tục hành trình."
+      },
+      {
+        "title": "Ngày 2 · Thác Lưu Ly",
+        "description": "Ghé thác trong rừng Nâm Nung, đi theo lối tiếp cận được phép và dừng chụp ảnh ở vị trí an toàn. Không xuống nước hoặc đi sát mép đá trơn.",
+        "destinationSlug": "thac-luu-ly"
+      },
+      {
+        "title": "Ngày 2 · Thiền viện Đạo Nguyên và kết thúc",
+        "description": "Tham quan Thiền viện Trúc Lâm Đạo Nguyên, tìm hiểu không gian kiến trúc và giữ sự yên tĩnh. Đoàn trở về điểm hẹn sau khi kiểm tra hành lý.",
+        "destinationSlug": "thien-vien-truc-lam-dao-nguyen"
+      }
+    ],
+    "images": [
+      {
+        "url": "https://static.dggv.edu.vn/360/1678326424686_123201-nam-nung-4.jpg",
+        "alt": "",
+        "credit": ""
+      }
+    ],
+    "meetingPoint": "Khu bảo tồn Nam Nung",
+    "includes": [
+      "Xe trung chuyển",
+      "Lều trại",
+      "Tiệc BBQ",
+      "Hướng dẫn viên"
+    ],
+    "excludes": [
+      "Chi phí cá nhân"
+    ],
+    "childPolicy": "",
+    "cancellationPolicy": "Miễn phí hủy trước 48h.",
+    "status": "published",
+    "originalName": "Tour tham quan trải nghiệm dãy Nam Nung (2 ngày - 1 đêm)",
+    "mode": "update",
+    "previewId": "preview-trekking",
+    "priceFrom": 1250000,
+    "previewChildPrice": 625000,
+    "destinationSlugs": [
+      "vna-portal-0e9b319e-c888-40c6-9c70-14f4f2d94579",
+      "thac-luu-ly",
+      "thien-vien-truc-lam-dao-nguyen"
+    ],
+    "sources": [
+      {
+        "title": "Lịch trình chi tiết Tour du lịch Tà Đùng",
+        "url": "https://dulichdaksong.vnasw.vn/tin-tuc-su-kien/lich-trinh-chi-tiet-tour-du-lich-ta-dung5ad1c423-d723-4a98-94f4-54de48568aca",
+        "checkedAt": "2026-10-10T00:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "name": "Khám phá thác Lưu Ly & Thiền viện Đạo Nguyên",
+    "slug": "kham-pha-thac-luu-ly",
+    "summary": "Một ngày kết nối thác Lưu Ly với không gian thanh tịnh của Thiền viện Trúc Lâm Đạo Nguyên giữa rừng Nâm Nung.",
+    "description": "Nếu muốn dành một ngày cho thiên nhiên mà vẫn có thời gian tìm hiểu văn hóa địa phương, tuyến thác Lưu Ly – Thiền viện Trúc Lâm Đạo Nguyên là lựa chọn để cân nhắc. Hai điểm dừng cùng xuất hiện trong các hành trình tham khảo trên cổng du lịch Đắk Song và đã có sẵn trong ứng dụng.\n\nBuổi sáng, đoàn gặp hướng dẫn viên tại điểm hẹn, nghe giới thiệu cung đường rồi di chuyển đến thiền viện. Không gian rừng và kiến trúc nơi đây thích hợp cho việc tham quan nhẹ nhàng, quan sát và tìm hiểu. Du khách mặc trang phục lịch sự, giữ yên tĩnh và hỏi trước khi chụp ảnh ở các khu vực có quy định riêng.\n\nSau bữa trưa trong gói tour, hành trình tiếp tục đến thác Lưu Ly. Hướng dẫn viên hỗ trợ đoàn đi theo lối tiếp cận phù hợp, chọn điểm ngắm thác và chụp ảnh an toàn. Tiếng nước, cây rừng và không khí mát tạo nên phần trải nghiệm nổi bật của buổi chiều.\n\nLịch trình được sắp xếp lại theo thời tiết và điều kiện tại điểm tham quan. Hãy mang giày có độ bám, nước uống cá nhân và đồ chống mưa; trao đổi trước với VNA nếu có người cao tuổi, trẻ nhỏ hoặc người cần hỗ trợ di chuyển. Không tự ý xuống nước, đi sát mép thác hoặc rời khỏi đoàn.",
+    "durationHours": 8,
+    "themes": [
+      "nature",
+      "culture"
+    ],
+    "itinerary": [
+      {
+        "title": "Buổi sáng · Đón khách và giới thiệu hành trình",
+        "description": "Xe và hướng dẫn viên đón đoàn tại điểm hẹn đã thống nhất. Kiểm tra số lượng khách, nghe lưu ý di chuyển và giới thiệu hai điểm tham quan trong ngày."
+      },
+      {
+        "title": "Buổi sáng · Thiền viện Trúc Lâm Đạo Nguyên",
+        "description": "Tham quan kiến trúc và không gian thanh tịnh giữa rừng Nâm Nung. Giữ yên tĩnh, mặc trang phục phù hợp và tuân thủ hướng dẫn của điểm tham quan.",
+        "destinationSlug": "thien-vien-truc-lam-dao-nguyen"
+      },
+      {
+        "title": "Buổi trưa · Dùng bữa và nghỉ chân",
+        "description": "Đoàn dùng bữa trưa theo gói tour, nghỉ ngơi trước khi tiếp tục đến thác. Thông báo trước nhu cầu ăn chay hoặc yêu cầu ăn uống riêng để được tư vấn."
+      },
+      {
+        "title": "Buổi chiều · Khám phá thác Lưu Ly",
+        "description": "Đi theo lối tiếp cận được phép để ngắm thác và cảnh rừng. Hướng dẫn viên chọn điểm dừng phù hợp với thời tiết; không xuống nước hoặc đến gần mép đá trơn.",
+        "destinationSlug": "thac-luu-ly"
+      },
+      {
+        "title": "Cuối ngày · Trở về điểm đón",
+        "description": "Kiểm tra hành lý, thu gom rác tại điểm nghỉ và lên xe trở về. Kết thúc chuyến tham quan sau khi đoàn được trả tại điểm hẹn."
+      }
+    ],
+    "images": [
+      {
+        "url": "https://static.dggv.edu.vn/360/1678326310525_daknong-thac-luu-ly.jpg",
+        "alt": "",
+        "credit": ""
+      }
+    ],
+    "meetingPoint": "VP VNA Đắk Song",
+    "includes": [
+      "Xe đưa đón",
+      "Ăn trưa",
+      "Vé tham quan",
+      "Nước suối",
+      "Hướng dẫn viên"
+    ],
+    "excludes": [
+      "Chi phí cá nhân",
+      "VAT"
+    ],
+    "childPolicy": "",
+    "cancellationPolicy": "Miễn phí hủy trước 48h.",
+    "status": "published",
+    "originalName": "Khám phá thác Lưu Ly",
+    "mode": "update",
+    "previewId": "preview-coffee",
+    "priceFrom": 550000,
+    "previewChildPrice": 150000,
+    "destinationSlugs": [
+      "vna-portal-0e9b319e-c888-40c6-9c70-14f4f2d94579",
+      "thac-luu-ly",
+      "thien-vien-truc-lam-dao-nguyen"
+    ],
+    "sources": [
+      {
+        "title": "Hành Trình: Gia Nghĩa,  Hồ Tà Đùng,  Cồng Chiêng Dân Tộc Mnông, Thác Đăk G'lun, Thác Lưu Ly",
+        "url": "https://dulichdaksong.vnasw.vn/tin-tuc-su-kien/hanh-trinh-gia-nghia-ho-ta-dung-cong-chieng-dan-toc-mnong-thac-dak-glun-thac-luu-ly089ed63c-d547-4fd6-be1b-acf71a3a3807",
+        "checkedAt": "2026-10-10T00:00:00.000Z"
+      },
+      {
+        "title": "Lịch trình chi tiết Tour du lịch Tà Đùng",
+        "url": "https://dulichdaksong.vnasw.vn/tin-tuc-su-kien/lich-trinh-chi-tiet-tour-du-lich-ta-dung5ad1c423-d723-4a98-94f4-54de48568aca",
+        "checkedAt": "2026-10-10T00:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "name": "Văn hóa M’nông & không gian cồng chiêng (2 ngày 1 đêm)",
+    "slug": "tour-tham-quan-cac-ban-lang-dong-bao",
+    "summary": "Gặp gỡ cộng đồng địa phương, tìm hiểu đời sống buôn làng và trải nghiệm không gian cồng chiêng theo chương trình được xác nhận.",
+    "description": "Hành trình hai ngày một đêm dành thời gian cho câu chuyện của con người cao nguyên. Từ tour bản làng đang có, chương trình được bổ sung cách tổ chức buổi giao lưu văn hóa M’nông trong tuyến Gia Nghĩa – Tà Đùng – cồng chiêng, đồng thời giữ trải nghiệm đời sống thường nhật và lưu trú homestay của gói hiện tại.\n\nNgày đầu, đoàn gặp hướng dẫn viên và đến cộng đồng đón khách theo sắp xếp. Qua những câu chuyện tại chỗ, du khách tìm hiểu nếp sinh hoạt, nghề truyền thống và cách cộng đồng gìn giữ văn hóa. Việc tham quan nhà ở, chụp ảnh người dân hoặc tham gia hoạt động cần có sự đồng ý của chủ nhà.\n\nBuổi tối dành cho dùng bữa và giao lưu. Nội dung cồng chiêng, trò chuyện cùng người dân và các hoạt động cộng đồng được VNA xác nhận với đơn vị đón khách trước chuyến đi; đây không phải cam kết có lễ hội diễn ra hằng ngày. Khách không uống rượu vẫn có thể tham gia trò chuyện, nghe giới thiệu và tìm hiểu âm nhạc.\n\nNgày tiếp theo, đoàn tham gia trải nghiệm làm nông hoặc tìm hiểu nghề dệt theo khả năng tổ chức tại thời điểm khởi hành, dùng bữa rồi trở về điểm hẹn. Hãy mang hành lý gọn, trang phục lịch sự và giữ thái độ tôn trọng khi đến buôn làng. Không tự ý lấy hiện vật, vào không gian riêng hoặc yêu cầu tổ chức nghi lễ ngoài chương trình.",
+    "durationHours": 32,
+    "themes": [
+      "culture",
+      "food"
+    ],
+    "itinerary": [
+      {
+        "title": "Ngày 1 · Đón khách và gặp cộng đồng địa phương",
+        "description": "Tập trung tại điểm hẹn, nghe giới thiệu chương trình và đến buôn làng theo sắp xếp. Hướng dẫn viên trao đổi quy tắc tham quan, chụp ảnh và ứng xử với người dân."
+      },
+      {
+        "title": "Ngày 1 · Khám phá đời sống và văn hóa M’nông",
+        "description": "Đi cùng người hướng dẫn để tìm hiểu nếp sinh hoạt và câu chuyện địa phương. Các điểm ghé thăm trong cộng đồng được thống nhất trước với chủ nhà."
+      },
+      {
+        "title": "Ngày 1 · Dùng bữa và giao lưu cồng chiêng",
+        "description": "Dùng bữa trong gói tour, trò chuyện và tìm hiểu không gian cồng chiêng theo chương trình đã xác nhận. Nội dung biểu diễn phụ thuộc sự sắp xếp với cộng đồng; không mặc định có lễ hội."
+      },
+      {
+        "title": "Ngày 1 · Nghỉ đêm tại homestay",
+        "description": "Nhận chỗ nghỉ theo gói hiện có, kiểm tra đồ dùng và nghỉ ngơi. Trao đổi trước với VNA về nhu cầu riêng của gia đình hoặc người cần hỗ trợ."
+      },
+      {
+        "title": "Ngày 2 · Trải nghiệm đời sống thường nhật",
+        "description": "Tìm hiểu hoạt động làm nông hoặc nghề dệt theo điều kiện tổ chức. Tham gia ở mức phù hợp, tuân thủ hướng dẫn và xin phép trước khi chụp ảnh."
+      },
+      {
+        "title": "Ngày 2 · Kết thúc và trở về",
+        "description": "Dùng bữa theo chương trình, kiểm tra hành lý và chào cộng đồng đón khách. Đoàn trở về điểm hẹn, kết thúc hành trình."
+      }
+    ],
+    "images": [
+      {
+        "url": "https://static.dggv.edu.vn/360/1672307604677_z3997641506907_ff6e17b67121e6b6a218553db5c79124.jpg",
+        "alt": "",
+        "credit": ""
+      }
+    ],
+    "meetingPoint": "Trung tâm thị trấn Đắk Mâm",
+    "includes": [
+      "Xe đưa đón",
+      "Ăn uống 4 bữa",
+      "Chỗ ở homestay",
+      "Hướng dẫn viên bản địa"
+    ],
+    "excludes": [
+      "Chi phí cá nhân"
+    ],
+    "childPolicy": "",
+    "cancellationPolicy": "Miễn phí hủy trước 24h.",
+    "status": "published",
+    "originalName": "Tour tham quan các bản làng đồng bào (2 ngày - 1 đêm)",
+    "mode": "update",
+    "previewId": "preview-camping",
+    "priceFrom": 850000,
+    "previewChildPrice": 425000,
+    "destinationSlugs": [],
+    "sources": [
+      {
+        "title": "Hành Trình: Gia Nghĩa,  Hồ Tà Đùng,  Cồng Chiêng Dân Tộc Mnông, Thác Đăk G'lun, Thác Lưu Ly",
+        "url": "https://dulichdaksong.vnasw.vn/tin-tuc-su-kien/hanh-trinh-gia-nghia-ho-ta-dung-cong-chieng-dan-toc-mnong-thac-dak-glun-thac-luu-ly089ed63c-d547-4fd6-be1b-acf71a3a3807",
+        "checkedAt": "2026-10-10T00:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "name": "Khám phá Thiền viện Trúc Lâm Đạo Nguyên",
+    "slug": "kham-pha-thien-vien-truc-lam-dao-nguyen",
+    "summary": "Nửa ngày tìm hiểu kiến trúc và không gian thanh tịnh của Thiền viện Trúc Lâm Đạo Nguyên trong khu vực Nâm Nung.",
+    "description": "Tour ngắn dành cho khách muốn dành thời gian riêng cho Thiền viện Trúc Lâm Đạo Nguyên. Điểm đến xuất hiện trong tuyến tham khảo Tà Đùng – Nâm Nung – thác Lưu Ly, nhưng chương trình này giữ phạm vi nửa ngày của tour đang có, tập trung vào thiền viện và bữa cơm chay trong gói.\n\nĐoàn gặp hướng dẫn viên tại điểm tập trung, nghe giới thiệu trước khi tham quan. Không gian kiến trúc, sân vườn và cảnh rừng quanh thiền viện tạo điều kiện để quan sát, tìm hiểu và nghỉ chân nhẹ nhàng. Khách muốn lễ Phật có thể thực hiện trong khu vực được phép; các hoạt động tín ngưỡng là lựa chọn cá nhân.\n\nHướng dẫn viên giới thiệu những nội dung phù hợp với điểm tham quan và nhắc các quy tắc ứng xử. Du khách mặc trang phục kín đáo, nói chuyện nhỏ, tuân thủ biển chỉ dẫn và hỏi trước khi chụp ảnh. Không vào khu vực dành riêng cho sinh hoạt của thiền viện.\n\nBữa cơm chay được sắp xếp theo gói và điều kiện tổ chức đã xác nhận. Tour hiện không bao gồm xe đưa đón, nên khách cần chủ động di chuyển đến điểm tập trung hoặc liên hệ VNA để được tư vấn riêng. Hãy báo trước yêu cầu ăn uống, nhu cầu hỗ trợ di chuyển và số lượng trẻ em đi cùng.",
+    "durationHours": 4,
+    "themes": [
+      "culture",
+      "history"
+    ],
+    "itinerary": [
+      {
+        "title": "Đầu buổi · Tập trung tại thiền viện",
+        "description": "Gặp hướng dẫn viên tại điểm tập trung đã thống nhất. Nghe giới thiệu chương trình, quy định trang phục và các khu vực được phép tham quan.",
+        "destinationSlug": "thien-vien-truc-lam-dao-nguyen"
+      },
+      {
+        "title": "Trong buổi · Tham quan kiến trúc và cảnh quan",
+        "description": "Tìm hiểu không gian Thiền viện Trúc Lâm Đạo Nguyên, quan sát kiến trúc và dạo nhẹ trong khu vực được phép. Giữ yên tĩnh, không đi vào không gian sinh hoạt riêng.",
+        "destinationSlug": "thien-vien-truc-lam-dao-nguyen"
+      },
+      {
+        "title": "Cuối buổi · Dùng cơm chay",
+        "description": "Dùng bữa cơm chay theo sự sắp xếp của gói tour. Thông báo trước nhu cầu ăn uống riêng; địa điểm phục vụ được VNA xác nhận trước chuyến đi."
+      },
+      {
+        "title": "Kết thúc · Chào đoàn tại điểm tập trung",
+        "description": "Kiểm tra tư trang và kết thúc chương trình nửa ngày. Khách tự sắp xếp phương tiện về hoặc sử dụng dịch vụ di chuyển đã thỏa thuận riêng."
+      }
+    ],
+    "images": [
+      {
+        "url": "https://static.dggv.edu.vn/360/1678287988008_2.jpg",
+        "alt": "",
+        "credit": ""
+      }
+    ],
+    "meetingPoint": "Thiền viện Trúc Lâm",
+    "includes": [
+      "Cơm chay",
+      "Hướng dẫn viên",
+      "Nước suối"
+    ],
+    "excludes": [
+      "Chi phí cá nhân",
+      "Xe đưa đón"
+    ],
+    "childPolicy": "",
+    "cancellationPolicy": "Miễn phí hủy trước 24h.",
+    "status": "published",
+    "originalName": "Khám phá thiền viện Trúc Lâm Đạo Nguyên",
+    "mode": "update",
+    "previewId": "preview-culture",
+    "priceFrom": 150000,
+    "previewChildPrice": 75000,
+    "destinationSlugs": [
+      "thien-vien-truc-lam-dao-nguyen"
+    ],
+    "sources": [
+      {
+        "title": "Lịch trình chi tiết Tour du lịch Tà Đùng",
+        "url": "https://dulichdaksong.vnasw.vn/tin-tuc-su-kien/lich-trinh-chi-tiet-tour-du-lich-ta-dung5ad1c423-d723-4a98-94f4-54de48568aca",
+        "checkedAt": "2026-10-10T00:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "mode": "create",
+    "previewId": "preview-ta-dung-cong-chieng",
+    "slug": "gia-nghia-ta-dung-cong-chieng-luu-ly",
+    "name": "Gia Nghĩa – Tà Đùng – cồng chiêng M’nông – thác Lưu Ly",
+    "summary": "Hành trình 2 ngày 1 đêm kết hợp cảnh hồ Tà Đùng, giao lưu văn hóa M’nông và các điểm thác trong tuyến tham khảo trên cổng du lịch.",
+    "description": "Tuyến tham khảo đưa du khách từ không gian đô thị Gia Nghĩa đến cảnh hồ Tà Đùng, buổi giao lưu văn hóa M’nông và những dòng thác giữa đại ngàn. Nội dung được biên tập từ bài hành trình trên cổng du lịch Đắk Song để khách hình dung các trải nghiệm trước khi trao đổi lịch riêng với VNA.\n\nNgày đầu dành cho hành trình đến Gia Nghĩa, nghỉ chân và khám phá khu vực hồ Tà Đùng. Du khách ngắm cảnh hồ và tìm hiểu đời sống địa phương; hoạt động đi thuyền được tư vấn theo điều kiện vận hành và gói dịch vụ thực tế. Buổi tối là khoảng thời gian gặp gỡ cộng đồng, nghe giới thiệu và giao lưu trong không gian cồng chiêng M’nông khi đã được sắp xếp trước.\n\nNgày thứ hai tiếp tục đến thác Lưu Ly trong khu vực Nâm Nung. Tuyến nguồn còn có thác Đăk G’lun; điểm này được VNA kiểm tra khả năng tiếp cận và thời gian di chuyển trước khi chốt chương trình. Thứ tự tham quan, nơi lưu trú và điểm đón sẽ được thống nhất với khách theo chuyến cụ thể.\n\nBài nguồn được đăng năm 2023 và giới thiệu dịch vụ của đơn vị khác. Giá, tiêu chuẩn xe, bảo hiểm, điều kiện ghép đoàn và những yêu cầu cũ trong bài không được dùng làm điều kiện bán của VNA. Tour đang chờ cấu hình chuyến; khách cần nhận báo giá và xác nhận dịch vụ trước khi đặt.",
+    "durationHours": 48,
+    "themes": [
+      "nature",
+      "culture"
+    ],
+    "destinationSlugs": [
+      "vna-portal-0e9b319e-c888-40c6-9c70-14f4f2d94579",
+      "thac-luu-ly"
+    ],
+    "itinerary": [
+      {
+        "title": "Ngày 1 · Đón khách và đến Gia Nghĩa",
+        "description": "Điểm đón, phương tiện và giờ xuất phát được VNA thống nhất theo chuyến. Đoàn nghỉ chân, dùng bữa và nhận chỗ lưu trú theo báo giá đã xác nhận."
+      },
+      {
+        "title": "Ngày 1 · Khám phá hồ Tà Đùng",
+        "description": "Ngắm cảnh hồ và cảnh quan cao nguyên. Nếu lựa chọn đi thuyền, VNA xác nhận đơn vị phục vụ, điều kiện vận hành và chi phí trước khi chốt gói."
+      },
+      {
+        "title": "Ngày 1 · Giao lưu văn hóa M’nông",
+        "description": "Gặp gỡ cộng đồng và tìm hiểu không gian cồng chiêng theo chương trình đã sắp xếp. Nội dung biểu diễn, địa điểm và bữa tối cần được xác nhận trước chuyến."
+      },
+      {
+        "title": "Ngày 2 · Thác Lưu Ly giữa rừng Nâm Nung",
+        "description": "Di chuyển đến khu vực thác, đi theo lối tiếp cận được phép và ngắm cảnh ở vị trí an toàn. Điều chỉnh hoạt động theo thời tiết và sức khỏe đoàn.",
+        "destinationSlug": "thac-luu-ly"
+      },
+      {
+        "title": "Ngày 2 · Thác Đăk G’lun theo điều kiện thực tế",
+        "description": "Điểm thác tiếp theo trong tuyến nguồn. VNA kiểm tra khả năng tiếp cận và thời gian di chuyển; việc ghé điểm này được ghi rõ trong chương trình chốt với khách."
+      },
+      {
+        "title": "Ngày 2 · Dùng bữa và trở về",
+        "description": "Dùng bữa theo gói, kiểm tra hành lý và trở về điểm trả khách đã thống nhất. Kết thúc hành trình sau khi hoàn thành chương trình của chuyến."
+      }
+    ],
+    "images": [
+      {
+        "url": "https://core-360.vnaapi.com/aws/360/1720756813133_23.jpg",
+        "alt": "Ảnh tuyến tham khảo Gia Nghĩa – Tà Đùng trên cổng du lịch Đắk Song",
+        "credit": "Cổng du lịch Đắk Song"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Hành Trình: Gia Nghĩa,  Hồ Tà Đùng,  Cồng Chiêng Dân Tộc Mnông, Thác Đăk G'lun, Thác Lưu Ly",
+        "url": "https://dulichdaksong.vnasw.vn/tin-tuc-su-kien/hanh-trinh-gia-nghia-ho-ta-dung-cong-chieng-dan-toc-mnong-thac-dak-glun-thac-luu-ly089ed63c-d547-4fd6-be1b-acf71a3a3807",
+        "checkedAt": "2026-10-10T00:00:00.000Z"
+      }
+    ],
+    "meetingPoint": "Điểm đón do VNA tư vấn theo chuyến",
+    "includes": [
+      "Dịch vụ cụ thể được VNA xác nhận trong báo giá theo chuyến"
+    ],
+    "excludes": [
+      "Chi phí cá nhân",
+      "Các dịch vụ ngoài báo giá đã xác nhận"
+    ],
+    "childPolicy": "Trẻ em từ 6 đến 11 tuổi: 70% giá người lớn, ngủ chung giường với bố mẹ. Từ 12 tuổi chọn vé người lớn. Trẻ dưới 6 tuổi vui lòng liên hệ VNA. Chính sách lịch mẫu dựa trên bài nguồn năm 2023; VNA xác nhận điều kiện khi nhận yêu cầu.",
+    "cancellationPolicy": "VNA tư vấn điều kiện đổi, hủy và hoàn tiền trong báo giá trước khi khách xác nhận đặt.",
+    "status": "published",
+    "priceFrom": null,
+    "previewChildPrice": 1484000,
+    "referencePrice": 2120000,
+    "referencePriceNote": "Giá tham khảo mỗi khách từ bài nguồn đăng năm 2023. VNA xác nhận giá và dịch vụ theo chuyến trước khi đặt."
+  },
+  {
+    "mode": "create",
+    "previewId": "preview-ta-dung-nam-nung",
+    "slug": "ta-dung-nam-nung-dao-nguyen-luu-ly",
+    "name": "Tà Đùng – Nâm Nung – Đạo Nguyên – Lưu Ly (2 ngày 1 đêm)",
+    "summary": "Ngắm cảnh Tà Đùng và kết nối Nâm Nung, Thiền viện Trúc Lâm Đạo Nguyên cùng thác Lưu Ly trong một hành trình hai ngày.",
+    "description": "Tà Đùng và Nâm Nung mang đến hai cách cảm nhận thiên nhiên cao nguyên: cảnh hồ rộng mở và không gian rừng yên tĩnh. Chương trình tham khảo nối các điểm này với Thiền viện Trúc Lâm Đạo Nguyên và thác Lưu Ly, phù hợp để trao đổi với VNA về một chuyến hai ngày một đêm.\n\nBài nguồn giới thiệu tour Tà Đùng nhưng phần lịch trình ngày đầu không đầy đủ. Vì vậy, ứng dụng chỉ nêu trải nghiệm ngắm hồ Tà Đùng, nghỉ chân và lưu trú ở mức định hướng; giờ đón, nhà hàng, nơi nghỉ và các dịch vụ tại hồ sẽ do VNA tư vấn và xác nhận theo chuyến.\n\nPhần tham quan Nâm Nung, thiền viện và thác Lưu Ly trong bài nguồn được trình bày rõ hơn. Đoàn ghé thiền viện để tìm hiểu không gian kiến trúc và cảnh quan, sau đó tiếp tục đến thác. Tại mỗi điểm, khách đi theo hướng dẫn, mặc trang phục phù hợp và chú ý các đoạn đường hoặc bậc thang có thể trơn khi trời mưa.\n\nLịch trình được biên tập lại theo các điểm đã có trong ứng dụng; Tà Đùng là điểm tham quan của tuyến nguồn. Giá và các cam kết dịch vụ của Bazan Travel trong bài đăng năm 2023 không phải báo giá VNA. Tour chỉ nhận đặt khi đã có chuyến, giá và chính sách được xác nhận.",
+    "durationHours": 48,
+    "themes": [
+      "nature",
+      "culture"
+    ],
+    "destinationSlugs": [
+      "vna-portal-0e9b319e-c888-40c6-9c70-14f4f2d94579",
+      "thien-vien-truc-lam-dao-nguyen",
+      "thac-luu-ly"
+    ],
+    "itinerary": [
+      {
+        "title": "Ngày 1 · Điểm đón và hành trình đến Tà Đùng",
+        "description": "VNA tư vấn điểm đón, giờ xuất phát và phương tiện theo nhu cầu của đoàn. Chương trình ngày đầu trong bài nguồn chưa đầy đủ, nên các dịch vụ cần được xác nhận theo chuyến."
+      },
+      {
+        "title": "Ngày 1 · Ngắm cảnh hồ và nghỉ đêm",
+        "description": "Khám phá cảnh hồ Tà Đùng theo gói được chốt, dùng bữa và nhận chỗ nghỉ. Điểm ngắm cảnh, nơi lưu trú và dịch vụ bổ sung được ghi rõ trong báo giá."
+      },
+      {
+        "title": "Ngày 2 · Khám phá khu vực Nâm Nung",
+        "description": "Sau khi nghỉ ngơi và thu dọn hành lý, đoàn di chuyển đến khu vực Nâm Nung. Hướng dẫn viên giới thiệu cảnh quan và lưu ý bảo vệ môi trường.",
+        "destinationSlug": "vna-portal-0e9b319e-c888-40c6-9c70-14f4f2d94579"
+      },
+      {
+        "title": "Ngày 2 · Thiền viện Trúc Lâm Đạo Nguyên",
+        "description": "Tham quan thiền viện giữa không gian rừng, tìm hiểu kiến trúc và giữ sự yên tĩnh. Tuân thủ trang phục, biển chỉ dẫn và quy định chụp ảnh.",
+        "destinationSlug": "thien-vien-truc-lam-dao-nguyen"
+      },
+      {
+        "title": "Ngày 2 · Thác Lưu Ly",
+        "description": "Tiếp tục đến thác Lưu Ly, ngắm cảnh và đi bộ theo lối được phép. Không tự ý xuống nước; hoạt động được điều chỉnh theo thời tiết và điều kiện thực tế.",
+        "destinationSlug": "thac-luu-ly"
+      },
+      {
+        "title": "Ngày 2 · Dùng bữa và kết thúc hành trình",
+        "description": "Dùng bữa theo gói đã xác nhận và lên xe trở về điểm trả khách. Giờ đến phụ thuộc cung đường, điều kiện di chuyển và chương trình của chuyến."
+      }
+    ],
+    "images": [
+      {
+        "url": "https://core-360.vnaapi.com/aws/360/1720764683601_4.jpg",
+        "alt": "Ảnh tuyến du lịch Tà Đùng trên cổng du lịch Đắk Song",
+        "credit": "Cổng du lịch Đắk Song"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Lịch trình chi tiết Tour du lịch Tà Đùng",
+        "url": "https://dulichdaksong.vnasw.vn/tin-tuc-su-kien/lich-trinh-chi-tiet-tour-du-lich-ta-dung5ad1c423-d723-4a98-94f4-54de48568aca",
+        "checkedAt": "2026-10-10T00:00:00.000Z"
+      }
+    ],
+    "meetingPoint": "Điểm đón do VNA tư vấn theo chuyến",
+    "includes": [
+      "Dịch vụ cụ thể được VNA xác nhận trong báo giá theo chuyến"
+    ],
+    "excludes": [
+      "Chi phí cá nhân",
+      "Các dịch vụ ngoài báo giá đã xác nhận"
+    ],
+    "childPolicy": "Lịch mẫu: trẻ em từ 6 đến 11 tuổi tính 70% giá người lớn. Từ 12 tuổi chọn vé người lớn. Trẻ dưới 6 tuổi vui lòng liên hệ VNA. Đây là giá mẫu để thử đặt tour, bài nguồn chưa nêu giá trẻ em; VNA xác nhận giá và điều kiện khi nhận yêu cầu.",
+    "cancellationPolicy": "VNA tư vấn điều kiện đổi, hủy và hoàn tiền trong báo giá trước khi khách xác nhận đặt.",
+    "status": "published",
+    "priceFrom": null,
+    "previewChildPrice": 1043000,
+    "referencePrice": 1490000,
+    "referencePriceNote": "Giá tham khảo mỗi khách từ bài nguồn đăng năm 2023. VNA xác nhận giá và dịch vụ theo chuyến trước khi đặt."
+  }
+]

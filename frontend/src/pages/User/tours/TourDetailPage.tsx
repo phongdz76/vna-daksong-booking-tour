@@ -68,7 +68,7 @@ export default function TourDetailPage() {
     ) || [];
   const priceFrom = openDepartures.length
     ? Math.min(...openDepartures.map((d) => d.adultPrice))
-    : null;
+    : tour?.referencePrice ?? null;
   const isSaved = saved ?? Boolean(user?.savedTours?.includes(id || ""));
   const mapLocation = [tour?.meetingPoint, "Đắk Song, Việt Nam"]
     .filter(Boolean)
@@ -212,9 +212,7 @@ export default function TourDetailPage() {
                   <Icon name="clock" />
                   <small>Thời lượng</small>
                   <strong>
-                    {isPreview && tour._id === "preview-trekking"
-                      ? "2N1Đ"
-                      : duration(tour.durationHours)}
+                    {duration(tour.durationHours)}
                   </strong>
                 </div>
                 <div>
@@ -338,6 +336,18 @@ export default function TourDetailPage() {
                   <Icon name="shield" size={20} />
                   Điều khoản & dịch vụ
                 </h2>
+                {tour.sources?.length ? (
+                  <details className="policy">
+                    <summary>Nguồn tham khảo lịch trình</summary>
+                    {tour.sources.map((source) => (
+                      <p key={source.url}>
+                        {/^https:\/\//.test(source.url) ? (
+                          <a href={source.url} target="_blank" rel="noopener noreferrer">{source.title}</a>
+                        ) : source.title}
+                      </p>
+                    ))}
+                  </details>
+                ) : null}
                 <details className="policy">
                   <summary>
                     <span>
@@ -401,6 +411,7 @@ export default function TourDetailPage() {
                       <p>
                         Tour chưa có chuyến đang mở. Bạn có thể quay lại để xem
                         lịch mới.
+                        {tour.referencePriceNote && <> {tour.referencePriceNote}</>}
                       </p>
                     </div>
                   )}
@@ -416,7 +427,7 @@ export default function TourDetailPage() {
 
             <div className="action-bar detail-action">
               <div>
-                <small>Giá trọn gói từ</small>
+                <small>Từ</small>
                 <strong>
                   {departures.loading ? "Đang tải…" : money(priceFrom)}
                 </strong>

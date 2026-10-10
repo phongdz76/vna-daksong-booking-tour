@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useMemo } from "react";
 import Header from "../../../components/layout/Header";
 import Photo from "../../../components/common/Photo";
+import ImageGallery from "../../../components/common/ImageGallery";
 import Icon from "../../../components/common/Icon";
 import { ErrorState, LoadingState } from "../../../components/common/States";
 import TourCard from "../../../components/tour/TourCard";
@@ -24,8 +25,8 @@ export default function DestinationDetailPage() {
       previewExploreDestinations.find((item) => item._id === id),
   );
   const relatedPreview = useMemo(
-    () => previewList(previewTours.slice(0, 2)),
-    [],
+    () => previewList(previewTours.filter((tour) => tour.destinationIds?.includes(id || "")).slice(0, 4)),
+    [id],
   );
   const related = useApi<ListResponse<Tour>>(
     `/tours?destinationId=${id}&limit=4`,
@@ -61,6 +62,12 @@ export default function DestinationDetailPage() {
                   <Icon name="info" />
                   <p>{result.data.visitNotes}</p>
                 </div>
+              )}
+              {Boolean(result.data.images && result.data.images.length > 1) && (
+                <ImageGallery
+                  images={result.data.images.slice(1)}
+                  title={result.data.name}
+                />
               )}
               {result.data.sources?.length ? (
                 <details className="policy">

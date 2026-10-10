@@ -18,6 +18,12 @@ const itinerarySchema = new mongoose.Schema({
   destinationId: { type: mongoose.Schema.Types.ObjectId, ref: "Destination", default: null },
 }, { _id: false, strict: "throw" });
 
+const sourceSchema = new mongoose.Schema({
+  title: { type: String, required: true, trim: true, maxlength: 300 },
+  url: { type: String, required: true, validate: httpUrl, maxlength: 2000 },
+  checkedAt: { type: Date, required: true },
+}, { _id: false, strict: "throw" });
+
 const tourSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true, maxlength: 200 },
   slug: { type: String, required: true, unique: true, trim: true, lowercase: true, maxlength: 180, match: /^[a-z0-9]+(?:-[a-z0-9]+)*$/ },
@@ -28,6 +34,9 @@ const tourSchema = new mongoose.Schema({
   destinationIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Destination" }],
   itinerary: { type: [itinerarySchema], default: [] },
   images: { type: [imageSchema], default: [] },
+  sources: { type: [sourceSchema], default: [] },
+  referencePrice: { type: Number, min: 0, max: 1_000_000_000, default: null, validate: value => value === null || Number.isSafeInteger(value) },
+  referencePriceNote: { type: String, maxlength: 1000, default: "" },
   meetingPoint: { type: String, required: true, maxlength: 1000 },
   includes: [{ type: String, maxlength: 500 }],
   excludes: [{ type: String, maxlength: 500 }],

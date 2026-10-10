@@ -18,6 +18,7 @@ export default function TourCard({
   onToggleSaved?: (e: React.MouseEvent) => void;
 }) {
   const { isPreview } = usePreview();
+  const displayedPrice = tour.priceFrom ?? tour.referencePrice;
   const photo =
     isPreview && compact && tour._id === "preview-trekking"
       ? previewImages.trekking
@@ -58,8 +59,8 @@ export default function TourCard({
           {duration(tour.durationHours)}
         </span>
         <div className="tour-card-price">
-          <span>{tour.priceFrom != null ? "Từ " : ""}</span>
-          <strong>{money(tour.priceFrom)}</strong>
+          <span>{displayedPrice != null ? "Từ " : ""}</span>
+          <strong>{money(displayedPrice)}</strong>
           {!compact && <Icon name="arrow" size={18} />}
         </div>
         {Boolean(tour.reviewCount) && tour.averageRating != null && (

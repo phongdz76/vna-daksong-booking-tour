@@ -117,7 +117,9 @@ export default function HomePage() {
       <section className="section home-tours" id="tours-section">
         <div className="section-heading">
           <h2>Tour đề xuất</h2>
-          <span className="muted">Đặc sắc Đắk Song</span>
+          <AppLink to="/tours" className="text-link">
+            Xem tất cả <Icon name="chevron" size={16} />
+          </AppLink>
         </div>
         {tours.loading ? (
           <LoadingState />

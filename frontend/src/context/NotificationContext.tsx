@@ -11,6 +11,7 @@ import { useAuth } from "./AuthContext";
 import { usePreview } from "./PreviewContext";
 import { api, errorMessage } from "../utils/api";
 import type { ListResponse, ImageAsset } from "../types/api";
+import { previewArticle } from "../data/previewArticles";
 
 export interface AppNotification {
   id: string;
@@ -32,16 +33,9 @@ export interface ArticleContent {
   images: ImageAsset[];
   publishedAt?: string;
   createdAt?: string;
+  sources?: { title: string; url: string; checkedAt?: string }[];
 }
 
-const previewArticle: ArticleContent = {
-  _id: "preview-notification-article",
-  title: "Chuẩn bị cho hành trình khám phá Đắk Song",
-  summary: "Một vài lưu ý trước khi lên đường.",
-  images: [],
-  content:
-    "Kiểm tra lịch khởi hành và điểm tập trung trong chi tiết đơn. Chuẩn bị nước uống, giày phù hợp và đồ dùng cá nhân. Liên hệ đơn vị tổ chức nếu bạn cần hỗ trợ. Đây là bài viết minh họa trong bản xem mẫu.",
-};
 export { previewArticle };
 const sampleNotifications: AppNotification[] = [
   {

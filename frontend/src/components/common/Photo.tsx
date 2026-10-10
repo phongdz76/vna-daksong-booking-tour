@@ -6,13 +6,16 @@ export default function Photo({
   alt,
   className = "",
   eager = false,
+  hideOnError = false,
 }: {
   src?: string;
   alt: string;
   className?: string;
   eager?: boolean;
+  hideOnError?: boolean;
 }) {
   const [failedUrl, setFailedUrl] = useState("");
+  if (hideOnError && (!src || failedUrl === src)) return null;
   return (
     <div className={`photo ${className}`}>
       {src && failedUrl !== src ? (

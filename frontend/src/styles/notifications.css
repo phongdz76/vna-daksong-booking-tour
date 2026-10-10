@@ -217,11 +217,62 @@
   .article-summary {
     font-weight: 600;
     margin-bottom: 20px;
+    line-height: 22px;
+    color: #37473f;
   }
   .article-body {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     font-size: 14px;
     line-height: 24px;
+    color: #1f2924;
+  }
+  .article-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 24px 0 28px;
+  }
+  .article-gallery-item {
+    margin: 0;
+    padding: 0;
+  }
+  .article-gallery-photo {
+    aspect-ratio: 16 / 9;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(4, 67, 47, 0.08);
+    border: 1px solid rgba(4, 67, 47, 0.06);
+  }
+  .article-gallery-caption {
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 16px;
+    color: #6c7770;
+    text-align: center;
+    font-style: italic;
+  }
+  .article-content > .photo,
+  .article-content > .article-cover {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(4, 67, 47, 0.08);
+  }
+  .article-content .policy {
+    margin-top: 28px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #edf6ef;
+    border: 1px solid #e4ece5;
+  }
+  .article-content .policy summary {
+    font-weight: 600;
+    color: #04432f;
+  }
+  .article-content .policy p {
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 18px;
   }
 }

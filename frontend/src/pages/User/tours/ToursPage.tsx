@@ -102,9 +102,9 @@ export default function ToursPage() {
         (!maxDuration || t.durationHours <= Number(maxDuration)),
     );
     if (sort === "price_asc")
-      tours.sort((a, b) => (a.priceFrom ?? 0) - (b.priceFrom ?? 0));
+      tours.sort((a, b) => (a.priceFrom ?? a.referencePrice ?? 0) - (b.priceFrom ?? b.referencePrice ?? 0));
     if (sort === "price_desc")
-      tours.sort((a, b) => (b.priceFrom ?? 0) - (a.priceFrom ?? 0));
+      tours.sort((a, b) => (b.priceFrom ?? b.referencePrice ?? 0) - (a.priceFrom ?? a.referencePrice ?? 0));
     if (sort === "duration")
       tours.sort((a, b) => a.durationHours - b.durationHours);
     return previewList(tours);
