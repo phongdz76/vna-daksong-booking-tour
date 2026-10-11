@@ -210,7 +210,6 @@ Một số component có state và gọi API, ví dụ TourReviews/CouponPicker.
 | Dữ liệu API/loading/error | useApi hoặc hook admin | Theo path và lần refresh |
 | Filter/phân trang | URL search params trên màn danh sách | Có thể giữ khi quay lại cùng URL |
 | Thông báo | NotificationContext + API | Refresh 30 giây khi hiển thị/focus/sự kiện booking |
-| Bookmark điểm đến | Storage trên thiết bị | Tách khỏi savedTours trong User MongoDB |
 | Preview | PreviewContext và fixtures | Chỉ dev với query preview=1 |
 
 ## 7. Mô hình dữ liệu

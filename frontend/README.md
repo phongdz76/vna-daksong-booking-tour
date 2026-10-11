@@ -162,7 +162,7 @@ PullToRefresh bật ở tab chính và chi tiết tour/điểm đến/bài viế
 | /articles/:id | ArticleDetailPage | Nội dung, ảnh, nguồn bài viết |
 | /tours | ToursPage | Tìm q, theme, duration, sort, phân trang API |
 | /tours/:id | TourDetailPage | Nội dung/chính sách/chuyến, lưu tour, reviews, bản đồ, bắt đầu đặt |
-| /destinations/:id | DestinationDetailPage | Mô tả/gallery/nguồn, tour liên quan, bookmark trên thiết bị |
+| /destinations/:id | DestinationDetailPage | Mô tả/gallery/nguồn và tour liên quan |
 | /booking/:id/select | SelectDeparturePage | :id là tour; chọn Departure/số khách/coupon, lấy quote |
 | /booking/:id/review | ReviewBookingPage | :id là tour; đọc draft, contact/note, chọn tiền, đồng ý và gửi |
 | /booking/success/:id | BookingSuccessPage | :id là booking; đọc kết quả server, trạng thái và tiếp tục thanh toán |
@@ -303,7 +303,7 @@ utils/zalo.ts kiểm window.APP_ID:
 - readSession/storeSession dùng nativeStorage khi Zalo, sessionStorage trên browser; key vna-customer-session.
 - zaloLoginCredentials xin getUserInfo với quyền tùy chọn, sau đó getAccessToken, gửi accessToken/includeProfile.
 - SDK profile không được gửi nguyên làm danh tính backend; server xác minh token và tự đọc hồ sơ.
-- Bookmark điểm đến dùng native/session storage theo key riêng, không phải User.savedTours.
+- Adapter có helper bookmark điểm đến dùng native/session storage, nhưng giao diện hiện tại chưa gọi các helper này.
 
 Phiên admin key vna-admin-session trong sessionStorage. Không dùng localStorage/cookie login theo source hiện tại.
 
@@ -377,7 +377,7 @@ Explore có tab destinations/guides, category/guideCategory, page/guidePage riê
 
 ToursPage lấy query q/theme/sort/maxDurationHours/page, gọi API limit=8, reset page khi filter đổi. Backend hỗ trợ thêm date/price/destination filter nhưng UI này không tự có toàn bộ bộ lọc chỉ vì API hỗ trợ.
 
-Chi tiết bài/điểm dùng text/gallery/nguồn. Lưu tour cần auth và /tours/:id/save, User.savedTours; bookmark điểm đến trên storage thiết bị, không đồng bộ account.
+Chi tiết bài/điểm dùng text/gallery/nguồn. Lưu tour cần auth và /tours/:id/save, User.savedTours. Giao diện hiện tại chưa có thao tác lưu điểm đến.
 
 ### Bản đồ
 

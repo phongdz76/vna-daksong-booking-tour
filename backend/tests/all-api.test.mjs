@@ -301,6 +301,7 @@ process.on("exit",()=>{if(!reportWritten)try{writeReport();}catch{}});
 installExternalStubs();
 Object.assign(process.env,localEnv,{
   NODE_ENV:"test",ALLOW_MOCK_LOGIN:"true",PORT:"0",JWT_SECRET:sessionSecret,
+  EMAIL_USER:"",EMAIL_PASS:"",
   ZALO_APP_SECRET:"isolated-zalo-secret",ZALOPAY_APP_ID:"999999",
   ZALOPAY_KEY1:"isolated-zalopay-key1",ZALOPAY_KEY2:"isolated-zalopay-key2",
   ZALOPAY_ENDPOINT:"https://example.invalid/zalopay",CLIENT_URL:"https://example.invalid/client"

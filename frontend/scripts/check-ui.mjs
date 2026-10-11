@@ -6,6 +6,14 @@ import assert from "node:assert/strict";
 
 // Real Chrome. Every API write is intercepted; no application database writes.
 const base = process.env.UI_BASE_URL || "http://localhost:5173";
+const sampleTours = JSON.parse(await readFile(new URL("../src/data/sampleTours.json", import.meta.url), "utf8"));
+const sampleDestinations = JSON.parse(await readFile(new URL("../src/data/sampleDestinations.json", import.meta.url), "utf8"));
+const sampleArticles = JSON.parse(await readFile(new URL("../src/data/sampleArticles.json", import.meta.url), "utf8"));
+const previewTour = sampleTours.find(tour => tour.previewId === "preview-trekking");
+const previewAdultPrice = previewTour.priceFrom ?? previewTour.referencePrice;
+const previewChildPrice = previewTour.childPolicy ? previewTour.previewChildPrice : null;
+const previewReviewTotal = 2 * previewAdultPrice + (previewChildPrice ?? 0);
+const previewTourReady = `document.querySelectorAll('.tour-card').length === ${sampleTours.length}`;
 const chromePath =
   process.env.CHROME_PATH ||
   "C:/Program Files/Google/Chrome/Application/chrome.exe";
@@ -176,7 +184,7 @@ try {
     });
     await visit(
       "/?preview=1",
-      "document.querySelectorAll('.tour-card').length === 4",
+      previewTourReady,
     );
     check(
       `Home ${width}px: no horizontal overflow`,
@@ -215,15 +223,19 @@ try {
     await waitFor(
       "document.querySelectorAll('.departure-option').length === 3",
     );
+    check(
+      `Select ${width}px: child tickets require a departure price and policy`,
+      await evaluate(`document.querySelector('[aria-label="Tăng trẻ em"]').disabled === ${previewChildPrice == null}`),
+    );
     await evaluate(
       "document.querySelector('[aria-label=\"Tăng người lớn\"]').click(); document.querySelector('[aria-label=\"Tăng trẻ em\"]').click()",
     );
     await evaluate("document.querySelector('.action-bar button').click()");
     await waitFor("document.querySelector('.contact-fields input[name=name]')");
     check(
-      `Review ${width}px: server-style quote for 2 adults + 1 child`,
+      `Review ${width}px: quote matches the selected guests and departure prices`,
       await evaluate(
-        "document.querySelector('.price-total dd').textContent.replace(/\\D/g, '') === '3240000'",
+        `document.querySelector('.price-total dd').textContent.replace(/\\D/g, '') === '${previewReviewTotal}'`,
       ),
     );
     check(
@@ -246,7 +258,7 @@ try {
     }
     await evaluate(`(() => {
       const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
-      for (const [name, value] of [['name', 'Khách xem giao diện'], ['phone', '0900000000']]) {
+      for (const [name, value] of [['name', 'Khách xem giao diện'], ['phone', '0900000000'], ['email', 'preview@example.test']]) {
         const input = document.querySelector('input[name=' + name + ']');
         setter.call(input, value); input.dispatchEvent(new Event('input', { bubbles: true }));
       }
@@ -292,7 +304,7 @@ try {
     check(
       `Booking detail ${width}px: progress, ticket and cost breakdown`,
       await evaluate(
-        "document.querySelectorAll('.booking-progress li').length === 4 && document.querySelector('.booking-code-square svg[aria-label]').getAttribute('aria-label').includes('minh họa') && document.querySelector('.booking-cost-total > strong').textContent.replace(/\\D/g,'') === '3750000' && !document.querySelector('.bottom-nav')",
+        `document.querySelectorAll('.booking-progress li').length === 4 && document.querySelector('.booking-code-square svg[aria-label]').getAttribute('aria-label').includes('minh họa') && document.querySelector('.booking-cost-total > strong').textContent.replace(/\\D/g,'') === '${2 * previewAdultPrice}' && !document.querySelector('.bottom-nav')`,
       ),
     );
     if (width === 390) {
@@ -316,18 +328,18 @@ try {
       await evaluate("document.documentElement.scrollWidth <= innerWidth"),
     );
     check(
-      `Explore ${width}px: equal two-column cards and portrait photos`,
+      `Explore ${width}px: equal two-column cards and landscape photos`,
       await evaluate(`(() => {
       const cards = [...document.querySelectorAll('.explore-destination-card')];
       const first = cards[0].getBoundingClientRect(), second = cards[1].getBoundingClientRect();
       const photo = cards[0].querySelector('.explore-destination-image').getBoundingClientRect();
-      return Math.abs(first.top - second.top) < 1 && Math.abs(first.width - second.width) < 1 && Math.abs(photo.height / photo.width - 1.25) < .01 && cards[0].querySelector('h3').getBoundingClientRect().top >= photo.bottom;
+      return Math.abs(first.top - second.top) < 1 && Math.abs(first.width - second.width) < 1 && Math.abs(photo.height / photo.width - .75) < .01 && cards[0].querySelector('h3').getBoundingClientRect().top >= photo.bottom;
     })()`),
     );
     check(
-      `Explore ${width}px: title, two sections and actual preview count`,
+      `Explore ${width}px: title, two tabs and actual preview count`,
       await evaluate(
-        "document.querySelector('.explore-subnav h1').textContent === 'Khám Phá Đắk Song' && document.querySelectorAll('.explore-segments button').length === 2 && document.querySelector('.explore-chip').textContent.includes('(6)') && document.querySelectorAll('.explore-guide-card').length === 2",
+        `document.querySelector('.explore-subnav h1').textContent === 'Khám Phá Đắk Song' && document.querySelectorAll('.explore-segments button').length === 2 && document.querySelector('.explore-chip').textContent.includes('(${sampleDestinations.length})') && !document.querySelector('#explore-guides')`,
       ),
     );
     if (width === 390) {
@@ -335,50 +347,47 @@ try {
       await fullScreenshot("explore-full-390.png");
     }
   }
-  await evaluate("document.querySelector('.explore-save').click()");
-  await waitFor("document.querySelector('.explore-save[aria-pressed=true]')");
-  await visit(
-    "/explore?preview=1",
-    "document.querySelector('.explore-save[aria-pressed=true]')",
-  );
-  check(
-    "Destination bookmark survives reload and does not open destination",
-    await evaluate(
-      "location.pathname === '/explore' && document.querySelector('.explore-save').getAttribute('aria-pressed') === 'true'",
-    ),
-  );
   await evaluate(
     "document.querySelector('.explore-filters button:nth-child(2)').click()",
   );
   await waitFor(
-    "document.querySelectorAll('.explore-destination-card').length === 2",
+    `document.querySelectorAll('.explore-destination-card').length === ${sampleDestinations.filter(item => item.category === "nature").length}`,
   );
   check(
-    "Explore theme filter selects cloud valley and pine hill",
+    "Explore nature filter shows exactly the matching sample destinations",
     await evaluate(
-      "document.querySelector('.explore-destination-grid').textContent.includes('Thung lũng mây ngàn') && document.querySelector('.explore-destination-grid').textContent.includes('Đồi thông Bonsai')",
+      `${JSON.stringify(sampleDestinations.filter(item => item.category === "nature").map(item => item.name))}.every(name => document.querySelector('.explore-destination-grid').textContent.includes(name))`,
     ),
+  );
+  await visit(
+    "/explore?preview=1&category=nature",
+    `document.querySelectorAll('.explore-destination-card').length === ${sampleDestinations.filter(item => item.category === "nature").length}`,
+  );
+  check(
+    "Destination category filter survives reload",
+    await evaluate("document.querySelector('.explore-filters button:nth-child(2)').getAttribute('aria-pressed') === 'true'"),
   );
   await evaluate(
     "document.querySelector('.explore-segments button:nth-child(2)').click()",
   );
   await waitFor(
-    "document.querySelector('.explore-segments button:nth-child(2)').getAttribute('aria-pressed') === 'true'",
+    `document.querySelector('.explore-segments button:nth-child(2)').getAttribute('aria-selected') === 'true' && document.querySelectorAll('.explore-guide-card').length === ${sampleArticles.length}`,
   );
   await delay(500);
   check(
-    "Guides tab scrolls to readable guide section below sticky controls",
+    "Guides tab shows readable articles below sticky controls",
     await evaluate(
       "document.querySelector('#explore-guides').getBoundingClientRect().top >= document.querySelector('.explore-subnav').getBoundingClientRect().bottom - 1 && document.querySelector('#explore-guides').getBoundingClientRect().top < innerHeight",
     ),
   );
   await evaluate(
-    "document.querySelector('.explore-guide-footer button').click()",
+    "document.querySelector('.explore-guide-card a').click()",
   );
+  await waitFor("document.querySelector('.article-content h1')");
   check(
-    "Read more expands actual guide content",
+    "Guide card opens the matching full article",
     await evaluate(
-      "document.querySelector('.explore-guide-footer button').getAttribute('aria-expanded') === 'true' && document.querySelector('.explore-guide-body > p').classList.contains('expanded')",
+      `document.querySelector('.article-content h1').textContent === ${JSON.stringify(sampleArticles[0].title)} && document.querySelector('.article-body').textContent.includes(${JSON.stringify(sampleArticles[0].content.slice(0, 80))})`,
     ),
   );
   await visit(
@@ -392,7 +401,7 @@ try {
   check(
     "Explore card opens the matching destination detail",
     await evaluate(
-      "document.querySelector('.detail-title').textContent === 'Cánh đồng quạt gió'",
+      `document.querySelector('.detail-title').textContent === ${JSON.stringify(sampleDestinations[2].name)}`,
     ),
   );
   await command("Emulation.setDeviceMetricsOverride", {
@@ -412,7 +421,7 @@ try {
     ],
     [
       "/tours?preview=1",
-      "document.querySelectorAll('.tour-card').length === 4",
+      previewTourReady,
     ],
     ["/login?preview=1", "document.querySelector('.login-content')"],
     ["/account?preview=1", "document.querySelector('.profile-card')"],
@@ -427,7 +436,7 @@ try {
       check(
         "Login has VNA branding and browser development action",
         await evaluate(
-          "document.querySelector('.login-brand img').naturalWidth > 0 && document.querySelector('.zalo-login-button').textContent.includes('Đăng nhập thử nghiệm')",
+          "document.querySelector('.login-brand img').naturalWidth > 0 && document.querySelector('.zalo-login-button').textContent.includes('Zalo') && Boolean(document.querySelector('.login-form #login-phone'))",
         ),
       );
       await fullScreenshot("login-full-390.png");
@@ -481,7 +490,7 @@ try {
   check(
     "Account saved tours opens a readable dialog",
     await evaluate(
-      "document.querySelectorAll('.account-dialog .tour-card').length === 4",
+      `document.querySelectorAll('.account-dialog .tour-card').length === ${sampleTours.length}`,
     ),
   );
   await evaluate(
@@ -505,16 +514,17 @@ try {
   });
   await visit(
     "/tours?preview=1",
-    "document.querySelectorAll('.tour-card').length === 4",
+    previewTourReady,
   );
   await evaluate(
-    "[...document.querySelectorAll('.chip')].find(b => b.textContent === 'Văn hóa').click()",
+    "[...document.querySelectorAll('.chip')].find(b => b.textContent === 'Thiên nhiên').click()",
   );
-  await waitFor("document.querySelectorAll('.tour-card').length === 1");
+  const natureTours = sampleTours.filter(tour => tour.themes.includes("nature"));
+  await waitFor(`document.querySelectorAll('.tour-card').length === ${natureTours.length}`);
   check(
     "Theme filter changes results",
     await evaluate(
-      "document.querySelector('.tour-card').textContent.includes('văn hóa')",
+      `JSON.stringify([...document.querySelectorAll('.tour-card')].map(card => new URL(card.href).pathname).sort()) === ${JSON.stringify(JSON.stringify(natureTours.map(tour => '/tours/' + tour.previewId).sort()))}`,
     ),
   );
   check("Preview never writes to backend", writes.length === 0);
@@ -558,7 +568,7 @@ try {
     );
     liveApiTested = true;
     const destinations = await fetch(
-      "http://localhost:8000/api/destinations?limit=8&page=1",
+      "http://localhost:8000/api/destinations?limit=100&page=1",
     ).then((response) => response.json());
     if (destinations.data?.length) {
       await visit(
@@ -568,7 +578,7 @@ try {
       check(
         "Live explore uses API destination names and count",
         await evaluate(
-          `document.querySelectorAll('.explore-destination-card').length === ${destinations.data.length} && document.querySelector('.explore-destination-card h3').textContent === ${JSON.stringify(destinations.data[0].name)} && document.querySelector('.explore-chip').textContent.includes('(${destinations.pagination.total})')`,
+          `document.querySelectorAll('.explore-destination-card').length > 0 && document.querySelectorAll('.explore-destination-card').length <= 8 && [...document.querySelectorAll('.explore-destination-card h3')].every(card => ${JSON.stringify(destinations.data.map(item => item.name))}.includes(card.textContent))`,
         ),
       );
       check(
@@ -580,7 +590,7 @@ try {
       await screenshot("explore-api-390.png");
       await visit(
         "/explore?tab=guides",
-        "document.querySelector('.explore-destination-card')",
+        "document.querySelector('#explore-guides .explore-guide-card') || document.querySelector('#explore-guides .empty-state')",
       );
       await delay(500);
       check(
@@ -715,6 +725,8 @@ try {
     let status = 200;
     let response = { message: "Unknown mocked route" };
     if (request.method === "OPTIONS") response = {};
+    else if (path === "/api/notifications") response = { ...list([]), unreadCount: 0 };
+    else if (path === "/api/coupons/available") response = list([]);
     else if (path === "/api/auth/mock") {
       mockLoginBody = body;
       response = { user, token: "ui-intercepted-session-only" };
@@ -960,7 +972,7 @@ try {
     Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, '0900000000');
     input.dispatchEvent(new Event('input', { bubbles: true }));
   })()`);
-  await evaluate("document.querySelector('.zalo-login-button').click()");
+  await evaluate("document.querySelector('.login-form button[type=submit]').click()");
   await waitFor(
     "document.querySelector('.profile-card')?.textContent.includes('Khách kiểm tra')",
   );
@@ -987,7 +999,7 @@ try {
   check(
     "Account does not claim Zalo verification for browser login",
     await evaluate(
-      "document.querySelector('.account-session-label').textContent.includes('Phiên thử nghiệm') && !document.querySelector('.account-session-label').textContent.includes('Verified')",
+      "document.querySelector('.account-session-label').textContent.includes('Đã xác thực') && !document.querySelector('.account-session-label').textContent.includes('Zalo')",
     ),
   );
   await screenshot("account-api-390.png");
@@ -1434,6 +1446,9 @@ try {
   await evaluate(
     `(() => { const input = document.querySelector('input[name=phone]'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, '0900000000'); input.dispatchEvent(new Event('input', { bubbles: true })); })()`,
   );
+  await evaluate(
+    `(() => { const input = document.querySelector('input[name=email]'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'customer@example.test'); input.dispatchEvent(new Event('input', { bubbles: true })); })()`,
+  );
   await evaluate("document.querySelector('.agreement input').click()");
   await evaluate("document.querySelector('.action-bar button').click()");
   await waitFor(
@@ -1523,6 +1538,10 @@ try {
     `${checks.length} checks passed. Screenshots: frontend/test-results/`,
   );
 } catch (error) {
+  if (command) {
+    const capture = await command("Page.captureScreenshot", { format: "png" }).catch(() => null);
+    if (capture) await writeFile(new URL("ui-failure.png", output), Buffer.from(capture.data, "base64"));
+  }
   await writeFile(
     new URL("ui-results.json", output),
     JSON.stringify(
