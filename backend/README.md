@@ -1,1016 +1,644 @@
-# VNA Đắk Song Booking Tour - Backend
+# Backend VNA Đắk Song Booking Tour
 
-Backend REST API cho Mini App đặt tour VNA Đắk Song. Backend cung cấp:
+Backend REST API viết bằng JavaScript ESM, Express 5 và Mongoose. Phục vụ cùng lúc giao diện khách web/Zalo Mini App và cổng quản trị. Tài liệu đối chiếu source ngày **11/10/2026**; xem [README tổng](../README.md) để hiểu hệ thống và [README frontend](../frontend/README.md) để nối API với màn hình.
 
-- Danh mục điểm đến, bài viết và tour.
-- Đăng nhập Zalo, đăng nhập mock khi phát triển và đăng nhập admin.
-- Quản lý lịch khởi hành.
-- Báo giá và đặt tour.
-- Quản lý booking, trạng thái thanh toán và lịch sử trạng thái.
-- Coupon giảm giá.
-- Đánh giá tour.
-- Thông báo cho người dùng.
-- Upload ảnh lên Cloudinary.
-- Tích hợp thanh toán ZaloPay.
-- API dashboard cho admin.
+## Mục lục
 
-Frontend Mini App nằm trong thư mục `../frontend`.
+1. [Cài đặt và cấu hình](#1-cài-đặt-và-cấu-hình)
+2. [Kiến trúc, MVC và vòng đời request](#2-kiến-trúc-mvc-và-vòng-đời-request)
+3. [Cấu trúc và trách nhiệm module](#3-cấu-trúc-và-trách-nhiệm-module)
+4. [Authentication và phân quyền](#4-authentication-và-phân-quyền)
+5. [Mô hình dữ liệu](#5-mô-hình-dữ-liệu)
+6. [Quy ước API và validation](#6-quy-ước-api-và-validation)
+7. [Danh sách endpoint](#7-danh-sách-endpoint)
+8. [Quote, snapshot và tạo booking](#8-quote-snapshot-và-tạo-booking)
+9. [Chuyển trạng thái và hội viên](#9-chuyển-trạng-thái-và-hội-viên)
+10. [ZaloPay, đối soát và hoàn tiền](#10-zalopay-đối-soát-và-hoàn-tiền)
+11. [Nội dung, địa điểm, đánh giá và thông báo](#11-nội-dung-địa-điểm-đánh-giá-và-thông-báo)
+12. [Upload và email](#12-upload-và-email)
+13. [Script dữ liệu](#13-script-dữ-liệu)
+14. [Kiểm thử](#14-kiểm-thử)
+15. [Chạy production, Vercel và tunnel local](#15-chạy-production-vercel-và-tunnel-local)
+16. [Lỗi và giới hạn triển khai](#16-lỗi-và-giới-hạn-triển-khai)
 
-## 1. Công nghệ
+## 1. Cài đặt và cấu hình
 
-- Node.js ESM, yêu cầu Node.js `20.19+` hoặc `22.12+`.
-- Express `5`.
-- MongoDB và Mongoose.
-- JWT với thuật toán HS256.
-- Bcrypt cho mật khẩu admin.
-- Zalo Graph API cho xác thực người dùng Zalo.
-- ZaloPay cho thanh toán.
-- Cloudinary và Multer cho upload ảnh.
-- Axios, Moment và CryptoJS cho tích hợp thanh toán.
+Node.js theo engines `^20.19.0 || >=22.12.0`. Package độc lập với frontend. MongoDB cần replica set hoặc Atlas cho transaction ở booking/payment.
 
-## 2. Cấu trúc thư mục & Kiến trúc ứng dụng
+Chạy trong thư mục backend:
 
-### 2.1 Cấu trúc thư mục chi tiết
+```powershell
+npm.cmd ci
+Copy-Item .env.example .env
+# Điền MONGO_URI và JWT_SECRET trong .env.
+npm.cmd run dev
+```
+
+Chỉ copy nếu chưa có env cần giữ. Dev dùng nodemon với danh sách watch trong package.json. Production Node dùng `npm.cmd start`. Mặc định cổng 8000. Không có bước compile TypeScript cho backend.
+
+### Biến môi trường thực tế
+
+| Biến | Dùng tại đâu | Ý nghĩa |
+| --- | --- | --- |
+| PORT | server.js | Cổng Node local, mặc định 8000 |
+| MONGO_URI | config/db.js và script | Chuỗi kết nối DB; giữ trong backend |
+| JWT_SECRET | auth/booking middleware/controller | Tối thiểu 32 ký tự, ký session và quote |
+| CLIENT_URL | paymentController | Base frontend để redirect về /booking/success/:id; không phải CORS allowlist |
+| ALLOW_MOCK_LOGIN | authController | Bật/tắt login thử; production tắt trừ khi đặt chính xác true |
+| NODE_ENV | authController | Tham gia điều kiện mock login |
+| VERCEL | server.js/config/db.js | Không listen local; nhánh xử lý lỗi DB theo môi trường |
+| VERCEL_REGION | auth diagnostics | Nhãn vùng trong log chẩn đoán xác minh Zalo |
+| ZALO_APP_SECRET | authController | HMAC appsecret_proof khi gọi Graph API |
+| ZALO_APP_ID | .env.example | Thông tin app để cấu hình; authController hiện không dùng biến này để đối chiếu ID token |
+| ADMIN_NAME, ADMIN_EMAIL, ADMIN_PASSWORD | createAdmin.js | Chỉ tạo tài khoản admin bằng script |
+| CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET | config/cloudinary.js | Upload ảnh |
+| EMAIL_USER, EMAIL_PASS | config/mailer.js | Gmail và App Password cho Nodemailer |
+| EMAIL_APP_URL | utils/email.js | Base URL tạo liên kết xem chi tiết đơn trong email |
+| EMAIL_SUPPORT_PHONE | utils/email.js | Số hỗ trợ trong thư |
+| EMAIL_SUPPORT_ADDRESS | utils/email.js | Được truyền thành supportEmail; là địa chỉ email hỗ trợ |
+| ZALOPAY_APP_ID, ZALOPAY_KEY1, ZALOPAY_KEY2, ZALOPAY_ENDPOINT | paymentController | Tạo, kiểm chữ ký, query và refund ZaloPay |
+
+Không in/commit URI có mật khẩu, secret hoặc token. Frontend không nhận các biến bí mật. Dùng endpoint/key cùng môi trường merchant đã được cấp; source suy URL query/refund từ ZALOPAY_ENDPOINT bằng new URL.
+
+### Khởi tạo admin
+
+Điền ba biến ADMIN_* rồi chạy:
+
+```powershell
+npm.cmd run create:admin
+```
+
+Script chuẩn hóa email, kiểm tra trùng email, yêu cầu password ít nhất 8 ký tự và tối đa 72 byte UTF-8, hash bcrypt với salt rounds 10, tạo User role admin/active. Chạy lại cùng email báo đã tồn tại, không tự thay mật khẩu/nâng quyền tài khoản hiện có.
+
+## 2. Kiến trúc, MVC và vòng đời request
+
+Backend theo cách tổ chức **routes → middleware → controllers → models**, có config/utils bổ trợ. Ở cấp hệ thống, React frontend là lớp trình bày; Express trả JSON, không có view engine/template trang HTML.
+
+| Lớp | Mục đích |
+| --- | --- |
+| Route | Chọn endpoint, thứ tự route cụ thể trước route :id, gắn middleware |
+| Middleware | Auth, role, validation, upload và lỗi chung |
+| Controller | Request/response và nghiệp vụ, gồm transaction và gọi dịch vụ |
+| Model | Schema, enum, index, reference, validation, phương thức dữ liệu |
+| Config | Kết nối DB và cấu hình SDK |
+| Utils | Quy tắc/helper dùng lại, email, nội dung, tổng hợp reviews/vị trí |
+
+MVC giúp tách định tuyến, nghiệp vụ và dữ liệu để bảo trì/kiểm thử. Nghiệp vụ hiện tập trung tại controller; source chưa có services/repositories/Presenter riêng. Utils không phải tầng bắt buộc chạy sau Model.
+
+```mermaid
+flowchart TD
+  R[Request] --> C[cors và express.json]
+  C --> Q[validateQuery dưới /api]
+  Q --> Route[Router resource]
+  Route --> Auth[Middleware auth theo endpoint]
+  Auth --> Body[validateBody hoặc upload nếu có]
+  Body --> Ctrl[Controller]
+  Ctrl --> Model[Mongoose models]
+  Model --> DB[(MongoDB)]
+  Ctrl --> Out[JSON response]
+  Ctrl -. next error .-> Error[errorHandler]
+```
+
+server.js import dotenv trước các module đọc env, tạo app, gọi connectDB, gắn 11 resource, cuối cùng notFound/errorHandler. connectDB được gọi không await trước listen. config/db.js tái sử dụng kết nối qua cờ isConnected/readyState; không đo hoặc bảo đảm thời gian cold start.
+
+Local mở cổng khi không có process.env.VERCEL. Trên Vercel, api/index.js import/export app. GET / trả `{ "service": "VNA Dak Song Booking API" }`; không kiểm tra trạng thái DB.
+
+## 3. Cấu trúc và trách nhiệm module
 
 ```text
 backend/
-├── config/                  # Cấu hình dịch vụ bên thứ 3 và cơ sở dữ liệu
-│   ├── cloudinary.js        # Cấu hình Cloudinary Storage SDK
-│   └── db.js                # Kết nối MongoDB với Mongoose
-├── controllers/             # Layer xử lý nghiệp vụ chính (Business Logic)
-│   ├── articleController.js # Quản lý bài viết cẩm nang du lịch
-│   ├── authController.js    # Xác thực Zalo Mini App, Mock Login & Admin Login
-│   ├── bookingController.js # Đặt tour, tính toán giá, giữ chỗ & quản lý đơn đặt
-│   ├── couponController.js  # Mã giảm giá, kiểm tra điều kiện áp dụng
-│   ├── departureController.js# Lịch khởi hành tour, giới hạn 50 khách/chuyến
-│   ├── destinationController.js# Quản lý điểm đến du lịch
-│   ├── notificationController.js# Thông báo hệ thống & đánh dấu đã đọc
-│   ├── paymentController.js # Khởi tạo ZaloPay & xử lý callback IPN
-│   ├── reviewController.js  # Đánh giá tour & tính lại điểm rating trung bình
-│   └── tourController.js    # Quản lý danh mục tour, giá mở bán & bộ lọc
-├── middlewares/             # Các Middleware xử lý request trung gian
-│   ├── authMiddleware.js    # Protect (JWT), optionalProtect, adminOnly (Role Check)
-│   ├── errorMiddleware.js   # Bắt lỗi 404 Route không tồn tại và Lỗi tập trung (500)
-│   └── uploadMiddleware.js  # Multer Memory Storage (Upload ảnh, giới hạn 5MB)
-├── models/                  # Mongoose Data Models & Schemas (Data Layer)
-│   ├── Article.js           # Schema bài viết / tin tức
-│   ├── Booking.js           # Schema đơn đặt tour, trạng thái & snapshot giá
-│   ├── Coupon.js            # Schema mã giảm giá & giới hạn lượt dùng
-│   ├── Departure.js         # Schema lịch khởi hành, số chỗ đã đặt (tối đa 50)
-│   ├── Destination.js       # Schema điểm đến du lịch
-│   ├── NotificationRead.js  # Schema theo dõi trạng thái đã đọc thông báo của User
-│   ├── PaymentTransaction.js# Schema nhật ký giao dịch ZaloPay
-│   ├── Review.js            # Schema đánh giá & bình luận tour
-│   ├── Tour.js              # Schema thông tin tour, lịch trình & giá mở bán
-│   └── User.js              # Schema thông tin người dùng, hạng thành viên & điểm tích lũy
-├── routes/                  # Định nghĩa Endpoints & gán Middleware (Routing Layer)
-│   ├── articleRoutes.js     # Route API cẩm nang bài viết
-│   ├── authRoutes.js        # Route API đăng nhập & lấy profile
-│   ├── bookingRoutes.js     # Route API tạo & quản lý đơn đặt tour
-│   ├── couponRoutes.js      # Route API mã giảm giá
-│   ├── departureRoutes.js   # Route API lịch khởi hành
-│   ├── destinationRoutes.js # Route API điểm đến
-│   ├── notificationRoutes.js# Route API thông báo người dùng
-│   ├── paymentRoutes.js     # Route API thanh toán ZaloPay & Callback
-│   ├── reviewRoutes.js      # Route API đánh giá tour
-│   ├── tourRoutes.js        # Route API tour du lịch
-│   └── uploadRoutes.js      # Route API upload ảnh lên Cloudinary
-├── scripts/                 # Kịch bản khởi tạo, cập nhật & migration dữ liệu MongoDB
-│   ├── importPortalContent.js# Cào / nhập dữ liệu từ cổng du lịch Đắk Song
-│   ├── repairPortalCaptions.js# Sửa chú thích ảnh cho bài viết portal
-│   ├── seed.js              # Dữ liệu mẫu khởi tạo (Local dev only, gitignored)
-│   ├── seedTestUsers.js     # Khởi tạo user test theo hạng thành viên (gitignored)
-│   ├── updateSampleArticles.js# Cập nhật bài viết mẫu vào database
-│   ├── updateSampleDestinations.js# Cập nhật điểm đến mẫu vào database
-│   ├── updateSampleTourChildren.js# Cập nhật chính sách trẻ em cho tour
-│   ├── updateTourContent.js # Cập nhật nội dung & lịch trình chi tiết cho tour
-│   └── updateTourReferencePrices.js# Cập nhật bảng giá tham khảo tour
-├── tests/                   # Kịch bản kiểm thử API tự động
-│   ├── all-api.test.mjs     # Test suite tổng hợp toàn bộ API
-│   └── notifications.test.mjs# Test suite kiểm tra chức năng thông báo
-├── utils/                   # Helper utilities & Dịch vụ phụ trợ
-│   ├── email.js             # Dịch vụ gửi email xác nhận đặt tour qua Nodemailer (Gmail SMTP)
-│   └── reviewStats.js       # Tính toán lại số lượt đánh giá & điểm trung bình của Tour
-├── createAdmin.js           # Script khởi tạo tài khoản Admin đầu tiên từ file .env
-├── server.js                # Entry point chính của Express Server
-├── package.json             # Khai báo dependencies & npm scripts
-└── .env.example             # Mẫu khai báo biến môi trường
+├── server.js
+├── api/index.js
+├── config/
+│   ├── db.js
+│   ├── cloudinary.js
+│   └── mailer.js
+├── controllers/
+│   ├── authController.js
+│   ├── destinationController.js
+│   ├── articleController.js
+│   ├── tourController.js
+│   ├── departureController.js
+│   ├── bookingController.js
+│   ├── couponController.js
+│   ├── reviewController.js
+│   ├── notificationController.js
+│   └── paymentController.js
+├── routes/                    # Cùng resource, thêm uploadRoutes.js
+├── middlewares/
+│   ├── authMiddleware.js
+│   ├── inputValidation.js
+│   ├── uploadMiddleware.js
+│   └── errorMiddleware.js
+├── models/                    # 10 model trong phần 5
+├── utils/
+│   ├── inputValidation.js
+│   ├── email.js
+│   ├── zaloAuthDiagnostics.js
+│   ├── reviewStats.js
+│   ├── tourLocations.js
+│   ├── tourContent.js
+│   └── portalContent.js
+├── scripts/
+├── tests/
+├── data/dakSongLocations.json
+├── assets/email/vna-logo.png
+├── createAdmin.js
+└── .env.example, package.json, package-lock.json, vercel.json
 ```
 
-### 2.2 Mô hình kiến trúc phân tầng (Layered Architecture)
+| Controller/module | Trách nhiệm |
+| --- | --- |
+| authController | Xác minh Zalo, bổ sung profile tùy chọn, mock/admin login, trả phiên/profile |
+| destinationController | Đọc/CRUD điểm đến, trạng thái xuất bản, dữ liệu vị trí |
+| articleController | Đọc/CRUD bài viết, quan hệ điểm đến, publishedAt |
+| tourController | Tìm/lọc/giá hiển thị, chi tiết/vị trí/review, CRUD, lưu tour |
+| departureController | Chuyến theo tour, CRUD lịch/giá, enrich số khách/chỗ trống |
+| bookingController | Quote, hash/snapshot, idempotency, tạo/hủy/chuyển trạng thái, điểm/dashboard |
+| couponController | Coupon khả dụng, CRUD admin; phép tính nằm thêm trong Coupon model |
+| reviewController | Đủ điều kiện, tạo/sửa/xóa review và response công khai |
+| notificationController | Tổng hợp bài viết/history đơn, biên nhận đã đọc |
+| paymentController | Tạo attempt, query/webhook, ghi nhận tiền, refund/query refund |
+| uploadRoutes | Upload handler trực tiếp trong route, chưa tách uploadController |
+| utils/inputValidation | Schema request, kiểm tra text/number/id/phone/email/date/url/query |
+| utils/tourLocations | Trả điểm tuyến đúng thứ tự và điểm tập trung |
+| utils/reviewStats | Aggregate trung bình, số lượng và phân bố sao |
+| utils/tourContent, portalContent | Chuẩn hóa nội dung cho script dữ liệu |
+| utils/zaloAuthDiagnostics | Làm sạch thông điệp provider để không log secret/token |
+| utils/email | Dựng HTML/text và gửi mail ghi nhận booking |
 
-Hệ thống được thiết kế theo mô hình **MVC / Layered Architecture** chuẩn RESTful API:
+## 4. Authentication và phân quyền
 
-```text
-[Client: Zalo Mini App / Admin Dashboard]
-                  │
-                  ▼
-         ┌────────────────┐
-         │   server.js    │ (Express App & Global Middlewares)
-         └───────┬────────┘
-                 │
-                 ▼
-         ┌────────────────┐
-         │ Routing Layer  │ (routes/*.js - Express Router + Auth/Upload Middlewares)
-         └───────┬────────┘
-                 │
-                 ▼
-         ┌────────────────┐
-         │Controller Layer│ (controllers/*.js - Business Logic, Validation, Email & Payment)
-         └───────┬────────┘
-                 │
-       ┌─────────┴─────────┐
-       ▼                   ▼
-┌──────────────┐   ┌──────────────┐
-│  Data Layer  │   │   Services   │
-│ (models/*.js)│   │ (utils, SDKs)│
-└──────┬───────┘   └──────┬───────┘
-       │                  │
-       ▼                  ▼
-┌──────────────┐   ┌──────────────┐
-│   MongoDB    │   │  Cloudinary /│
-│   Database   │   │ZaloPay / SMTP│
-└──────────────┘   └──────────────┘
-```
+### JWT session
 
-1. **Routing Layer (`routes/`)**: tiếp nhận yêu cầu từ client, ánh xạ đường dẫn URL và áp dụng các filter middleware thích hợp (`protect`, `adminOnly`, `upload`).
-2. **Controller Layer (`controllers/`)**: chứa toàn bộ logic xử lý nghiệp vụ chính:
-   - Tính toán tổng tiền tour (giá người lớn, trẻ em, áp dụng voucher khuyến mãi).
-   - Kiểm tra và tự động cập nhật số chỗ khả dụng của lịch khởi hành (tối đa 50 khách/chuyến).
-   - Xử lý tích điểm thưởng (`points`) và nâng hạng thành viên (`standard` ➔ `silver` ➔ `gold` ➔ `diamond`).
-   - Khởi tạo giao dịch ZaloPay & xác thực chữ ký bảo mật HMAC-SHA256 khi nhận IPN callback.
-   - Gọi dịch vụ Nodemailer gửi email xác nhận tự động cho khách hàng.
-3. **Data Layer (`models/`)**: quản lý truy xuất cơ sở dữ liệu MongoDB thông qua Mongoose ORM với các Schema được định nghĩa chặt chẽ, tối ưu index và tính nhất quán dữ liệu.
-4. **Services & Utilities (`utils/`, `config/`)**: tích hợp các dịch vụ bên ngoài như Cloudinary (lưu trữ hình ảnh), Gmail SMTP (gửi thông báo email), Zalo Graph API (xác thực token).
-
-## 3. Cài đặt
-
-```powershell
-cd backend
-npm install
-```
-
-Tạo file môi trường từ file mẫu:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Không commit `.env`. Các secret chỉ được đặt ở server hoặc secret manager.
-
-## 4. Biến môi trường
-
-### Tối thiểu để chạy API
-
-```env
-PORT=8000
-MONGO_URI=mongodb+srv://<user>:<password>@<cluster>/vna_daksong
-JWT_SECRET=<chuỗi ngẫu nhiên tối thiểu 32 ký tự>
-```
-
-`JWT_SECRET` được dùng để ký session token và quote token. Không dùng secret ngắn hoặc secret mặc định.
-
-### Đăng nhập Zalo
-
-```env
-ZALO_APP_SECRET=<Khóa bí mật của ứng dụng Zalo Developers chứa Mini App>
-```
-
-Backend gọi Zalo Graph API để xác thực `accessToken` do Mini App gửi lên. App Secret không được đưa vào frontend hoặc biến `VITE_*`.
-
-Lấy khóa tại ứng dụng cha trên Zalo Developers (trường **Khóa bí mật của ứng dụng**), không dùng Mini App ID hay deploy token. Với dự án này, ứng dụng cha có ID `623554610017872975`; Mini App demo có ID `518986987538037878`.
-
-Đăng nhập xác minh bằng `fields=id`, phù hợp với quyền mặc định của `getAccessToken`.
-Frontend xin phép lấy tên và ảnh qua `getUserInfo({ autoRequestPermission: true })`;
-nếu người dùng đồng ý, gửi `includeProfile: true` cùng token. Backend đọc thêm
-`id,name,picture` từ Zalo, chỉ lưu tên/ảnh khi ID trùng với ID vừa xác minh. Không dùng
-tên/ảnh/ID do client tự gửi để xác thực. Từ chối quyền hoặc lỗi lấy hồ sơ vẫn cho
-đăng nhập bằng ID và giữ hồ sơ đã lưu. Ảnh được trả trong session và `/auth/me`,
-hiển thị ở header và trang Tài khoản. Người đã đăng nhập trước bản cập nhật cần
-đăng xuất rồi đăng nhập lại để cấp quyền và đồng bộ ảnh.
-
-Nếu Zalo từ chối token, kiểm tra dòng `Zalo identity verification rejected` trong
-log backend đang sử dụng: `status`, `errorCode`, `providerMessage` (đã che bí mật),
-`region` (vùng chạy function). Không ghi toàn bộ phản hồi hay hồ sơ người dùng vào
-log. Đối chiếu thông báo đầy đủ trước khi kết luận lỗi khóa, token hay vùng máy
-chủ; kiểm tra khóa ứng dụng cha và khởi động lại backend sau khi đổi cấu hình.
-
-### Mock login development
-
-```env
-NODE_ENV=development
-ALLOW_MOCK_LOGIN=true
-```
-
-Mock login luôn bị từ chối khi `NODE_ENV=production` hoặc `ALLOW_MOCK_LOGIN` khác `true`. Production phải đặt:
-
-```env
-NODE_ENV=production
-ALLOW_MOCK_LOGIN=false
-```
-
-### Admin
-
-Các biến này được dùng bởi `npm run create:admin`:
-
-```env
-ADMIN_NAME=VNA Admin
-ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=<tối thiểu 8 ký tự, tối đa 72 byte>
-```
-
-### Cloudinary
-
-```env
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-```
-
-### SMTP gửi email xác nhận đặt tour
-
-Khi khách nhập email ở bước thông tin liên hệ, backend gửi email xác nhận yêu cầu đặt tour sau khi booking được tạo. Cấu hình SMTP trong `backend/.env`:
-
-```env
-EMAIL_USER=email-cua-ban@gmail.com
-EMAIL_PASS=gmail-app-password
-```
-
-Backend dùng Nodemailer với `service: "gmail"`, giống project TaskManager. `EMAIL_PASS` phải là Gmail App Password, không phải mật khẩu Gmail thông thường. Nếu chưa cấu hình email, booking vẫn được tạo nhưng backend sẽ ghi log cảnh báo và không gửi email.
-
-### ZaloPay
-
-```env
-ZALOPAY_APP_ID=
-ZALOPAY_KEY1=
-ZALOPAY_KEY2=
-ZALOPAY_ENDPOINT=https://sb-openapi.zalopay.vn/v2/create
-```
-
-Dùng credential sandbox khi development và credential production riêng khi phát hành. `CLIENT_URL` được dùng để tạo `redirecturl` cho giao dịch:
-
-```env
-CLIENT_URL=http://localhost:5173
-```
-
-## 5. Chạy server
-
-Development với Nodemon:
-
-```powershell
-npm run dev
-```
-
-Production:
-
-```powershell
-npm start
-```
-
-Server mặc định chạy tại `http://localhost:8000`.
-
-Health/root endpoint:
-
-```http
-GET /
-```
-
-Response:
+JWT HS256 dùng issuer `vna-daksong-api`, audience `session`, sub là User ObjectId, expiresIn 1 ngày. Login trả:
 
 ```json
 {
-  "service": "VNA Dak Song Booking API"
-}
-```
-
-API base URL:
-
-```text
-http://localhost:8000/api
-```
-
-## 6. Authentication và phân quyền
-
-### Session token
-
-Các endpoint private nhận:
-
-```http
-Authorization: Bearer <token>
-```
-
-JWT session có issuer `vna-daksong-api`, audience `session`, thời hạn 1 ngày. Backend luôn đọc role và trạng thái active từ database, không tin role tự chèn trong JWT.
-
-### Middleware
-
-- `protect`: bắt buộc token hợp lệ và user đang active.
-- `optionalProtect`: không có token thì tiếp tục như guest; nếu có token thì phải xác thực.
-- `adminOnly`: yêu cầu `req.user.role === "admin"`.
-
-### Quyền
-
-| Vai trò | Quyền |
-|---|---|
-| Guest | Đọc nội dung public, xem tour và lấy quote |
-| User | Đăng nhập, lưu tour, đặt tour, xem/hủy đơn của mình, thanh toán, đánh giá, xem thông báo |
-| Admin | Đăng nhập admin và quản lý dữ liệu, booking, coupon, upload, refund, dashboard |
-
-## 7. Danh sách API
-
-Tất cả endpoint bên dưới có prefix `/api`.
-
-### 7.1. Authentication
-
-| Method | Endpoint | Quyền | Mục đích |
-|---|---|---|---|
-| POST | `/auth/zalo` | Public | Đổi Zalo access token thành session |
-| POST | `/auth/mock` | Development | Tạo/đăng nhập user mock bằng tên và số điện thoại |
-| POST | `/auth/admin/login` | Public | Admin đăng nhập bằng email và mật khẩu |
-| GET | `/auth/me` | User | Lấy profile user hiện tại |
-
-`POST /auth/zalo` body:
-
-```json
-{
-  "accessToken": "zalo-access-token"
-}
-```
-
-`POST /auth/mock` body:
-
-```json
-{
-  "name": "Khách thử nghiệm",
-  "phone": "0900000000"
-}
-```
-
-`POST /auth/admin/login` body:
-
-```json
-{
-  "email": "admin@example.com",
-  "password": "password"
-}
-```
-
-Response session thành công có dạng:
-
-```json
-{
-  "user": {},
-  "token": "...",
+  "user": { "_id": "USER_ID", "name": "Khách Zalo", "role": "user" },
+  "token": "SESSION_JWT",
   "tokenType": "Bearer",
   "expiresIn": 86400
 }
 ```
 
-### 7.2. Destinations
+Các ID/token viết hoa trong ví dụ là placeholder cần thay, không phải giá trị hợp lệ để gửi API.
 
-| Method | Endpoint | Quyền | Mục đích |
-|---|---|---|---|
-| GET | `/destinations` | Public/optional | Danh sách điểm đến |
-| GET | `/destinations/:id` | Public/optional | Chi tiết điểm đến |
-| POST | `/destinations` | Admin | Tạo điểm đến |
-| PUT/PATCH | `/destinations/:id` | Admin | Cập nhật điểm đến |
-| DELETE | `/destinations/:id` | Admin | Archive/xóa điểm đến theo nghiệp vụ |
+protect yêu cầu Authorization: Bearer, xác minh algorithm/issuer/audience/sub, đọc User từ DB, kiểm tra active rồi gắn req.user. Quyền không lấy từ role tự chèn vào JWT. adminOnly kiểm role từ req.user. optionalProtect cho phép không gửi token; nếu đã gửi Authorization thì token phải hợp lệ, không bỏ qua token sai.
 
-### 7.3. Articles
+### Zalo
 
-| Method | Endpoint | Quyền | Mục đích |
-|---|---|---|---|
-| GET | `/articles` | Public/optional | Danh sách bài viết |
-| GET | `/articles/:id` | Public/optional | Chi tiết bài viết |
-| POST | `/articles` | Admin | Tạo bài viết |
-| PUT/PATCH | `/articles/:id` | Admin | Cập nhật bài viết |
-| DELETE | `/articles/:id` | Admin | Xóa/archive bài viết |
+POST /auth/zalo nhận accessToken và includeProfile tùy chọn. Backend gọi Graph fields=id với access_token và appsecret_proof HMAC SHA256. ID trả về phải là chuỗi số hợp lệ. Nếu includeProfile=true, backend thử đọc id/name/picture, kiểm ID khớp; hồ sơ lỗi/thiếu quyền không chặn login ID đã xác minh. User được upsert theo zaloId, mặc định Khách Zalo/user/active.
 
-Bài viết và điểm đến draft không hiển thị cho guest. Một số thông báo xuất bản được tạo khi nội dung được publish.
+Không có API nhận trực tiếp zaloId/role từ client để tạo phiên. Frontend phải lấy SDK token, còn backend xác minh với Zalo. ZALO_APP_ID hiện chỉ là mục cấu hình trong example; không có kiểm app ID độc lập trong authController.
 
-### 7.4. Tours
+### Mock và admin
 
-| Method | Endpoint | Quyền | Mục đích |
-|---|---|---|---|
-| GET | `/tours` | Public/optional | Danh sách tour |
-| GET | `/tours/:id` | Public/optional | Chi tiết tour |
-| GET | `/tours/saved` | User | Tour đã lưu của user |
-| POST | `/tours/:id/save` | User | Lưu/bỏ lưu tour |
-| POST | `/tours` | Admin | Tạo tour |
-| PUT/PATCH | `/tours/:id` | Admin | Cập nhật tour |
-| DELETE | `/tours/:id` | Admin | Archive/xóa tour |
-| GET | `/tours/:id/departures` | Public/optional | Lịch khởi hành của tour |
-| GET | `/tours/:id/reviews` | Public/optional | Review của tour |
-| GET | `/tours/:id/reviews/eligibility` | User | Kiểm tra user có được review không |
-| POST | `/tours/:id/reviews` | User | Tạo review |
+Mock nhận name/phone, tạo ID mock_ + phone. Bị chặn nếu ALLOW_MOCK_LOGIN=false; production chỉ cho phép khi giá trị true. Ngoài production, unset vẫn có thể cho phép; vì vậy không nên hiểu rằng endpoint luôn chỉ mở khi biến true.
 
-Query thường dùng cho `GET /tours`:
+Admin login nhận email/password, chuẩn hóa email, tìm admin active, select password, bcrypt compare. Password không được trả trong JSON. GET /auth/me trả `{ user }`.
 
-```text
-q
-status                 # admin có thể đọc draft/published/archived
-destinationId
-theme                  # nature, culture, food, history
-maxDurationHours
-dateFrom
-dateTo
-minPrice
-maxPrice
-sort                   # newest, duration, price_asc, price_desc, most_bought
-page
-limit
-```
+### Quyền sở hữu
 
-Tìm kiếm `q` là tìm chuỗi con, không phân biệt hoa thường, trên tên, summary và description.
+Booking detail/query tiền: owner hoặc admin. Tạo thanh toán: chỉ owner. Hủy qua /cancel: lọc đơn của chính người gọi; admin xử lý đơn người khác qua /status. Sửa review: chỉ tác giả, kể cả caller là admin. Xóa review: tác giả hoặc admin. Nhãn/quyền trên UI không thay các kiểm tra này.
 
-### 7.5. Departures
+## 5. Mô hình dữ liệu
 
-| Method | Endpoint | Quyền | Mục đích |
-|---|---|---|---|
-| GET | `/departures` | Admin | Danh sách lịch khởi hành |
-| GET | `/departures/:id` | Admin | Chi tiết lịch |
-| POST | `/departures` | Admin | Tạo lịch |
-| PUT/PATCH | `/departures/:id` | Admin | Cập nhật lịch |
-| DELETE | `/departures/:id` | Admin | Xóa/đóng lịch |
+Hầu hết model có timestamps và optimisticConcurrency. Trường immutable bảo vệ identity/reference quan trọng ở schema; controller vẫn cần kiểm tra payload và quan hệ.
 
-Lịch của một tour được đọc qua `GET /tours/:id/departures`.
+| Model | Field chính | Ràng buộc đáng chú ý |
+| --- | --- | --- |
+| User | name, zaloId, email/password, avatar, role, active, savedTours, membershipTier, loyaltyPoints | zaloId/email unique sparse; zaloId immutable; password select:false và bị bỏ khi toJSON |
+| Destination | name/slug/summary/description/category/address, images/sources, visitNotes, status; placeGroup/areaScope/locality/coordinates | slug unique; tọa độ latitude ±90, longitude ±180; field vị trí tùy chọn |
+| Article | title/slug/summary/content/category, destinationIds, images/sources, status/publishedAt | slug unique; content tối đa 50.000 ký tự; category culture/food/travel_tips/story |
+| Tour | name/slug/summary/description, durationHours/themes, destinationIds/itinerary, meetingPoint/meetingDestinationId, includes/excludes, chính sách, referencePrice/note, soldCount, bookingRevision | slug unique; duration 1–720; itinerary destinationId có thể null |
+| Departure | tourId, departureAt/bookingDeadline, adultPrice/childPrice, maxGuestsPerBooking/maxCapacity, status, bookingRevision | deadline trước departure; giá nguyên 0–1 tỷ; maxCapacity mặc định 50, 1–200 |
+| Booking | code/userId/tourId/departureId, adults/children/contact/note, snapshot, status/paymentStatus/paymentMethod, paidTransactionId, couponCode/couponId, history, idempotencyKey/requestHash | code unique; unique userId+idempotencyKey; reference gốc immutable |
+| Coupon | code/description, discountType/value/maxDiscount/minOrderValue, validFrom/Until, usageLimit/usedCount, isActive | code unique uppercase; percentage ≤100; fixed nguyên đồng; thời gian hợp lệ |
+| PaymentTransaction | bookingId/code, appTransId/amount/provider/status, rawCallback, paidAt/appliedAt, zpTransId, activeAttempt/expiresAt, refund IDs/state/time/note | appTransId unique; partial unique bookingId+provider khi activeAttempt=true |
+| Review | tourId, bookingId, userId, rating/comment | bookingId unique; rating nguyên 1–5; comment 1–2000; strict throw |
+| NotificationRead | userId, notificationId, readAt | Unique userId+notificationId; mốc __all__ dùng cùng collection |
 
-Departure kiểm tra trạng thái `open`, `bookingDeadline` và `departureAt` trước khi cho quote hoặc đặt tour.
+### Reference, embedded document và index
 
-### 7.6. Booking và quote
+Tour/Article/User dùng mảng reference cho điểm đến/tour đã lưu. Booking giữ ObjectId của User/Tour/Departure/Coupon nhưng nhúng snapshot/contact/history để đọc lại đơn theo dữ liệu đã chốt. Image/source/itinerary là subdocument; ảnh có url/alt/credit, nguồn có title/url/checkedAt.
 
-| Method | Endpoint | Quyền | Mục đích |
-|---|---|---|---|
-| POST | `/bookings/quote` | Public/optional | Tính báo giá |
-| POST | `/bookings` | User | Tạo booking |
-| GET | `/bookings/mine` | User | Danh sách booking của user |
-| GET | `/bookings/:id` | User/Admin | Chi tiết booking được phép xem |
-| PATCH | `/bookings/:id/cancel` | User | User hủy booking đủ điều kiện |
-| GET | `/bookings` | Admin | Danh sách toàn hệ thống |
-| PATCH | `/bookings/:id/status` | Admin | Đổi trạng thái booking |
-| GET | `/bookings/dashboard-data` | Admin | Thống kê dashboard |
+Các index text ở Tour/Destination/Article hỗ trợ q bằng $text. Index trên trạng thái/thời gian/reference hỗ trợ truy vấn. Review và PaymentTransaction có index riêng cho danh sách theo tour/booking. Reference không tự tạo foreign key; controller thực hiện kiểm tra tồn tại.
 
-`POST /bookings/quote` body:
+### Model field và HTTP field khác nhau
+
+Tour schema có referencePrice/referencePriceNote/soldCount; request validator/controller CRUD không cho client sửa các field này. Departure có maxCapacity nhưng API CRUD không nhận field đó, nên tạo qua API dùng mặc định 50. bookingRevision dùng nội bộ và select:false; không phải số ghế đang giữ.
+
+Booking contact.email tùy chọn trong schema, nhưng API tạo booking yêu cầu email hợp lệ. Không suy hợp đồng HTTP chỉ từ schema Mongoose.
+
+## 6. Quy ước API và validation
+
+Base local `http://localhost:8000/api`. Body JSON, trừ upload dùng multipart. ID thường là MongoDB ObjectId 24 ký tự hex; appTransId và ID thông báo dùng định dạng riêng.
+
+| Loại response | Dạng thường dùng |
+| --- | --- |
+| Danh sách | { data: [], pagination: { page, limit, total, pages } } |
+| Chi tiết Tour/Destination/Article/Departure | Object trực tiếp |
+| Booking | { data: booking }; detail có payments |
+| Quote | Object giá trực tiếp, quoteToken/expiresAt/message |
+| Login | { user, token, tokenType, expiresIn } |
+| Profile | { user } |
+| Reviews | { data, summary, pagination } |
+| Notifications | { data, unreadCount, pagination } |
+| Dashboard | { bookings, tours, destinations, openDepartures, totalRevenue } |
+
+Không có envelope response thống nhất cho mọi route. PUT/PATCH nội dung/chuyến đều là cập nhật các field gửi lên, không yêu cầu replace toàn bộ object. Coupon chỉ có PUT; review chỉ có PATCH.
+
+validateQuery chạy toàn cục dưới /api: chỉ nhận bộ lọc theo resource, mỗi giá trị là một chuỗi, chặn array/object/query trùng, kiểm kiểu và khoảng. page 1–10.000, limit 1–100. Controller có mặc định limit khác nhau theo API.
+
+validateBody dùng whitelist: field không hỗ trợ bị từ chối; update cần ít nhất một field. Text chặn control character; money nguyên 0–1 tỷ; URL HTTP(S) không chứa tài khoản/mật khẩu; date kiểm ngày lịch và định dạng; phone/email kiểm quy tắc riêng. Không phải mọi route đều dùng validateBody: admin/mock login tự kiểm, webhook dùng định dạng provider.
+
+## 7. Danh sách endpoint
+
+Mọi path trong các bảng sau có prefix **/api**. Public/optional nghĩa là guest được gọi; token gửi kèm vẫn phải hợp lệ.
+
+### 7.1 Authentication
+
+| Method | Path | Quyền | Kết quả |
+| --- | --- | --- | --- |
+| POST | /auth/zalo | Public | Đổi token Zalo đã xác minh lấy session |
+| POST | /auth/mock | Theo cấu hình dev | Login thử name/phone |
+| POST | /auth/admin/login | Public | Admin email/password |
+| GET | /auth/me | Có phiên | Profile hiện tại |
+
+### 7.2 Nội dung và tour
+
+| Method | Path | Quyền | Tác dụng |
+| --- | --- | --- | --- |
+| GET | /destinations | Public/optional | Danh sách điểm đến |
+| GET | /destinations/:id | Public/optional | Chi tiết điểm đến |
+| POST | /destinations | Admin | Tạo |
+| PUT, PATCH | /destinations/:id | Admin | Cập nhật |
+| DELETE | /destinations/:id | Admin | Chuyển archived |
+| GET | /articles | Public/optional | Danh sách bài viết |
+| GET | /articles/:id | Public/optional | Chi tiết bài viết |
+| POST | /articles | Admin | Tạo |
+| PUT, PATCH | /articles/:id | Admin | Cập nhật |
+| DELETE | /articles/:id | Admin | Chuyển archived |
+| GET | /tours | Public/optional | Danh sách, filter, giá từ chuyến, thống kê review |
+| GET | /tours/saved | Có phiên | Tour published đã lưu |
+| GET | /tours/:id | Public/optional | Chi tiết, routeDestinations/meetingDestination, review summary |
+| POST | /tours/:id/save | Có phiên | Toggle saved tour |
+| POST | /tours | Admin | Tạo tour |
+| PUT, PATCH | /tours/:id | Admin | Cập nhật |
+| DELETE | /tours/:id | Admin | Chuyển archived |
+| GET | /tours/:id/departures | Public/optional | Các chuyến theo tour |
+| GET | /tours/:id/reviews | Public/optional | Review và summary |
+| GET | /tours/:id/reviews/eligibility | Có phiên | Booking đủ điều kiện và review của mình |
+| POST | /tours/:id/reviews | Có phiên | Review booking completed của mình |
+
+Không có GET /reviews/:id hoặc GET /departures/tour/:id trong routes, dù tên helper/comment cũ có thể gây nhầm.
+
+| Resource | Query được hỗ trợ ngoài page/limit |
+| --- | --- |
+| destinations | q, status, category |
+| articles | q, status, category, destinationId |
+| tours | q, status, destinationId, theme, maxDurationHours, dateFrom, dateTo, minPrice, maxPrice, sort |
+| departures | tourId, status |
+| bookings | status, departureId, code |
+| coupons | isActive, sort |
+| notifications | type |
+
+Sort tour: newest, duration, price_asc, price_desc, most_bought. Sort coupon: newest/oldest. Guest/user luôn bị lọc nội dung published dù gửi status khác; admin có thể đọc các trạng thái khác. Bộ lọc riêng còn được controller diễn giải theo từng endpoint.
+
+### 7.3 Chuyến và booking
+
+| Method | Path | Quyền | Tác dụng |
+| --- | --- | --- | --- |
+| GET | /departures | Admin | Danh sách lịch |
+| GET | /departures/:id | Admin | Chi tiết lịch |
+| POST | /departures | Admin | Tạo lịch |
+| PUT, PATCH | /departures/:id | Admin | Cập nhật, không đổi tourId |
+| DELETE | /departures/:id | Admin | Chuyển closed |
+| POST | /bookings/quote | Public | Báo giá, không dùng protect/optionalProtect trên route |
+| POST | /bookings | Có phiên | Tạo đơn, cần Idempotency-Key |
+| GET | /bookings/mine | Có phiên | Đơn của mình |
+| GET | /bookings | Có phiên | Admin xem toàn bộ; user chỉ xem của mình |
+| GET | /bookings/:id | Owner/admin | Chi tiết và payments |
+| PATCH | /bookings/:id/cancel | Chủ đơn | Hủy pending/confirmed, cần reason |
+| PATCH | /bookings/:id/status | Admin | Chuyển trạng thái hợp lệ |
+| GET | /bookings/dashboard-data | Admin | Thống kê |
+
+GET /bookings không adminOnly ở route; controller tự lọc userId nếu caller không phải admin. Dashboard trả tổng theo status, số tour/điểm published, chuyến open chưa hết deadline và giá trị snapshot của confirmed/completed. totalRevenue không lọc paid, không phải báo cáo tiền thực thu.
+
+### 7.4 Coupon, review, notification và upload
+
+| Method | Path | Quyền | Tác dụng |
+| --- | --- | --- | --- |
+| GET | /coupons/available | Public/optional | Field ưu đãi công khai của coupon còn khả dụng |
+| GET | /coupons | Admin | Danh sách quản trị |
+| POST | /coupons | Admin | Tạo; code có thể sinh tự động nếu không truyền |
+| PUT | /coupons/:id | Admin | Sửa, không đổi code |
+| DELETE | /coupons/:id | Admin | Xóa bản ghi thật |
+| PATCH | /reviews/:id | Tác giả | Sửa rating/comment |
+| DELETE | /reviews/:id | Tác giả/admin | Xóa review |
+| GET | /notifications | Public/optional | Bài viết và event đơn đúng chủ |
+| PATCH | /notifications/read-all | Có phiên | Lưu mốc đọc tất cả hiện có |
+| PATCH | /notifications/:id/read | Có phiên | Đọc một thông báo được phép |
+| POST | /upload | Admin | Một ảnh, multipart field image |
+
+### 7.5 ZaloPay
+
+| Method | Path | Quyền | Tác dụng |
+| --- | --- | --- | --- |
+| POST | /payments/zalopay/create | Chủ booking | Tạo payment attempt |
+| POST | /payments/zalopay/webhook | Public, kiểm MAC | Callback provider |
+| POST | /payments/zalopay/:appTransId/query | Owner/admin | Đối soát tiền |
+| POST | /payments/zalopay/:appTransId/refund | Admin | Gửi hoàn toàn bộ tiền giao dịch |
+| POST | /payments/zalopay/:appTransId/refund/query | Admin | Xác minh kết quả hoàn |
+
+Query/refund/read/save/delete route có validateBody empty chấp nhận không body hoặc {}, không nhận field tùy ý. Callback URL cần được cấu hình với provider theo domain backend thật; source không tự đăng ký webhook phía merchant.
+
+## 8. Quote, snapshot và tạo booking
+
+### 8.1 Request quote
 
 ```json
 {
-  "departureId": "ObjectId",
+  "departureId": "DEPARTURE_OBJECT_ID",
   "adults": 2,
   "children": 1,
-  "couponCode": "WELCOME10"
+  "couponCode": "OPTIONAL_CODE"
 }
 ```
 
-Quote token có thời hạn tối đa 10 phút và khóa snapshot giá tại thời điểm báo giá.
+children mặc định 0, couponCode tùy chọn. Quy trình getBookingQuote:
 
-`POST /bookings` yêu cầu:
+1. Kiểm ObjectId, số khách nguyên, adults 1–100, children 0–100.
+2. Tìm Departure và Tour; tour published, chuyến open, còn deadline và chưa khởi hành.
+3. Aggregate adults+children của đơn pending_confirmation/confirmed/completed; tính availableSeats.
+4. Chặn hết chỗ, vượt số chỗ hoặc maxGuestsPerBooking.
+5. Có trẻ em thì phải có childPrice và childPolicy.
+6. Tính subtotal từ giá chuyến; coupon phải active, trong thời gian, còn lượt và đạt minOrderValue.
+7. Tạo snapshot, SHA256 fingerprint theo object canonicalize (sort keys), ký JWT audience quote.
+8. Trả quoteToken, expiresAt, bảng giá và thông điệp chỗ được VNA xác nhận sau.
 
-```http
-Authorization: Bearer <user-token>
-Idempotency-Key: <chuỗi tối thiểu 8 ký tự>
+Công thức:
+
+```text
+subTotal = adultPrice × adults + childPrice × children
+fixed discount = min(discountValue, subTotal)
+percentage discount = floor(subTotal × discountValue / 100)
+percentage có maxDiscount: chặn theo mức tối đa
+total = subTotal - discountAmount
 ```
 
-Body tối thiểu:
+Discount không âm/không vượt subtotal; maxDiscount trong calculateDiscount áp dụng cho percentage. Quote không tăng usedCount hoặc giữ ghế. expiresIn = min(600 giây, số giây đến deadline).
+
+Snapshot gồm tourName, departureAt, meetingPoint, childPolicy/cancellationPolicy, adultPrice/childPrice, subTotal, discountAmount/appliedCoupon, total/currency VND và durationHours.
+
+### 8.2 Request tạo đơn
+
+Headers: Authorization Bearer và Idempotency-Key dài 8–200 ký tự ASCII hiển thị.
 
 ```json
 {
-  "quoteToken": "...",
+  "quoteToken": "QUOTE_JWT",
   "contact": {
-    "name": "Nguyễn Văn A",
-    "phone": "0900000000"
+    "name": "Tên khách",
+    "phone": "SỐ_DI_ĐỘNG_VIỆT_NAM",
+    "email": "customer@example.test"
   },
-  "note": "",
-  "couponCode": "WELCOME10",
+  "note": "Ghi chú tùy chọn",
+  "couponCode": "OPTIONAL_CODE",
   "paymentMethod": "cash_on_arrival"
 }
 ```
 
-Nếu gửi lại cùng `Idempotency-Key` và cùng payload, backend trả lại booking cũ. Nếu dùng cùng key cho payload khác, backend trả `409`.
+Client không gửi userId/status/total. Contact được trim; email lowercase; note trim. requestHash gồm token, contact chuẩn hóa, note, couponCode và paymentMethod.
 
-Trạng thái booking:
+### 8.3 Idempotency và transaction
 
-```text
-pending_confirmation
-confirmed
-completed
-cancelled
-rejected
+```mermaid
+flowchart TD
+  R[Nhận request] --> Existing{Đã có userId và key?}
+  Existing -->|Có, cùng hash| Replay[200, booking cũ, replayed true]
+  Existing -->|Có, khác hash| Conflict[409]
+  Existing -->|Chưa có| Token[Xác minh quote JWT]
+  Token --> TX[MongoDB transaction]
+  TX --> Load[Đọc và ghi revision Tour/Departure đang nhận đơn]
+  Load --> Price[Tính lại giá/coupon, tăng usedCount]
+  Price --> Hash{Hash snapshot khớp quote?}
+  Hash -->|Không| Rollback[Rollback và trả lỗi]
+  Hash -->|Có| Save[Tạo booking pending và unpaid]
+  Save --> Commit[Commit]
+  Commit --> Email[Email nếu cấu hình]
+  Email --> New[201, replayed false]
 ```
 
-Trạng thái thanh toán:
+Trong transaction, Tour/Departure được ghi tăng bookingRevision/__v, kiểm maxGuestsPerBooking mới, tính coupon và snapshot mới. Coupon/Booking cùng commit hoặc rollback. Index unique user+key xử lý race gửi lặp; nếu duplicate thì đọc lại và đối chiếu hash.
 
-```text
-unpaid
-paid
-refund_pending
-refunded
-```
+Mã đơn `VNA-` + 12 ký tự hex ngẫu nhiên viết hoa. Trạng thái pending_confirmation/unpaid, history ghi actorId và thời điểm. paymentMethod enum cash_on_arrival/qr_transfer/zalopay, mặc định cash_on_arrival.
 
-Hai nhóm trạng thái độc lập. Booking lưu snapshot tour, lịch, giá, giảm giá và chính sách để dữ liệu đơn không thay đổi khi catalog thay đổi.
+**Giới hạn capacity:** transaction tạo đơn chưa aggregate lại tổng khách/chỗ. Revision có tác dụng tạo write conflict và retry, nhưng không thay cho việc kiểm capacity trong transaction. Các quote cùng lúc chưa là cơ chế giữ chỗ có bảo đảm.
 
-Khi admin chuyển booking sang `completed`, backend tính điểm thưởng (`10.000 đ = 1 điểm`), cộng `loyaltyPoints` và tự động cập nhật hạng thành viên:
+Email chạy sau commit. Replay trả trước bước xác minh quote mới/gửi email; vẫn phải qua validateBody/protect, và hash payload phải khớp. Key khác tạo attempt khác; frontend cần giữ cùng key sau kết quả chưa rõ.
 
-```text
-Dưới 1.000 điểm      -> Hạng Bạc
-Từ 1.000 - 4.999 điểm -> Hạng Vàng
-Từ 5.000 điểm trở lên -> Hạng Kim Cương
-```
+## 9. Chuyển trạng thái và hội viên
 
-Hạng thành viên hiện chưa tự tạo giảm giá. Giảm giá thực tế chỉ đến từ coupon hợp lệ.
+| Người gọi | Trạng thái hiện tại | Chuyển được |
+| --- | --- | --- |
+| Khách qua cancel | pending_confirmation | cancelled |
+| Khách qua cancel | confirmed | cancelled |
+| Admin qua status | pending_confirmation | confirmed, cancelled, rejected |
+| Admin qua status | confirmed | completed, cancelled |
+| Mọi vai trò | completed/cancelled/rejected | Không có transition tiếp |
 
-### 7.7. Coupons
+Hủy/từ chối bắt buộc reason tối đa 1000 ký tự. completed cần đã qua departureAt + durationHours của snapshot. Controller không thêm điều kiện phải paid để completed, và không chặn riêng khách hủy confirmed theo giờ khởi hành; cancellationPolicy được lưu/hiển thị nhưng chưa phân tích thành lịch phí/hạn hủy tự động.
 
-Tất cả endpoint coupon yêu cầu Admin:
+changeStatus chạy transaction cho status/history, coupon, giao dịch, soldCount và điểm:
 
-| Method | Endpoint | Mục đích |
-|---|---|---|
-| GET | `/coupons` | Danh sách coupon |
-| POST | `/coupons` | Tạo coupon |
-| PUT | `/coupons/:id` | Cập nhật coupon |
-| DELETE | `/coupons/:id` | Xóa/vô hiệu hóa coupon |
+- Hủy/từ chối trả một lượt coupon đã dùng, ưu tiên couponId; đơn cũ fallback code+createdAt để không trừ nhầm coupon mới cùng code.
+- Booking paid chuyển refund_pending; PaymentTransaction success chuyển refund_pending. Đây là ghi nhận cần hoàn, chưa gọi provider tự động.
+- confirmed tăng soldCount bằng adults+children; confirmed → cancelled giảm và chặn dưới 0.
+- completed cộng floor(snapshot.total/10000) điểm; ≥5000 Kim Cương, ≥1000 Vàng, còn lại Bạc.
+- Trạng thái/history trong transaction giúp lần gọi lặp/xung đột không cộng điểm hoặc hoàn coupon hai lần.
 
-Trường chính:
+History còn chứa event tiền như payment_received/refund_pending/refunded, ngoài enum Booking.status. Khi dựng UI/notification phải phân biệt status hiện tại và event lịch sử.
 
-```json
-{
-  "code": "WELCOME10",
-  "description": "Giảm cho khách mới",
-  "discountType": "percentage",
-  "discountValue": 10,
-  "maxDiscount": 200000,
-  "minOrderValue": 500000,
-  "validFrom": "2026-01-01T00:00:00.000Z",
-  "validUntil": "2026-12-31T23:59:59.000Z",
-  "usageLimit": 100,
-  "isActive": true
-}
-```
+## 10. ZaloPay, đối soát và hoàn tiền
 
-Hỗ trợ giảm phần trăm hoặc số tiền cố định. Backend kiểm tra thời gian hiệu lực, số lượt dùng, đơn tối thiểu và giới hạn giảm tối đa.
+### Tạo payment attempt
 
-### 7.8. Reviews
+Chỉ owner, booking pending/confirmed, paymentStatus unpaid, amount nguyên dương. Chặn attempt đang chờ/active/đã nhận tiền; thử đối soát attempt cũ đã hết hạn trước khi tạo lại. Transaction ghi Booking/version và PaymentTransaction activeAttempt=true, expiresAt 15 phút. Partial unique index chặn hai attempt active cho cùng booking/provider.
 
-| Method | Endpoint | Quyền | Mục đích |
-|---|---|---|---|
-| POST | `/tours/:tourId/reviews` | User | Tạo review |
-| PATCH | `/reviews/:id` | Chủ review | Sửa review |
-| DELETE | `/reviews/:id` | Chủ review | Xóa review |
-| GET | `/tours/:tourId/reviews` | Public/optional | Danh sách và thống kê |
-| GET | `/tours/:tourId/reviews/eligibility` | User | Kiểm tra điều kiện |
+appTransId có tiền tố YYMMDD theo UTC+7 và chuỗi ngẫu nhiên. Payload lấy amount từ snapshot, ký HMAC key1; URL redirect từ CLIENT_URL. Provider được gọi ngoài transaction MongoDB vì transaction có thể retry. Thành công trả order_url/zp_trans_token/appTransId.
 
-User chỉ được review tour đã có booking `completed`, mỗi user chỉ có một review cho mỗi tour. Review có rating và nội dung; thống kê trung bình/phân bố sao được tính từ dữ liệu review.
+sendZaloPayRequest timeout 10 giây. Tạo/query dùng tham số HTTP theo helper hiện tại; refund/query_refund dùng body form URL encoded UTF-8. HTTP lỗi/response không hợp lệ trả kết quả chưa xác định, giữ thông tin attempt để query.
 
-### 7.9. Notifications
+### Callback và query
 
-| Method | Endpoint | Quyền | Mục đích |
-|---|---|---|---|
-| GET | `/notifications` | Public/optional | Lấy thông báo theo user nếu đã đăng nhập |
-| PATCH | `/notifications/:id/read` | User | Đánh dấu một thông báo đã đọc |
-| PATCH | `/notifications/read-all` | User | Đánh dấu tất cả đã đọc |
+Webhook kiểm data/mac, timingSafeEqual HMAC key2, app_id, app_trans_id, amount. recordZaloPayPayment dùng transaction để cập nhật cả booking/payment:
 
-Thông báo được giới hạn theo user hiện tại. Read state không được chia sẻ giữa các tài khoản.
+- Amount phải bằng transaction.amount.
+- appliedAt/refunded chặn áp dụng lại callback.
+- Giao dịch bình thường ghi success, Booking paid và paidTransactionId, history payment_received.
+- Đơn đã hủy/từ chối hoặc tiền trùng chuyển giao dịch cần refund; không ghi thêm tour confirmed/soldCount/loyalty.
+- Query thành công sử dụng cùng recordZaloPayPayment, rồi frontend đọc DB.
 
-### 7.10. Payments - ZaloPay
+Webhook trả return_code theo hợp đồng provider, thường HTTP 200 kể cả chữ ký sai hoặc cần retry; caller phải đọc return_code. Query không coi lỗi MAC/config/network là chứng cứ chưa thu tiền. Attempt hết hạn chỉ giải phóng khi provider xác nhận không còn xử lý với kết quả mà controller nhận diện.
 
-| Method | Endpoint | Quyền | Mục đích |
-|---|---|---|---|
-| POST | `/payments/zalopay/create` | User | Tạo giao dịch |
-| POST | `/payments/zalopay/webhook` | ZaloPay | Nhận callback |
-| POST | `/payments/zalopay/:appTransId/query` | User | Đối soát giao dịch |
-| POST | `/payments/zalopay/:appTransId/refund` | Admin | Tạo yêu cầu hoàn tiền |
-| POST | `/payments/zalopay/:appTransId/refund/query` | Admin | Kiểm tra hoàn tiền |
+### Refund
 
-Backend ký request/kiểm tra callback bằng key ZaloPay. Kết quả timeout hoặc provider không rõ ràng không được tự coi là thanh toán thành công. Chỉ khi backend ghi nhận `paymentStatus=paid` thì frontend mới hiển thị đã thanh toán.
+Admin yêu cầu hoàn **toàn bộ amount giao dịch**, không có input số tiền hoàn một phần. Giao dịch phải refund_pending, có zpTransId và chưa có refund đang pending/success. Nếu thiếu zpTransId, query thanh toán trước.
 
-Webhook phải là URL HTTPS public và không yêu cầu JWT:
+Ghi refundRequestId/refundState pending trước khi gọi provider, ký key1, POST form tới refund. Trả 202 chưa nghĩa hoàn xong. Query refund dùng cùng mã yêu cầu; provider return_code=1 mới ghi transaction refunded/refundState success/refundedAt và history.
 
-```text
-POST https://<backend-domain>/api/payments/zalopay/webhook
-```
+Booking đã đóng chỉ chuyển paymentStatus refunded khi không còn transaction success/refund_pending khác. Hoàn payment trùng không tự xóa trạng thái paid của giao dịch chính. REFUND_QUERY_UNVERIFIED/timeout giữ mã cần đối soát; không tự xem là failed hoặc gửi refund mới.
 
-### 7.11. Upload
+## 11. Nội dung, địa điểm, đánh giá và thông báo
 
-| Method | Endpoint | Quyền | Content-Type |
-|---|---|---|---|
-| POST | `/upload` | Admin | `multipart/form-data` |
+### Nội dung và giá tour
 
-Tên field file là `image`. Chỉ nhận file ảnh, lưu trong memory và upload lên Cloudinary folder `vna-daksong`. Kích thước tối đa 5 MB. Response trả `url` và `public_id`.
+Destination/Article xuất bản cần sources; Tour published cần itinerary, quan hệ điểm hợp lệ và meetingDestination nếu chọn phải nằm trong destinationIds/đủ trạng thái. Không áp dụng yêu cầu sources giống nhau cho mọi resource nếu controller chưa kiểm.
 
-## 8. Models và trạng thái dữ liệu
+GET tours aggregate các Departure open chưa hết hạn/chưa đi: priceFrom là giá người lớn nhỏ nhất, displayPrice nội bộ fallback referencePrice để sort. Lọc giá/ngày yêu cầu có chuyến khớp; tour không có chuyến vẫn có thể xuất hiện khi không lọc theo giá/ngày. priceFrom không phải snapshot giá booking.
 
-### User
+DELETE Tour/Destination/Article chuyển archived, giữ reference đơn; DELETE Departure đóng chuyến. Coupon DELETE xóa thật, Review DELETE xóa thật. Khi sửa giờ chuyến đã có pending/confirmed, controller trả 409 để xử lý với khách/tạo chuyến mới.
 
-- `name`, `zaloId`, `email`, `avatar`.
-- `role`: `user` hoặc `admin`.
-- `active`.
-- `savedTours`.
-- `membershipTier`: `Bạc`, `Vàng`, `Kim Cương`.
-- `loyaltyPoints`.
-- Mật khẩu admin được lưu hash và không trả trong JSON.
+### Địa điểm và bản đồ
 
-### Tour
+Destination placeGroup: nature/culture/rest/pickup; areaScope: daksong/nearby/unspecified. Tọa độ optional; bản ghi cũ không tự được migrate. Tour destinationIds giữ thứ tự admin chọn; getTourLocations trả routeDestinations theo thứ tự đó, lọc published cho khách và không archived cho admin. meetingDestination chỉ khi thuộc tuyến.
 
-- `name`, `slug`, `summary`, `description`.
-- `durationHours`, `themes`, `destinationIds`.
-- `itinerary`, `images`, `meetingPoint`.
-- `includes`, `excludes`, `childPolicy`, `cancellationPolicy`.
-- `status`: `draft`, `published`, `archived`.
-- `soldCount`.
-- Có text index trên name, summary, description.
-
-### Departure
-
-- `tourId`.
-- `departureAt`, `bookingDeadline`.
-- `adultPrice`, `childPrice`.
-- `maxGuestsPerBooking`.
-- `maxCapacity`: Sức chứa tối đa của chuyến (mặc định 50 khách).
-- `status`: `open` hoặc `closed`. Tự động chuyển `closed` hoặc báo `409 Conflict` khi đã hết chỗ.
-
-### Destination
-
-Điểm đến có nội dung mô tả, slug, category, ảnh, địa chỉ, nguồn và trạng thái xuất bản.
-
-### Article
-
-Bài viết có title, slug, summary, content, category, ảnh, nguồn và trạng thái draft/published/archived.
-
-### Booking
-
-Booking liên kết user, tour, departure và snapshot giá. Có:
-
-- `code`.
-- `adults`, `children`, `contact`, `note`.
-- `status`, `paymentStatus`, `paymentMethod`.
-- `couponCode`, `couponId`.
-- `history`.
-- Tự động gửi email xác nhận đặt tour qua Gmail SMTP (Nodemailer) tới email liên hệ của khách hàng.
-- `idempotencyKey` và `requestHash` được ẩn khỏi response public.
-
-### Coupon
-
-Hỗ trợ `percentage` và `fixed`, giới hạn thời gian, số lượt dùng, đơn tối thiểu và mức giảm tối đa.
-
-### PaymentTransaction
-
-Lưu giao dịch ZaloPay, `appTransId`, số tiền, trạng thái provider, mã giao dịch ZaloPay, callback và thông tin refund.
+Backend không tính đường lái xe, GPS khách hoặc quãng đường. Frontend dùng tọa độ để marker/link Google Maps.
 
 ### Review
 
-Lưu tour, user, rating, nội dung và timestamp. Có ràng buộc không review trùng theo user/tour.
+Eligibility chỉ lấy booking completed của user theo tour và loại booking đã có review. Create kiểm published tour, đúng tour/owner/completed; unique bookingId chống trùng. Sửa chỉ rating/comment, không đổi bookingId. Response công khai chỉ author.name/avatar, rating/comment, verifiedBooking và timestamps, không public userId/contact.
 
-### NotificationRead
+Summary aggregate từ Review; averageRating null khi chưa có review. Không lưu rating trung bình cố định trong Tour schema.
 
-Lưu trạng thái đọc theo user và notification event.
+### Notification
 
-## 9. Luồng nghiệp vụ chính
+Pipeline Article published union Booking.history của owner; type article/trip/payment. ID article:<ObjectId> hoặc booking:<ObjectId>:<historyIndex>. API có type all/article/trip/payment, page/limit; unreadCount tính toàn bộ thông báo chưa đọc, không chỉ type đang lọc.
 
-### Đặt tour
+Đọc từng ID kiểm bài published hoặc event thuộc đơn của user, canonicalize ID rồi upsert NotificationRead. read-all lưu mốc __all__; event mới sau mốc vẫn chưa đọc. Cache-Control private,no-store. Không có Notification collection riêng lưu nội dung, không có push/ZNS/OA sending.
 
-```text
-Chọn departure
-  -> POST /bookings/quote
-  -> nhận quoteToken và snapshot giá
-  -> user đăng nhập
-  -> POST /bookings với Bearer + Idempotency-Key
-  -> backend kiểm tra quote, tồn tại departure, trạng thái và sức chứa
-  -> tạo booking trong MongoDB transaction
-  -> trả booking pending_confirmation
-```
+## 12. Upload và email
 
-### Xác nhận và hoàn thành
+Upload POST /upload cần admin, một file field image, không nhận field văn bản, tối đa 5 MiB. Cho JPEG/PNG/WebP/GIF/AVIF, kiểm cả MIME và signature bytes. Multer memoryStorage đưa buffer vào Cloudinary folder vna-daksong, trả message/url/public_id. Không tự resize hay bảo đảm độ phân giải HD. Không có endpoint xóa ảnh Cloudinary.
 
-```text
-pending_confirmation
-  -> admin xác nhận: confirmed
-  -> sau chuyến đi admin hoàn thành: completed
-  -> cộng loyalty points và cập nhật hạng
-```
+config/mailer.js tạo Gmail transport nếu có EMAIL_USER/PASS; thiếu thì mailer=null. utils/email.js dựng subject/text/html, escape text, lấy snapshot là dữ liệu chính, cố đọc ảnh tour làm cover, đính kèm logo CID. EMAIL_APP_URL dùng link chi tiết; support phone/email chỉ hiển thị khi phù hợp.
 
-Từ chối/hủy booking đã thanh toán có thể tạo trạng thái cần hoàn tiền tùy nghiệp vụ thanh toán.
-
-### Thanh toán
-
-```text
-booking unpaid
-  -> create ZaloPay order
-  -> user thanh toán
-  -> ZaloPay webhook hoặc query
-  -> backend kiểm tra chữ ký, số tiền và transaction
-  -> cập nhật paid/refund_pending/refunded
-```
-
-## 10. Tạo admin và dữ liệu test
-
-### Tạo admin
-
-Điền `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME` trong `.env`, sau đó:
+sendBookingConfirmation được await sau transaction tạo đơn; mail lỗi log và booking vẫn 201. Chưa có queue/outbox/retry độc lập. Preview email không gửi thư:
 
 ```powershell
-npm run create:admin
+npm.cmd run preview:email
 ```
 
-Script không ghi đè admin đã tồn tại.
+Tạo file preview HTML/text trong backend/test-results. Test email kiểm template/escape/links; không xác nhận Gmail đã gửi thư thực tế.
 
-### Seed dữ liệu mẫu
+## 13. Script dữ liệu
 
-`backend/scripts/seed.js` xóa các departure, tour, article và destination hiện có rồi tạo dữ liệu mẫu. Chỉ chạy trên database development:
+Chạy tại backend. Mặc định các script biên tập dưới đây xem kế hoạch; `--apply` mới ghi DB. Nhiều lệnh xem kế hoạch vẫn cần kết nối MONGO_URI. Đọc kết quả/backup và dùng đúng DB trước khi apply.
+
+| Lệnh | Source | Hành vi |
+| --- | --- | --- |
+| npm.cmd run import:portal | scripts/importPortalContent.js | Fetch/parse nội dung, ghi snapshot vào root tmp/portal-import; chưa ghi DB nếu không apply |
+| npm.cmd run update:sample-articles | updateSampleArticles.js | Cập nhật bài mẫu khớp slug/title, cần bản ghi có sẵn |
+| npm.cmd run update:sample-destinations | updateSampleDestinations.js | Cập nhật điểm mẫu khớp slug/name |
+| npm.cmd run update:tour-content | updateTourContent.js | Đọc 6 tour sample JSON, kiểm kế hoạch create/update/skip |
+| npm.cmd run update:tour-prices | updateTourReferencePrices.js | Cập nhật giá tham khảo tour, không giá Departure |
+| npm.cmd run update:tour-children | updateSampleTourChildren.js | Chính sách/giá trẻ em cho hai tour mẫu đủ điều kiện |
+| npm.cmd run add:locations | addDakSongLocations.js | Thêm địa điểm từ data/dakSongLocations.json, không chỉnh bản ghi cũ |
+| node scripts/repairPortalCaptions.js | repairPortalCaptions.js | Sửa text caption của nội dung vna-portal-, có backup khi apply |
+
+Ví dụ xem rồi áp dụng nội dung tour:
 
 ```powershell
-node scripts/seed.js --reset-demo-data
+npm.cmd run update:tour-content
+npm.cmd run update:tour-content -- --apply
 ```
 
-Không chạy script này trên production.
-
-### Tạo ba user test theo hạng
-
-`backend/scripts/seedTestUsers.js` tạo/cập nhật:
-
-| Hạng | Zalo ID mặc định | Điểm |
-|---|---|---:|
-| Bạc | `mock_test_bac` | 0 |
-| Vàng | `mock_test_vang` | 1.000 |
-| Kim Cương | `mock_test_kimcuong` | 5.000 |
-
-Chạy:
+Import kiểm toàn bộ snapshot trước khi ghi, chỉ thêm bản ghi chưa trùng theo logic portalContent; nội dung tour trong nguồn được tách riêng để biên tập, không tự biến thành sản phẩm tour mở bán. Có thể dùng snapshot đã chuẩn bị:
 
 ```powershell
-node scripts/seedTestUsers.js
+npm.cmd run import:portal
+npm.cmd run import:portal -- --apply --from-snapshot ../tmp/portal-import/content-snapshot.json
 ```
 
-Để login mock theo số điện thoại của frontend, đặt Zalo ID tương ứng dạng `mock_<phone>` trước khi chạy script.
+update:tour-content dùng transaction, backup và kiểm updatedAt/__v khi sửa; tour create đã tồn tại được skip để giữ chỉnh sửa sau đó. Các script có điều kiện khác nhau, không nên xem toàn bộ là migration framework hoặc seed một DB trống.
 
-## 11. Error response
+seed.js/seedTestUsers.js bị gitignore và không có script npm seed được chia sẻ. Không đặt lệnh reset dữ liệu mẫu vào quy trình cài mới mặc định. Nội dung sample được chia sẻ tại frontend/src/data; dữ liệu database thực tế phụ thuộc môi trường.
 
-Lỗi thường có dạng:
+## 14. Kiểm thử
 
-```json
-{
-  "message": "Mô tả lỗi",
-  "code": "ERROR_CODE"
-}
-```
+| Lệnh tại backend | Yêu cầu/phạm vi |
+| --- | --- |
+| npm.cmd run test:auth | Node test; stub Zalo/model, không xác thực Zalo thật |
+| npm.cmd run test:validation | Helper validation, không cần DB ngoài |
+| npm.cmd run test:email | Template email, không gửi SMTP thật |
+| npm.cmd run test:portal | Parse/clean/classify/duplicate nội dung |
+| npm.cmd run test:tour-content | Nội dung tour và liên kết sample |
+| node --test tests/zalopay-refund-transport.test.mjs | HTTP local và form refund |
+| npm.cmd run test:api | Đọc backend/.env, HTTP/routes/controller thật, MongoDB DB tạm, provider mô phỏng |
+| npm.cmd run test:notifications | MongoDB DB tạm riêng |
+| npm.cmd run test:locations | MongoDB DB tạm riêng cho địa điểm/tour |
+| npm.cmd run test:locations:ui | Thêm frontend UI với dev server/Chrome |
 
-Các nhóm lỗi chính:
+DB test có tên prefix riêng như vna_api_test_, vna_notif_test_, vna_loc_test_; harness kiểm DB name trước khi drop chính database tạm. Cần quyền tạo/dọn DB test và mạng tới MongoDB. Không chạy script apply dữ liệu để chuẩn bị test API tổng hợp.
 
-- `401`: thiếu hoặc token không hợp lệ.
-- `403`: không đủ quyền hoặc tài khoản bị khóa.
-- `404`: resource/API không tồn tại.
-- `409`: xung đột trạng thái, duplicate hoặc idempotency key khác payload.
-- `400`: input/validation không hợp lệ.
-- `413`: payload/file quá lớn.
-- `503`: thiếu cấu hình hoặc MongoDB không hỗ trợ transaction.
-- `500`: lỗi xử lý server.
+Báo cáo test:api ở test-results/all-api-results.json và KET_QUA_TEST_TOAN_BO_API.md; notification có notifications-results.json; kết quả UI ở frontend/test-results. Đây là file output gitignore, không phải artifact luôn có sau clone.
 
-## 12. Test
+Chỉ báo số ca/pass sau lần chạy thực tế. Test provider mô phỏng không kiểm chứng merchant, scope SDK, Gmail, Cloudinary hoặc payment trên thiết bị thật.
 
-Backend test dùng MongoDB và tự khởi động server test:
+## 15. Chạy production, Vercel và tunnel local
 
-```powershell
-npm run test:api
-npm run test:notifications
-```
+Node host: root backend, cài bằng npm ci, start npm start, cấu hình env tại host và MongoDB network access phù hợp. server.js dùng cors() mặc định, chưa dùng CLIENT_URL làm allowlist. Root response chỉ xác nhận route dịch vụ.
 
-Test API bao phủ auth, phân quyền, catalog, booking, quote, coupon, review, thanh toán ZaloPay, idempotency, refund và các lỗi đầu vào. Test notification bao phủ quyền xem, phân trang, read/read-all và thông báo phát hành nội dung.
+Vercel: vercel.json dùng @vercel/node cho api/index.js và route mọi path vào đó. Có VERCEL thì không listen. Kết nối DB, env, API HTTPS và provider callback phải chuẩn bị ở môi trường chạy, không tự có sau clone.
 
-Không chạy test trên database production. Nên dùng database test riêng trong `.env` hoặc môi trường CI.
+### Thử Zalo với backend trên máy local
 
-## 13. Deploy
-
-Backend có thể chạy trên Render, Railway, Fly.io, VPS hoặc container Node.js.
-
-Quy trình cơ bản:
-
-```powershell
-cd backend
-npm ci
-npm start
-```
-
-Production cần:
-
-1. MongoDB Atlas hoặc MongoDB replica set vì booking dùng transaction.
-2. HTTPS public cho API.
-3. Secret production riêng.
-4. `NODE_ENV=production`.
-5. `ALLOW_MOCK_LOGIN=false`.
-6. Zalo App Secret thuộc ứng dụng cha chứa Mini App đang chạy.
-7. Cloudinary production nếu dùng upload.
-8. ZaloPay production credentials nếu bật thanh toán.
-9. Webhook ZaloPay trỏ về backend public.
-10. Không chạy seed dữ liệu mẫu trên production.
-
-Sau deploy, kiểm tra:
-
-```text
-GET https://<backend-domain>/
-GET https://<backend-domain>/api/tours
-```
-
-### Thử đăng nhập Zalo bằng backend trên máy tính tại Việt Nam
-
-Nếu log Zalo ghi `Personal information is limited due to IP address not inside Vietnam`,
-backend cần gọi Zalo từ IP ở Việt Nam. Có thể dùng máy tính đang ở Việt Nam và
-[Cloudflare Quick Tunnel](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/)
-để thử tạm mà không cần tạo tài khoản tunnel.
-
-Từ thư mục gốc dự án, chạy:
+Chạy từ root dự án sau khi có backend/.env và dependencies:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-zalo-local.ps1
-cd frontend
+```
+
+Script có tác động: tải cloudflared nếu thiếu; khởi động backend ở cổng 8000 với NODE_ENV=production/ALLOW_MOCK_LOGIN=false; kiểm truy vấn API/DB; mở tunnel HTTPS; lưu process/session/log trong tmp/zalo-local; đổi riêng dòng VITE_API_BASE_URL trong frontend/.env.local. Nếu cổng đã dùng, script dừng với lỗi, không tự giết process khác.
+
+Sau khi URL sẵn sàng, ở frontend:
+
+```powershell
 npm.cmd run build:zalo
 ```
 
-Script dùng `backend/.env`, chạy API cổng 8000 với mock login bị tắt, tải cloudflared
-Windows từ bản phát hành chính thức nếu chưa có, và mở HTTPS tạm. URL được ghi vào
-`frontend/.env.local` (Git bỏ qua), còn cấu hình API Vercel trong `.env` được giữ.
-Sau khi build thành công, vào extension Zalo Mini App → Deploy → Development,
-triển khai bản mới rồi dùng Zalo trên điện thoại quét QR của bản đó.
-
-Giữ máy tính và mạng hoạt động suốt lúc thử. Log nằm ở `tmp/zalo-local/`; lỗi đăng nhập
-trong lần thử này xem ở `backend.err.log`, thay vì Vercel. URL tunnel thay đổi khi mở
-phiên mới; khi đó cần build và deploy lại Mini App. Đây là môi trường thử tạm.
-
-Sau khi sửa khóa trong `backend/.env`, khởi động lại riêng backend để giữ nguyên
-HTTPS và QR đã deploy:
+Dùng công cụ Zalo của tài khoản có quyền để triển khai bản thử và mở trên điện thoại. Máy phải online. Chỉ sửa backend/.env thì có thể restart backend trong phiên tunnel:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-zalo-local.ps1 -RestartBackend
 ```
 
-Để dừng, chạy từ thư mục gốc:
+Dừng từ root:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/stop-zalo-local.ps1
 ```
 
-Script dừng các tiến trình đã tạo và phục hồi API trước đó trong `.env.local`, nếu
-bạn chưa tự đổi URL này. Muốn Mini App quay về Vercel cũng cần build và deploy lại.
+Stop kiểm PID và thời gian bắt đầu trước khi dừng; khôi phục URL cũ chỉ khi dòng hiện tại vẫn đúng URL tunnel của phiên. Tunnel là công cụ thử, không xác nhận môi trường hosting/publication. Khi đổi API, nhớ env.local có thể ghi đè env và frontend cần build lại.
 
-## 14. Checklist bàn giao
+## 16. Lỗi và giới hạn triển khai
 
-- [ ] Đã tạo `.env` từ `.env.example`.
-- [ ] `MONGO_URI` trỏ đúng database cần dùng.
-- [ ] `JWT_SECRET` dài và ngẫu nhiên.
-- [ ] Đã tạo admin bằng `npm run create:admin`.
-- [ ] Đã seed dữ liệu development nếu cần.
-- [ ] Đã test Zalo login với App Secret đúng.
-- [ ] Đã test quote và booking bằng user test.
-- [ ] Đã test idempotency khi gửi lại request.
-- [ ] Đã test admin đổi trạng thái booking.
-- [ ] Đã test coupon hợp lệ/hết hạn/hết lượt.
-- [ ] Đã test review sau booking completed.
-- [ ] Đã test webhook/query ZaloPay nếu bật payment.
-- [ ] Đã test upload ảnh lên Cloudinary.
-- [ ] Đã tắt mock login khi production.
-- [ ] Đã cấu hình HTTPS và webhook public.
+| HTTP/code thường gặp | Ý nghĩa |
+| --- | --- |
+| 400 VALIDATION_ERROR | Input sai/field lạ/ID hoặc kiểu sai |
+| 401 AUTH_REQUIRED/INVALID_TOKEN/INVALID_USER | Chưa có phiên, sai/hết hạn hoặc user không active |
+| 403 ADMIN_REQUIRED | Không đủ quyền admin |
+| 404 NOT_FOUND hoặc thông điệp controller | Route/dữ liệu không tồn tại hoặc không được phép thấy |
+| 409 DUPLICATE_RECORD/RECORD_CHANGED | Unique hoặc xung đột version |
+| 409 quote/status/idempotency | Giá thay đổi, transition không hợp lệ hoặc key bị dùng khác |
+| 413 LIMIT_FILE_SIZE | File vượt 5 MiB |
+| 502 PAYMENT_RESULT_UNKNOWN | Provider/mạng chưa xác định kết quả |
+| 502 REFUND_QUERY_UNVERIFIED | Chưa xác minh được hoàn tiền, giữ mã để đối soát |
+| 503 AUTH_NOT_CONFIGURED | JWT secret thiếu/không đạt yêu cầu |
+| 503 TRANSACTIONS_REQUIRED | MongoDB không hỗ trợ transaction khi lỗi đi qua middleware chung |
 
-## 15. Lưu ý an toàn
+errorHandler phân loại lỗi JSON/Multer/Mongoose/duplicate/version/transaction. Nhiều controller vẫn catch và trả response riêng; không bảo đảm mọi lỗi cùng envelope hoặc cùng mã HTTP. Ví dụ lỗi transaction ở createBooking có thể vào catch trả 500; không nên hứa luôn 503 chỉ từ middleware.
 
-- Không commit `.env`, MongoDB URI, JWT secret, Cloudinary secret hoặc ZaloPay key.
-- Không gửi secret trong frontend.
-- Không dùng database production cho seed/test.
-- Không bật `ALLOW_MOCK_LOGIN` ở production.
-- Không coi timeout của ZaloPay là thanh toán thất bại hoặc thành công nếu chưa đối soát.
-- Không dùng tổng tiền do frontend tự tính để ghi nhận booking; backend dùng quote snapshot.
-- Giữ `Idempotency-Key` khi retry request tạo booking sau lỗi mạng.
-
-## Mẫu email ghi nhận đặt tour
-
-Email gửi sau khi tạo booking dùng mẫu HTML màu xanh VNA, kèm bản văn bản thuần
-và logo nhúng trong thư. Trạng thái chuyến/thanh toán và giá lấy từ booking đã lưu;
-ảnh bìa lấy từ tour hiện tại nếu có. Không dùng email ghi nhận để báo đã xác nhận
-chuyến hoặc đã thu tiền khi backend chưa ghi nhận các trạng thái đó.
-
-`EMAIL_APP_URL` là URL gốc của giao diện khách đã triển khai, dùng để tạo nút mở
-`/my-bookings/:id`. Không cấu hình URL thì thư hướng dẫn mở mục Đơn hàng trong
-Mini App. `EMAIL_SUPPORT_PHONE` và `EMAIL_SUPPORT_ADDRESS` là thông tin hỗ trợ
-tùy chọn. Các biến này được mô tả trong `.env.example`; không đưa bí mật vào HTML.
-
-Chạy `npm run preview:email` để tạo `test-results/booking-email-preview.html`
-với dữ liệu minh họa và ảnh nhúng; không gửi email. Chạy `npm run test:email`
-để kiểm tra nội dung, escape dữ liệu, giờ Việt Nam và MIME bằng transport offline.
-
-## Cập nhật bàn giao 09/10/2026
-
-- Cài dependency từ lockfile bằng npm.cmd ci. Lệnh chạy: npm.cmd run dev hoặc npm.cmd start. Trên PowerShell dùng npm.cmd nếu npm.ps1 bị chặn.
-- Email yêu cầu đặt tour dùng Nodemailer, config/mailer.js, utils/email.js và assets/email/vna-logo.png. Cần EMAIL_USER và EMAIL_PASS (Gmail App Password); EMAIL_APP_URL cấu hình link mở đơn. EMAIL_SUPPORT_PHONE và EMAIL_SUPPORT_ADDRESS là liên hệ hỗ trợ hiển thị trong email. Thiếu cấu hình SMTP thì bỏ qua email; email nhận yêu cầu chưa phải xác nhận chuyến.
-- npm.cmd run test:email kiểm tra nội dung, snapshot giá, timezone Việt Nam, escape HTML, trạng thái chuyến/thanh toán và MIME có logo; không gửi email thật. Đợt này đã qua 6/6 test. npm.cmd run preview:email tạo bản xem mẫu local trong thư mục kết quả kiểm thử.
-- GET /api/coupons/available trả ưu đãi khả dụng; giá và điều kiện được kiểm tra lại tại API quote/booking. Admin tạo ưu đãi để backend sinh mã.
-- Các script scripts/seed.js và scripts/seedTestUsers.js được giữ local, không có trong clone GitHub. Không cần chạy seed để khởi động với database đã có dữ liệu. Tạo admin bằng createAdmin.js là công cụ được commit.
-- Test API và thông báo dùng database tạm riêng trên MongoDB; cần tài khoản có quyền tạo/xóa database kiểm thử. Kết quả test-results/ là file sinh tự động, không commit.
-- CLIENT_URL hiện được dùng cho URL chuyển về frontend sau thanh toán. server.js hiện gọi cors() cho phép origin mặc định; CLIENT_URL không thiết lập CORS allowlist.
-- Secret chỉ nằm trong .env hoặc môi trường hosting. Giữ .env.example và package-lock.json trong Git. Với production dùng npm ci --omit=dev, npm start, NODE_ENV=production và ALLOW_MOCK_LOGIN=false.
-
-Đợt cập nhật này chỉ push source lên GitHub, chưa triển khai hosting, chưa thử SMTP/ZaloPay thật hoặc xác minh Zalo trên thiết bị.
-
-## Nhập bài từ Cổng Văn hóa Du lịch Đắk Song
-
-Từ thư mục gốc dự án:
-
-```powershell
-npm.cmd run import:portal --prefix backend
-npm.cmd run import:portal --prefix backend -- --apply --from-snapshot ../tmp/portal-import/content-snapshot.json
-```
-
-Lệnh đầu chỉ đọc API công khai của `dulichdaksong.vnasw.vn` và kiểm tra schema.
-Lệnh sau thêm bản ghi mới vào database trong `backend/.env`; giữ nguyên bản ghi
-trùng nguồn, trùng tên và nội dung đã chỉnh sửa. Không chạy seed hay xóa dữ liệu.
-Nhập danh lam, di tích lịch sử và địa điểm giải trí vào Điểm đến; lễ hội,
-trải nghiệm, làng nghề, ẩm thực và đặc sản vào Cẩm nang. Nội dung HTML được chuyển thành văn bản có đoạn,
-ảnh và link nguồn; giữ ngày xuất bản của bài nguồn nếu có.
-
-Hai bài trong chuyên mục Tour du lịch được xuất **riêng** tại
-`tmp/portal-import/tours-separate.json`, không nhập vào Article/Tour/Departure.
-File này giữ ID nguồn, tiêu đề, tóm tắt, nội dung HTML, ảnh và URL để xử lý riêng.
-`tmp/` bị Git bỏ qua; gửi file xuất riêng nếu người nhận cần dùng.
-
-Theo yêu cầu mới, hai tuyến đã được biên tập thành Tour bằng công cụ riêng bên dưới.
-Importer bài viết vẫn chỉ xuất riêng tour, tránh tự nhập lại hoặc đổi lịch/giá.
-
-API nguồn sử dụng `X-Department-Code: DAKNONG-2-29`; importer chỉ gọi các đường
-đọc danh mục, tìm bài và đọc chi tiết. `test:portal` kiểm tra phân trang, chống trùng,
-xử lý HTML và việc tách tour với phản hồi giả lập, không ghi database.
-Muốn nhập nội dung mới, chạy lại bước đọc nguồn rồi bước `--apply`.
-
-Bốn bài văn hóa mẫu cũ dùng bản biên soạn đầy đủ trong
-`frontend/src/data/sampleArticles.json`, cũng là dữ liệu bài viết của bản xem mẫu.
-Từ checkout đầy đủ, chạy `npm.cmd run update:sample-articles --prefix backend`
-để xem thay đổi; thêm `-- --apply` để cập nhật nội dung, tóm tắt và nguồn của đúng
-bốn bài theo slug và tên. Lệnh giữ ID, ảnh, trạng thái và đường dẫn; sao lưu nội dung
-cũ vào `tmp/sample-articles/` trước khi cập nhật và dừng nếu bản ghi vừa đổi.
-Không chạy seed để cập nhật nội dung vì seed xóa các collection cũ.
-
-`frontend/src/data/sampleDestinations.json` giữ bản nội dung sáu điểm đến dùng cho
-preview. `npm.cmd run update:sample-destinations --prefix backend` kiểm tra nội dung
-mới của ba điểm đến mẫu ban đầu (Thác Lưu Ly, Thiền viện Trúc Lâm Đạo Nguyên và
-Đồi Điện Gió); thêm `-- --apply` để cập nhật tóm tắt, mô tả và nguồn. Lệnh sao lưu
-bản cũ vào `tmp/sample-destinations/`, giữ nguyên ID, tên, ảnh và địa chỉ.
-
-Importer ghép lại chú thích nguồn bị HTML tách chữ, ví dụ `Ản / h: / Interne / t`
-thành `Ảnh: Internet`. Với dữ liệu đã nhập, từ thư mục `backend` chạy
-`node scripts/repairPortalCaptions.js` để kiểm tra và thêm `--apply` để sửa.
-Công cụ chỉ sửa văn bản trong bản ghi có slug `vna-portal-`, sao lưu bản cũ trong
-`tmp/portal-caption-repair/` và giữ nguyên ảnh, ID và các trường khác.
-
-## Biên tập 6 tour từ các tuyến tham khảo
-
-`frontend/src/data/sampleTours.json` chứa nội dung đã chọn lọc cho 4 tour hiện có
-và 2 tour mới: Gia Nghĩa – Tà Đùng – cồng chiêng – Lưu Ly, và Tà Đùng – Nâm Nung
-– Đạo Nguyên – Lưu Ly. Bản xem mẫu và công cụ cập nhật cùng dùng dữ liệu này.
-
-```powershell
-npm.cmd run update:tour-content --prefix backend
-npm.cmd run update:tour-content --prefix backend -- --apply
-npm.cmd run test:tour-content --prefix backend
-```
-
-Lệnh kiểm tra tất cả tour và điểm dừng trước khi ghi. Khi áp dụng, công cụ sao lưu
-tour cũ vào `tmp/tour-content/` rồi cập nhật trong một transaction MongoDB; cần
-Atlas hoặc replica set. Giữ nguyên ID/slug của 4 tour cũ, lịch khởi hành, giá chuyến,
-ảnh, điểm đón, dịch vụ, chính sách và các booking đã lưu. Chỉ sửa tên hiển thị,
-tóm tắt, mô tả, chủ đề, điểm đến liên quan, lịch trình và nguồn tham khảo.
-
-Hai tour mới xuất bản để xem nhưng chưa tạo Departure; chưa có giá bán hoặc nút đặt
-cho đến khi admin cấu hình chuyến. Không lấy bảo hiểm, điều kiện ghép đoàn hay
-yêu cầu cũ năm 2023 của đơn vị khác làm chính sách VNA. Bài Tà Đùng thiếu phần
-ngày đầu, nên không tự tạo giờ đón hoặc dịch vụ cụ thể. Chạy lại sẽ bỏ qua hai
-slug đã thêm để giữ chỉnh sửa admin; bốn tour cũ chỉ cập nhật nếu đúng tên cũ hoặc
-tên đã biên tập và dữ liệu chưa bị sửa đồng thời.
-
-Giá trong bài nguồn được hiển thị riêng là **giá tham khảo năm 2023**:
-2.120.000đ/khách cho tuyến Gia Nghĩa – Tà Đùng – cồng chiêng và 1.490.000đ/khách
-cho tuyến Tà Đùng – Nâm Nung. Trường `referencePrice` và `referencePriceNote`
-không tham gia báo giá booking. Khi có Departure đang mở, giao diện ưu tiên giá
-thực của chuyến; không tạo chuyến hay bật đặt tour chỉ vì có giá tham khảo.
-Chạy `npm.cmd run update:tour-prices --prefix backend` để kiểm tra, thêm
-`-- --apply` để cập nhật đúng hai trường này, có sao lưu và transaction.
-
-## Bật vé trẻ em cho hai tour mẫu
-
-Chạy `npm run update:tour-children` để kiểm tra, sau đó thêm `-- --apply` để áp dụng. Script sao lưu trước khi cập nhật chính sách và giá trẻ em của các lịch sắp tới đang mở; không sửa đơn hàng đã tạo. Giá tour Gia Nghĩa dựa trên tỷ lệ 70% cho trẻ 6–11 tuổi trong bài nguồn năm 2023. Tour Tà Đùng – Nâm Nung dùng tỷ lệ 70% cho lịch mẫu, ghi rõ trong chính sách vì bài nguồn không có giá trẻ em. Giá tùy chỉnh trong quản trị được giữ lại và script yêu cầu kiểm tra nếu không khớp bộ mẫu.
-
-## Địa điểm Đắk Song và bản đồ tour
-
-`npm run add:locations` kiểm tra danh mục mới trong `data/dakSongLocations.json`.
-Thêm `-- --apply` để tạo bốn địa điểm có tọa độ theo Cổng thông tin du lịch Đắk Nông.
-Script chỉ thêm slug chưa tồn tại, đối chiếu dữ liệu cũ trước/sau và không sửa
-tên, tọa độ, phân nhóm hay nội dung của bất kỳ địa điểm đã có nào. Chạy lại không tạo trùng.
-
-Trong form tour, chọn **Trong Đắk Song**, chọn nhóm và đánh dấu các địa điểm.
-Sắp xếp thứ tự bằng kéo thả hoặc nút lên/xuống, chọn điểm tập trung rồi lưu tour.
-Trang chi tiết tour của khách dùng các địa điểm đã xuất bản và tọa độ đã lưu để
-hiển thị ghim bản đồ, thứ tự điểm dừng và liên kết cung đường Google Maps.
-Địa điểm cũ chưa có tọa độ vẫn chọn được nhưng không được gán vị trí giả.
-
-Chỉ kiểm tra tính năng này: `npm run test:locations` trong backend hoặc frontend;
-`npm run test:locations:ui` trong backend kiểm tra giao diện admin đến bản đồ user
-trên Chrome, với frontend localhost:5173 đang chạy và database test riêng.
-
-## Kiểm tra dữ liệu đầu vào
-
-Các API nội dung, chuyến khởi hành, ưu đãi, báo giá, đặt/hủy/duyệt tour, đánh giá và tạo thanh toán kiểm tra dữ liệu trước controller. Trường lạ, kiểu sai, mục lồng nhau sai, văn bản chỉ có khoảng trắng và giá tiền không phải số nguyên đều trả HTTP 400 với `code: VALIDATION_ERROR` và `fields`. Giá vé/số tiền ưu đãi tối đa 1 tỷ đồng; phần trăm giảm tối đa 100%; mỗi mảng nội dung tối đa 100 mục. Số điện thoại liên hệ dùng định dạng di động Việt Nam bắt đầu bằng `0` hoặc `+84`. Hạn nhận đặt phải trước khởi hành và giới hạn khách mỗi yêu cầu không vượt sức chứa chuyến. Backend vẫn kiểm tra quyền, chỗ còn trống và giá tại lúc gửi đơn.
-
-Bộ lọc phân trang nhận một giá trị nguyên: trang 1–10.000 và giới hạn 1–100; không tự ép các giá trị sai như `1abc`, tham số lặp hoặc trang 0. URL ảnh/nguồn cần HTTP(S) hợp lệ, không có tài khoản/mật khẩu. Upload giới hạn 5 MB và kiểm tra MIME cùng chữ ký JPG/PNG/WebP/GIF/AVIF. Callback ZaloPay giữ giao thức phản hồi của nhà cung cấp và xác thực MAC/dữ liệu thanh toán.
-
-Luồng đăng nhập admin và mock giữ nguyên theo yêu cầu, không đổi tài khoản/mật khẩu mẫu. Chạy `npm run test:validation` cho kiểm tra độc lập và `npm run test:api` cho kiểm thử toàn bộ API trên database test riêng, các dịch vụ ngoài được giả lập.
+Các giới hạn cần giữ khi viết tính năng tiếp: createBooking chưa kiểm tổng capacity trong transaction; CRUD chưa sửa maxCapacity/referencePrice; chưa có ghi nhận tiền mặt/qr thủ công; email chưa queue; dashboard chưa phân biệt doanh số và tiền thu; cancellationPolicy chưa chuyển thành lịch hoàn một phần; server chưa await DB trước listen; chưa có rate limit, WebSocket, API quản trị User hoặc dịch vụ ZNS. Đây là phạm vi mã nguồn hiện tại, không phải tính năng đã có.
