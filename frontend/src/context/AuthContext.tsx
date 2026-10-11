@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -15,6 +16,7 @@ interface AuthContextType {
   loading: boolean;
   login: (token: string, userData: User) => void;
   logout: () => void;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -22,6 +24,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: false,
   login: () => {},
   logout: () => {},
+  refreshProfile: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -30,6 +33,12 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const { isPreview } = usePreview();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const refreshProfile = useCallback(async () => {
+    const token = readSession();
+    if (!token || isPreview) return;
+    const response = await api.get<{ user: User }>("/auth/me");
+    if (readSession() === token) setUser(response.data.user);
+  }, [isPreview]);
 
   useEffect(() => {
     const token = readSession();
@@ -65,7 +74,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

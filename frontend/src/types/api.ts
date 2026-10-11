@@ -50,6 +50,7 @@ export interface Tour {
 }
 export interface Destination extends PlaceLocation {
   _id: string;
+  slug?: string;
   name: string;
   summary: string;
   description?: string;

@@ -18,8 +18,14 @@ import { usePreview } from "./context/PreviewContext";
 import Header from "./components/layout/Header";
 import AppLink from "./components/common/AppLink";
 import { EmptyState } from "./components/common/States";
+import PageRefreshProvider from "./context/PageRefreshContext";
+import PullToRefresh from "./components/layout/PullToRefresh";
 
 export default function MainApp() {
+  return <PageRefreshProvider><MainContent /></PageRefreshProvider>;
+}
+
+function MainContent() {
   const location = useLocation();
   const { isPreview } = usePreview();
   const content = useRef<HTMLDivElement>(null);
@@ -41,6 +47,7 @@ export default function MainApp() {
           <a href="/">Dùng API thật ↗</a>
         </div>
       )}
+      <PullToRefresh content={content} enabled={showTabs || /^\/(tours|destinations|articles)\//.test(location.pathname)} pageKey={location.pathname + location.search} />
       <div className="page-content" ref={content}>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -74,7 +81,7 @@ export default function MainApp() {
           />
         </Routes>
       </div>
-      {showTabs && <BottomNavigation />}
+      {showTabs && <BottomNavigation onReselect={() => content.current?.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" })} />}
     </div>
   );
 }

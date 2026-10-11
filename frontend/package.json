@@ -11,6 +11,8 @@
     "preview": "vite preview --outDir dist",
     "test:ui": "node scripts/check-ui.mjs",
     "test:notifications": "node scripts/check-notifications-ui.mjs",
+    "test:scroll": "node tests/scroll-ui.mjs",
+    "test:explore": "node --test tests/explore-catalog.test.mjs",
     "test:admin": "node tests/admin-ui.mjs",
     "test:locations": "node --test tests/tour-locations.test.mjs"
   },

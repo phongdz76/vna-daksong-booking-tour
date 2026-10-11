@@ -160,6 +160,7 @@
     background: var(--background);
   }
   .app-container {
+    position: relative;
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -176,6 +177,47 @@
   }
   .page-content::-webkit-scrollbar {
     display: none;
+  }
+  .pull-refresh-indicator {
+    position: absolute;
+    top: calc(var(--vna-native-toolbar-space, 0px) + 66px);
+    left: 50%;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    max-width: calc(100% - 32px);
+    padding: 9px 16px;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    background: #fff;
+    color: var(--primary);
+    box-shadow: 0 5px 18px #04432f18;
+    font-size: 12px;
+    line-height: 1.5;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -10px);
+    transition: opacity 150ms ease, transform 150ms ease;
+  }
+  .pull-refresh-indicator.visible {
+    opacity: 1;
+    transform: translate(-50%, calc(var(--pull-distance, 0px) * 0.2));
+  }
+  .pull-refresh-arrow { font-size: 20px; transition: transform 150ms ease; }
+  .pull-refresh-spinner {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    border: 2px solid var(--primary-soft);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: pull-refresh-spin 700ms linear infinite;
+  }
+  @keyframes pull-refresh-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .pull-refresh-indicator, .pull-refresh-arrow { transition: none; }
+    .pull-refresh-spinner { animation-duration: 1400ms; }
   }
   .page {
     min-height: 100%;

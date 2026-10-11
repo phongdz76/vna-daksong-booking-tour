@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePreview } from "../context/PreviewContext";
 import { api, errorMessage } from "../utils/api";
+import { usePageRefreshHandler } from "../context/PageRefreshContext";
 
 // Read-only requests share the same loading/error/retry behavior. Mutations stay in page handlers.
-export default function useApi<T>(path: string | null, previewData?: T) {
+export default function useApi<T>(path: string | null, previewData?: T, reader?: (path: string, signal: AbortSignal) => Promise<T>, refreshEnabled = true) {
   const { isPreview } = usePreview();
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
@@ -13,6 +14,11 @@ export default function useApi<T>(path: string | null, previewData?: T) {
   const refresher = useRef<() => Promise<T | null>>(async () => null);
   const refresh = useCallback(() => refresher.current(), []);
   const retry = useCallback(() => setRevision((value) => value + 1), []);
+  const refreshPage = useCallback(async () => {
+    if (isPreview) return;
+    if (await refresh() === null) throw new Error("Không tải được nội dung.");
+  }, [isPreview, refresh]);
+  usePageRefreshHandler(refreshPage, refreshEnabled && (Boolean(path) || isPreview));
   useEffect(() => {
     const controller = new AbortController();
     setData(null);
@@ -33,13 +39,14 @@ export default function useApi<T>(path: string | null, previewData?: T) {
     let pending: Promise<T | null> | null = null;
     function read(initial = false): Promise<T | null> {
       if (pending) return pending;
-      pending = api
-        .get<T>(path!, { signal: controller.signal })
+      const request = reader ? reader(path!, controller.signal) : api.get<T>(path!, { signal: controller.signal }).then((response) => response.data);
+      pending = request
         .then((response) => {
           if (controller.signal.aborted) return null;
-          setData(response.data);
+          setData(response);
+          setError("");
           setRefreshError("");
-          return response.data;
+          return response;
         })
         .catch((error) => {
           if (!controller.signal.aborted) {
@@ -57,7 +64,7 @@ export default function useApi<T>(path: string | null, previewData?: T) {
     refresher.current = () => read();
     void read(true);
     return () => controller.abort();
-  }, [path, isPreview, revision, previewData]);
+  }, [path, isPreview, revision, previewData, reader]);
   return {
     data,
     loading,

@@ -1,6 +1,7 @@
 import sampleArticles from "./sampleArticles.json";
 import type { ArticleContent } from "../context/NotificationContext";
 import { previewImages } from "./preview";
+import type { ArticleSummary } from "../types/api";
 
 const galleryPool = [
   { url: previewImages.culture, alt: "Bản sắc văn hóa dân tộc truyền thống Đắk Song" },
@@ -10,8 +11,9 @@ const galleryPool = [
   { url: previewImages.camping, alt: "Điểm cắm trại đêm ngắm sao trên đồi thông" },
 ];
 
-export const previewArticles: ArticleContent[] = sampleArticles.map((article, index) => ({
+export const previewArticles: (ArticleContent & Pick<ArticleSummary, "category">)[] = sampleArticles.map((article, index) => ({
   ...article,
+  category: article.category as ArticleSummary["category"],
   _id: index === 0 ? "preview-notification-article" : `preview-article-${article.slug}`,
   images: [
     galleryPool[index % galleryPool.length],

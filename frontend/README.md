@@ -21,7 +21,9 @@ API mặc định là `http://localhost:8000`. Nếu cần đổi, đặt `VITE_
 ## Phần đã dựng
 
 - Trang chủ theo thứ tự Stitch: hero, điểm đến nổi bật và tour đề xuất.
-- Khám phá đã dựng lại theo `kh_m_ph_vna_k_song`: tiêu đề giữa, thanh Điểm đến/Cẩm nang, bộ lọc cuộn ngang, lưới hai cột với ảnh 4:5, tên và thông tin dưới ảnh, bài cẩm nang có nút mở rộng. Nút tim lưu địa điểm trên thiết bị (trình duyệt dùng sessionStorage, trong Zalo dùng adapter nativeStorage), riêng với tour đã lưu của tài khoản. Preview dùng sáu địa điểm, ảnh và khoảng cách từ Stitch, có nhãn minh họa; API dùng tên/ảnh/địa chỉ thật, không tự thêm khoảng cách hoặc nhãn Hot. Cẩm nang API lấy `visitNotes` của các địa điểm đang hiển thị; chưa có API bài viết riêng. Thời tiết chỉ minh họa trong preview. Chi tiết điểm đến và tour liên quan giữ luồng hiện có.
+- Bộ ảnh trong chi tiết điểm đến và cẩm nang xếp dọc để cuộn xuống xem. Năm ảnh Nâm Nung từ `cdn.sgtiepthi.vn` có lỗi chứng chỉ được chuyển khi hiển thị sang các bản ảnh tương ứng tại [bài đăng lại của WeTrek](https://wetrek.vn/bai-viet-thanh-vien/khu-bao-ton-thien-nhien-nam-nung-diem-cam-trai-ly-tuong-cho-dan-ua-mao-hiem.htm); ghi nguồn NB / Sài Gòn Tiếp Thị được giữ. Chỉ đổi năm đường dẫn đã xác minh, không thay ảnh của điểm đến khác. Ảnh tải lỗi báo “Không tải được ảnh”.
+- Khi đang ở đầu trang, kéo xuống rồi thả để cập nhật dữ liệu trên các tab chính và màn chi tiết tour/điểm đến/bài viết. Có trạng thái đang tải, cập nhật xong hoặc lỗi; lỗi giữ nội dung đang xem. Bộ lọc, phiên đăng nhập và lựa chọn đặt tour được giữ. Chạm lại tab đang mở để cuộn mượt lên đầu, không xóa bộ lọc. Màn đăng nhập và các bước gửi booking không bật thao tác kéo cập nhật.
+- Khám phá có hai tab nội dung riêng, giữ bộ lọc, trang và vị trí cuộn khi chuyển tab. Điểm đến dùng lưới hai cột, ảnh 4:3, tên tối đa hai dòng và địa chỉ một dòng. Cẩm nang lấy API bài viết đã xuất bản: bài đầu nổi bật, các bài tiếp theo có ảnh nhỏ bên trái. Bộ lọc chỉ hiển thị nhóm có nội dung; kéo làm mới chỉ cập nhật catalog của tab đang mở. Catalog đọc đầy đủ các trang API trước khi phân trang giao diện; bốn cặp điểm đến trùng đã xác minh được gom khi hiển thị, ưu tiên bản ghi có tọa độ và giữ ID chi tiết thật. Không thêm khoảng cách hoặc thông tin thời tiết giả.
 - Danh sách tour: tìm kiếm, chủ đề, sắp xếp, thời lượng, phân trang API.
 - Chi tiết tour: gallery, nội dung trên nền trắng, thông tin chuyến, lịch trình dọc, bản đồ minh họa ở chế độ mẫu và chính sách. Chuyến mở quyết định khả năng đặt; giá lấy từ Departure/API.
 - Chọn chuyến khởi hành & Số chỗ khả dụng: Hiển thị trực quan cờ *"Còn X/50 chỗ"* (tối đa 50 người/chuyến), tự động khóa chọn khi hết chỗ hoặc chuyến bị đóng. Chọn số lượng người lớn, trẻ em và mã giảm giá (coupon) hợp lệ ➔ nhận báo giá tự động trước khi gửi đơn đặt tour.
@@ -46,6 +48,8 @@ Giá thật lấy từ API quote; không gửi tổng tiền do frontend tự t�
 ```powershell
 npm.cmd run build
 npm.cmd run test:ui
+npm.cmd run test:scroll
+npm.cmd run test:explore
 ```
 
 `test:ui` cần dev server đang chạy và Chrome được cài tại đường dẫn mặc định trên Windows; có thể đặt `CHROME_PATH` hoặc `UI_BASE_URL` để thay đổi. Script dùng Chrome headless, không cài thêm thư viện kiểm thử.

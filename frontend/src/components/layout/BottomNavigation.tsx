@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import AppLink from "../common/AppLink";
 import Icon from "../common/Icon";
 
-export default function BottomNavigation() {
+export default function BottomNavigation({ onReselect }: { onReselect: () => void }) {
   const location = useLocation();
   const tabs = [
     { path: "/", label: "Trang chủ", icon: "home" },
@@ -19,6 +19,12 @@ export default function BottomNavigation() {
           to={tab.path}
           className={`nav-item ${location.pathname === tab.path ? "active" : ""}`}
           aria-current={location.pathname === tab.path ? "page" : undefined}
+          onClick={(event) => {
+            if (location.pathname === tab.path && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey && event.button === 0) {
+              event.preventDefault();
+              onReselect();
+            }
+          }}
         >
           <Icon name={tab.icon} />
           <span>{tab.label}</span>

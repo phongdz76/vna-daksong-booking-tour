@@ -1,4 +1,4 @@
-import type { Destination } from "../types/api";
+import type { ArticleSummary, Destination } from "../types/api";
 import { previewDestinations } from "./preview";
 import { previewArticles } from "./previewArticles";
 
@@ -21,6 +21,7 @@ export interface ExploreGuide {
   title: string;
   image?: string;
   category: string;
+  categoryKey: ArticleSummary["category"];
   description: string;
   readingMinutes?: number;
   href: string;
@@ -30,7 +31,8 @@ export const previewExploreGuides: ExploreGuide[] = previewArticles.map(article 
   id: article._id,
   title: article.title,
   image: article.images[0]?.url,
-  category: "Văn hóa",
+  category: { culture: "Văn hóa", food: "Ẩm thực", travel_tips: "Kinh nghiệm", story: "Câu chuyện" }[article.category],
+  categoryKey: article.category,
   readingMinutes: Math.max(1, Math.ceil(article.content.split(/\s+/).length / 200)),
   description: article.summary,
   href: "/articles/" + article._id,

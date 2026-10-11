@@ -12,6 +12,7 @@ import {
 import AccountMenuItem from "../../../components/account/AccountMenuItem";
 import TourCard from "../../../components/tour/TourCard";
 import { useAuth } from "../../../context/AuthContext";
+import { usePageRefreshHandler } from "../../../context/PageRefreshContext";
 import { useBookingDraft } from "../../../context/BookingDraftContext";
 import { usePreview } from "../../../context/PreviewContext";
 import useApi from "../../../hooks/useApi";
@@ -72,9 +73,10 @@ function getTierProgressInfo(points: number = 0, currentTier: string = "Bạc") 
 }
 
 export default function AccountPage() {
-  const { user, loading, logout } = useAuth();
+  const { user, loading, logout, refreshProfile } = useAuth();
   const { setDraft, setAttempt } = useBookingDraft();
   const { isPreview } = usePreview();
+  usePageRefreshHandler(refreshProfile, !isPreview && Boolean(user));
   const navigate = useAppNavigate();
   const [panel, setPanel] = useState<string | null>(null);
   const [previewNotifications, setPreviewNotifications] = useState(true);

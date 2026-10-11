@@ -35,13 +35,14 @@ export default function DestinationCard({
             )}
           </div>
           <div className="explore-destination-body">
+            <span className="explore-destination-category">{themeLabels[destination.category]}</span>
             <h3 title={destination.name}>{destination.name}</h3>
             <p>
               <Icon name="direction" size={14} />
               <span title={destination.address}>
                 {distanceKm !== undefined
                   ? `Cách trung tâm ${distanceKm}km`
-                  : destination.address || themeLabels[destination.category]}
+                  : destination.locality || destination.address || themeLabels[destination.category]}
               </span>
             </p>
           </div>

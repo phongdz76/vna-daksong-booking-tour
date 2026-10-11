@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Icon from "./Icon";
+import { resolveImageUrl } from "../../utils/imageUrl";
 
 export default function Photo({
   src,
@@ -15,20 +16,21 @@ export default function Photo({
   hideOnError?: boolean;
 }) {
   const [failedUrl, setFailedUrl] = useState("");
-  if (hideOnError && (!src || failedUrl === src)) return null;
+  const imageSrc = resolveImageUrl(src);
+  if (hideOnError && (!imageSrc || failedUrl === imageSrc)) return null;
   return (
     <div className={`photo ${className}`}>
-      {src && failedUrl !== src ? (
+      {imageSrc && failedUrl !== imageSrc ? (
         <img
-          src={src}
+          src={imageSrc}
           alt={alt}
           loading={eager ? "eager" : "lazy"}
-          onError={() => setFailedUrl(src)}
+          onError={() => setFailedUrl(imageSrc)}
         />
       ) : (
         <span className="photo-placeholder">
           <Icon name="mountain" size={32} />
-          <span>Ảnh đang cập nhật</span>
+          <span>{imageSrc ? "Không tải được ảnh" : "Ảnh đang cập nhật"}</span>
         </span>
       )}
     </div>
