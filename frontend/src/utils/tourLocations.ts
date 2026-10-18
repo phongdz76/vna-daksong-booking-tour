@@ -1,4 +1,4 @@
-import type { PlaceLocation } from "../types/location";
+import type { Coordinates, PlaceLocation } from "../types/location";
 
 export const placeGroupLabels = {
   nature: "Thiên nhiên", culture: "Văn hóa", rest: "Ẩm thực & nghỉ chân", pickup: "Điểm đón khách",
@@ -20,6 +20,20 @@ export function placeMapUrl(place: PlaceLocation) {
     ? `${place.coordinates!.latitude},${place.coordinates!.longitude}`
     : [place.name, place.address].filter(Boolean).join(", ");
   return "https://www.google.com/maps/search/?" + new URLSearchParams({ api: "1", query });
+}
+
+export function parseCoordinatePair(value: string): Coordinates | null {
+  const parts = value.trim().split(/[,;\s]+/);
+  if (parts.length !== 2 || parts.some(part => !/^[+-]?\d+(?:\.\d+)?$/.test(part))) return null;
+  const coordinates = { latitude: Number(parts[0]), longitude: Number(parts[1]) };
+  return hasCoordinates({ coordinates } as PlaceLocation) ? coordinates : null;
+}
+
+// No fixed origin: Google Maps lets the visitor use their location or choose a start.
+export function placeDirectionsUrl(place: PlaceLocation): string | null {
+  if (!hasCoordinates(place)) return null;
+  return "https://www.google.com/maps/dir/?" + new URLSearchParams({ api: "1",
+    destination: `${place.coordinates!.latitude},${place.coordinates!.longitude}`, travelmode: "driving" });
 }
 
 export function getRoutePoints(places: PlaceLocation[], meeting?: PlaceLocation | null) {

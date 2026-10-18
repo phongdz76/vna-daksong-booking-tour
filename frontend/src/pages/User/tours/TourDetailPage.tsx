@@ -71,17 +71,6 @@ export default function TourDetailPage() {
     ? Math.min(...openDepartures.map((d) => d.adultPrice))
     : tour?.referencePrice ?? null;
   const isSaved = saved ?? Boolean(user?.savedTours?.includes(id || ""));
-  const mapLocation = [tour?.meetingPoint, "Đắk Song, Việt Nam"]
-    .filter(Boolean)
-    .join(", ");
-  const directionsUrl =
-    "https://www.google.com/maps/dir/?" +
-    new URLSearchParams({
-      api: "1",
-      origin: "Gia Nghĩa, Việt Nam",
-      destination: mapLocation,
-      travelmode: "driving",
-    }).toString();
 
   function handleBack() {
     if (window.history.state?.idx > 0) navigate(-1);
@@ -292,44 +281,24 @@ export default function TourDetailPage() {
                 </ol>
               </section>
 
-              {!isPreview && (tour.routeDestinations?.length || 0) > 0 ? <TourLocationMap tour={tour} /> : <section className="section detail-section tour-location">
+              {!isPreview ? <TourLocationMap tour={tour} /> : <section className="section detail-section tour-location">
                 <div className="tour-location-heading">
                   <h2>
                     <Icon name="map" size={20} />
                     Vị trí & Cung đường
                   </h2>
                   <span>
-                    {isPreview ? "Huyện Đắk Song, Đắk Nông" : tour.meetingPoint || "Đắk Song"}
+                    Bản đồ minh họa
                   </span>
                 </div>
                 <div className="tour-location-map">
-                  {isPreview ? (
                     <img
                       src={previewImages.mapPreview}
                       alt="Bản đồ khu vực Đắk Song minh họa theo thiết kế"
                       loading="lazy"
                     />
-                  ) : (
-                    <iframe
-                      key={mapLocation}
-                      title={`Bản đồ điểm tập trung: ${tour.meetingPoint || "Đắk Song"}`}
-                      src={`https://maps.google.com/maps?${new URLSearchParams({ q: mapLocation, z: "12", t: "p", hl: "vi", output: "embed" })}`}
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      allowFullScreen
-                    />
-                  )}
-                  <a
-                    className={`tour-location-route${isPreview ? " is-preview" : ""}`}
-                    href={directionsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Xem chỉ đường từ TP. Gia Nghĩa đến ${tour.meetingPoint || "Đắk Song"} trên Google Maps`}
-                  >
-                    <Icon name="navigation" size={18} />
-                    {isPreview ? "Cách TP. Gia Nghĩa ~35km" : "Chỉ đường từ TP. Gia Nghĩa"}
-                  </a>
                 </div>
+                <p className="tour-map-notice">Ảnh minh họa trong bản xem mẫu. Dùng API để xem các ghim và điểm hẹn đã được nhập cho tour.</p>
               </section>}
 
               <section className="section detail-section">

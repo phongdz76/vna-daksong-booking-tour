@@ -3148,6 +3148,21 @@ html[data-vna-admin] body {
 .vna-admin .destination-order { flex-shrink: 0; display: grid; place-items: center; width: 25px; height: 25px; border-radius: 50%; background: #e7f1e9; color: #245b45; font-weight: 600; }
 .vna-admin .selected-destination-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .vna-admin .selected-destination-name small { display: block; color: #66796c; font-size: 12px; }
+.vna-admin .admin-location-picker { display: grid; gap: 12px; margin-top: 18px; }
+.vna-admin .admin-location-picker p, .vna-admin .admin-route-preview p { font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.vna-admin .admin-location-picker>.button { justify-self: start; }
+.vna-admin .admin-location-picker .location-state { padding: 10px 12px; background: #eef6f0; border-radius: 8px; }
+.vna-admin .admin-route-checklist { list-style: none; padding: 0; }
+.vna-admin .admin-route-checklist li { padding: 9px 0; border-bottom: 1px solid #e2ebe5; overflow-wrap: anywhere; }
+.vna-admin .admin-route-checklist small { display: block; margin-top: 4px; color: #66796c; }
+.vna-admin .admin-location-picker .leaflet-marker-icon { cursor: grab; }
+.vna-admin .coordinate-paste { border-top: 1px solid #dce7df; padding-top: 12px; }
+.vna-admin .coordinate-paste summary { cursor: pointer; color: #245b45; font-weight: 600; font-size: 13px; }
+.vna-admin .coordinate-paste .field { margin: 12px 0; }
+.vna-admin .coordinate-manual { margin-top: 16px; }
+.vna-admin .coordinate-manual summary { cursor: pointer; font-size: 13px; color: #52645a; }
+.vna-admin .coordinate-manual .form-grid { margin-top: 12px; }
+.vna-admin .form-fieldset:disabled .admin-location-picker .tour-location-canvas { pointer-events: none; }
 @media (max-width: 600px) {
   .vna-admin .destination-picker-filters { grid-template-columns: 1fr; }
   .vna-admin .selected-destination-list li { flex-wrap: wrap; }

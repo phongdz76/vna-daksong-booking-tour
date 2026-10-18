@@ -900,6 +900,46 @@ async function runInputValidationTests() {
 }
 
 async function runBookingTests() {
+  await test('Stale quote cannot overbook; rejection preserves coupon quota and cancellation releases seats', async () => {
+    const departure = await Departure.create({ ...departureBody(), maxGuestsPerBooking: 2, maxCapacity: 2 });
+    try {
+      const quote = await getQuote({ departureId: String(departure._id), adults: 2, children: 0, couponCode: state.couponCode });
+      const payload = bookingBody(quote);
+      const submit = key => http('POST', '/api/bookings', { token: customer(), body: payload, headers: { 'Idempotency-Key': key } });
+      const quotaBefore = (await Coupon.findById(state.coupon)).usedCount;
+      const key = randomUUID();
+      const first = status(await submit(key), 201).data;
+      status(await submit(randomUUID()), 409);
+      assert.equal(await Booking.countDocuments({ departureId: departure._id }), 1);
+      assert.equal((await Coupon.findById(state.coupon)).usedCount, quotaBefore + 1);
+      const replay = status(await submit(key), 200);
+      assert.equal(replay.replayed, true);
+      assert.equal(replay.data._id, first._id);
+      status(await cancel(first._id), 200);
+      status(await submit(randomUUID()), 201);
+      assert.equal(await Booking.countDocuments({ departureId: departure._id, status: 'pending_confirmation' }), 1);
+    } finally {
+      // Only fixtures created inside this disposable test database.
+      await Booking.deleteMany({ departureId: departure._id });
+      await Departure.deleteOne({ _id: departure._id });
+      await Coupon.updateOne({ _id: state.coupon }, { $set: { usedCount: 0 } });
+    }
+  });
+  await test('Concurrent parties cannot take the same remaining seats', async () => {
+    const departure = await Departure.create({ ...departureBody(), maxGuestsPerBooking: 2, maxCapacity: 3 });
+    try {
+      const quote = await getQuote({ departureId: String(departure._id), adults: 1, children: 1 });
+      const responses = await Promise.all([customer(), stranger()].map(token => http('POST', '/api/bookings', {
+        token, body: bookingBody(quote), headers: { 'Idempotency-Key': randomUUID() },
+      })));
+      assert.deepEqual(responses.map(response => response.status).sort(), [201, 409]);
+      const bookings = await Booking.find({ departureId: departure._id }).lean();
+      assert.equal(bookings.reduce((total, booking) => total + booking.adults + booking.children, 0), 2);
+    } finally {
+      await Booking.deleteMany({ departureId: departure._id });
+      await Departure.deleteOne({ _id: departure._id });
+    }
+  });
   await test('Capacity validation rejects a request larger than actual remaining seats', async () => {
     const departure = await Departure.create({ ...departureBody(), maxGuestsPerBooking: 2, maxCapacity: 2 });
     try {

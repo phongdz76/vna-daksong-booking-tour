@@ -72,8 +72,18 @@ Desktop.ini
 # Agent configuration (local only)
 AGENTS.md
 
-# Documents
+# Documents, reports and local handbooks (office files)
 docs/
+*.docx
+*.doc
+*.pptx
+*.xlsx
+*.pdf
+~$*
+HUONG_DAN_*
+BAO_CAO_*
+/backend/scripts/generateGuideImages.js
+/backend/scripts/seedDemoData.js
 
 # UX/UI 
 stitch_vna_k_song_booking_tour/

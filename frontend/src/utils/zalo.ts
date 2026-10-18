@@ -1,11 +1,19 @@
-import { getAccessToken, getUserInfo, nativeStorage } from "zmp-sdk";
-
 export const isZalo = Boolean((window as Window & { APP_ID?: string }).APP_ID);
 const sessionKey = "vna-customer-session";
+let sdk: typeof import("zmp-sdk") | undefined;
+let sdkPromise: Promise<typeof import("zmp-sdk")> | undefined;
+
+// Importing the SDK starts its native login handshake. Load it only in Zalo,
+// before rendering the customer app so nativeStorage is ready synchronously.
+export async function initializeZaloSdk() {
+  if (!isZalo) return;
+  sdkPromise ??= import("zmp-sdk");
+  sdk = await sdkPromise;
+}
 
 export function readSession(): string | null {
   try {
-    if (isZalo) return nativeStorage.getItem(sessionKey) || null;
+    if (isZalo) return sdk?.nativeStorage.getItem(sessionKey) || null;
     return window.sessionStorage.getItem(sessionKey);
   } catch {
     return null;
@@ -14,8 +22,8 @@ export function readSession(): string | null {
 export function storeSession(token: string | null) {
   try {
     if (isZalo) {
-      if (token) nativeStorage.setItem(sessionKey, token);
-      else nativeStorage.removeItem(sessionKey);
+      if (token) sdk?.nativeStorage.setItem(sessionKey, token);
+      else sdk?.nativeStorage.removeItem(sessionKey);
     } else if (token) window.sessionStorage.setItem(sessionKey, token);
     else window.sessionStorage.removeItem(sessionKey);
   } catch {
@@ -25,15 +33,17 @@ export function storeSession(token: string | null) {
 export async function zaloAccessToken() {
   if (!isZalo)
     throw new Error("Mở Mini App trong Zalo để đăng nhập tài khoản của bạn.");
-  return getAccessToken();
+  await initializeZaloSdk();
+  return sdk!.getAccessToken();
 }
 
 export async function zaloLoginCredentials() {
   if (!isZalo)
     throw new Error("Mở Mini App trong Zalo để đăng nhập tài khoản của bạn.");
+  await initializeZaloSdk();
   let includeProfile = false;
   try {
-    const { userInfo } = await getUserInfo({
+    const { userInfo } = await sdk!.getUserInfo({
       autoRequestPermission: true,
       avatarType: "normal",
     });
@@ -49,7 +59,7 @@ export async function zaloLoginCredentials() {
 export function readDestinationBookmarks(key: string): string[] {
   try {
     const raw = isZalo
-      ? nativeStorage.getItem(key)
+      ? sdk?.nativeStorage.getItem(key)
       : window.sessionStorage.getItem(key);
     const value: unknown = JSON.parse(raw || "[]");
     return Array.isArray(value)
@@ -61,7 +71,7 @@ export function readDestinationBookmarks(key: string): string[] {
 }
 export function storeDestinationBookmarks(key: string, ids: string[]) {
   try {
-    if (isZalo) nativeStorage.setItem(key, JSON.stringify(ids));
+    if (isZalo) sdk?.nativeStorage.setItem(key, JSON.stringify(ids));
     else window.sessionStorage.setItem(key, JSON.stringify(ids));
   } catch {
     /* Bookmarks can still work for the current screen. */

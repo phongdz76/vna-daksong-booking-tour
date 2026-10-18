@@ -231,6 +231,17 @@ export const createBooking = async (req, res) => {
         if (claims.adults + claims.children > departure.maxGuestsPerBooking) {
           throw new Error("MAX_GUESTS_EXCEEDED");
         }
+
+        // The departure write above serializes competing bookings. Recheck seats
+        // inside the same transaction: a valid quote does not reserve capacity.
+        const occupied = await Booking.aggregate([
+          { $match: { departureId: departure._id, status: { $in: ["pending_confirmation", "confirmed", "completed"] } } },
+          { $group: { _id: null, guests: { $sum: { $add: ["$adults", "$children"] } } } },
+        ]).session(session);
+        const availableSeats = Math.max(0, (departure.maxCapacity || 50) - (occupied[0]?.guests || 0));
+        if (claims.adults + claims.children > availableSeats) {
+          throw new Error("CAPACITY_EXCEEDED");
+        }
         
         let total = departure.adultPrice * claims.adults + (departure.childPrice ?? 0) * claims.children;
         let appliedCoupon = null;
@@ -309,6 +320,9 @@ export const createBooking = async (req, res) => {
       }
       if (error.message === "MAX_GUESTS_EXCEEDED") {
           return res.status(400).json({ message: "Số khách vượt quá giới hạn cho phép của chuyến. Vui lòng lấy báo giá mới." });
+      }
+      if (error.message === "CAPACITY_EXCEEDED") {
+          return res.status(409).json({ message: "Chuyến không còn đủ chỗ cho số khách đã chọn. Vui lòng chọn lại chuyến và lấy báo giá mới." });
       }
       if (error.message === "COUPON_NOT_FOUND") {
           return res.status(400).json({ message: "Mã giảm giá không tồn tại." });

@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { transformWithEsbuild } from 'vite';
 const source = await readFile(new URL('../src/utils/tourLocations.ts', import.meta.url), 'utf8');
 const { code } = await transformWithEsbuild(source, 'tourLocations.ts', { loader: 'ts', format: 'esm' });
-const { buildRouteLinks, getRoutePoints, hasCoordinates, getPlaceGroup, placeMapUrl } = await import('data:text/javascript;base64,' + Buffer.from(code).toString('base64'));
+const { buildRouteLinks, getRoutePoints, hasCoordinates, getPlaceGroup, placeMapUrl, parseCoordinatePair, placeDirectionsUrl } = await import('data:text/javascript;base64,' + Buffer.from(code).toString('base64'));
 const place = (id, extra = {}) => ({ _id: String(id), name: 'Điểm demo ' + id, address: 'Địa chỉ demo',
   coordinates: { latitude: 12 + id / 100, longitude: 107 + id / 100 }, ...extra });
 
@@ -56,4 +56,19 @@ test('existing destination categories are grouped for display without adding sto
   assert.equal(getPlaceGroup(place(2, { category: 'food' })), 'rest');
   assert.equal(getPlaceGroup(place(3, { placeGroup: 'pickup' })), 'pickup');
   assert.equal(JSON.stringify(old), before);
+});
+
+test('coordinate paste accepts signed pairs and rejects URLs, missing values and impossible positions', () => {
+  assert.deepEqual(parseCoordinatePair(' 12.226096, 107.684887 '), { latitude: 12.226096, longitude: 107.684887 });
+  assert.deepEqual(parseCoordinatePair('-12.2; -107.6'), { latitude: -12.2, longitude: -107.6 });
+  assert.deepEqual(parseCoordinatePair('0 0'), { latitude: 0, longitude: 0 });
+  for (const value of ['', '12.2', '12.2,', '107.6, 120', '12, 181', 'https://maps.app.goo.gl/example', '12, 107, 3', '12, Infinity']) assert.equal(parseCoordinatePair(value), null);
+});
+
+test('meeting directions use exact destination without inventing a visitor origin or an unmapped pin', () => {
+  const query = new URL(placeDirectionsUrl(place(1))).searchParams;
+  assert.equal(query.get('destination'), '12.01,107.01');
+  assert.equal(query.get('api'), '1');
+  assert.equal(query.has('origin'), false);
+  assert.equal(placeDirectionsUrl(place(2, { coordinates: null })), null);
 });

@@ -20,7 +20,7 @@ const browser = spawn(process.env.CHROME_PATH || 'C:/Program Files/Google/Chrome
 ], { windowsHide: true, stdio: 'ignore' });
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const checks = [], exceptions = [], writes = [];
-let socket, command, browserError;
+let socket, command, browserError, tileFailure = false;
 browser.on('error', error => { browserError = error; });
 const check = (name, value) => { assert.ok(value, name); checks.push(name); console.log('PASS UI ' + name); };
 try {
@@ -54,8 +54,8 @@ try {
       void (async () => {
         // Background map tiles are a deterministic test image, not live requests.
         if (new URL(request.url).hostname === 'tile.openstreetmap.org') {
-          await command('Fetch.fulfillRequest', { requestId, responseCode: 200, responseHeaders: [{ name: 'Content-Type', value: 'image/png' }],
-            body: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==' }); return;
+          await command('Fetch.fulfillRequest', { requestId, responseCode: tileFailure ? 503 : 200, responseHeaders: [{ name: 'Content-Type', value: tileFailure ? 'text/plain' : 'image/png' }],
+            body: tileFailure ? '' : 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==' }); return;
         }
         const url = new URL(request.url);
         const path = url.pathname.replace(/^\/api/, '') + url.search;
@@ -103,24 +103,51 @@ try {
     await writeFile(new URL(name + '.png', output), Buffer.from(capture.data, 'base64'));
   };
   await command('Page.enable'); await command('Runtime.enable');
+  await command('Network.enable'); await command('Network.setCacheDisabled', { cacheDisabled: true });
   await command('Fetch.enable', { patterns: [{ urlPattern: '*://*/api/*', requestStage: 'Request' }, { urlPattern: '*://tile.openstreetmap.org/*', requestStage: 'Request' }] });
   await command('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
   await visit('/admin/login', "document.querySelector('[aria-label=Email]')");
   await evaluate(`sessionStorage.setItem('vna-admin-session', ${JSON.stringify(token)})`);
   await visit('/admin/destinations/new', "document.querySelector('[aria-label=\"Vĩ độ\"]')");
+  await evaluate("document.querySelector('.coordinate-manual').open = true");
   await fill('Tên nội dung', 'Điểm demo bản đồ mới'); await fill('Tóm tắt', 'Địa điểm demo cho kiểm thử bản đồ.');
   await fill('Mô tả chi tiết', 'Địa điểm chỉ tồn tại trong database test riêng.');
   await fill('Nhóm địa điểm', 'nature'); await fill('Phạm vi địa điểm', 'daksong'); await fill('Xã/khu vực', 'Khu demo mới');
   await fill('Vĩ độ', '12.35'); await click('Lưu điểm đến');
   await waitFor("document.querySelector('[role=alert]')?.innerText.includes('Nhập đủ vĩ độ')");
   check('partial coordinates block saving', writes.filter(item => item.path === '/destinations').length === 0);
-  await fill('Kinh độ', '107.75'); await fill('Trạng thái xuất bản', 'published');
+  await evaluate("document.querySelector('.coordinate-paste').open = true");
+  await fill('Cặp tọa độ', '107.7, 120'); await click('Áp dụng tọa độ');
+  check('coordinate paste rejects impossible latitude without changing the position', await evaluate("document.querySelector('.admin-location-picker').innerText.includes('Nhập hai số') && document.querySelector('[aria-label=\"Kinh độ\"]').value === ''"));
+  await fill('Cặp tọa độ', '12.35, 107.75'); await click('Áp dụng tọa độ');
+  await waitFor("document.querySelectorAll('.admin-location-picker .tour-place-marker').length === 1");
+  check('pasting a pair fills both fields and shows a preview pin', await evaluate("document.querySelector('[aria-label=\"Vĩ độ\"]').value === '12.35' && document.querySelector('[aria-label=\"Kinh độ\"]').value === '107.75'"));
+  await evaluate("document.querySelector('.admin-location-picker .tour-location-canvas').scrollIntoView({block:'center'})");
+  await delay(150);
+  const viewportBefore = await evaluate("document.querySelector('.admin-location-picker .leaflet-map-pane').style.transform");
+  await evaluate("(() => { const canvas=document.querySelector('.admin-location-picker .tour-location-canvas'); const r=canvas.getBoundingClientRect(); canvas.dispatchEvent(new MouseEvent('click',{bubbles:true,clientX:r.left+r.width*0.65,clientY:r.top+r.height*0.65})); })()");
+  check('choosing a point on the map updates the coordinate fields', await evaluate("document.querySelector('[aria-label=\"Vĩ độ\"]').value !== '12.35'"));
+  check('placing a pin keeps the editor viewport instead of resetting zoom', await evaluate("document.querySelector('.admin-location-picker .leaflet-map-pane').style.transform") === viewportBefore);
+  const latitudeBeforeDrag = await evaluate("document.querySelector('[aria-label=\"Vĩ độ\"]').value");
+  const pinPosition = await evaluate("(() => {const r=document.querySelector('.admin-location-picker .tour-place-marker').getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2};})()");
+  await command('Input.dispatchMouseEvent', { type: 'mouseMoved', x: pinPosition.x, y: pinPosition.y });
+  await command('Input.dispatchMouseEvent', { type: 'mousePressed', x: pinPosition.x, y: pinPosition.y, button: 'left', buttons: 1, clickCount: 1 });
+  for (let step = 1; step <= 5; step++) await command('Input.dispatchMouseEvent', { type: 'mouseMoved', x: pinPosition.x + step * 7, y: pinPosition.y - step * 4, button: 'left', buttons: 1 });
+  await command('Input.dispatchMouseEvent', { type: 'mouseReleased', x: pinPosition.x + 35, y: pinPosition.y - 20, button: 'left', buttons: 0, clickCount: 1 });
+  await waitFor(`document.querySelector('[aria-label="Vĩ độ"]').value !== ${JSON.stringify(latitudeBeforeDrag)}`);
+  check('dragging the pin updates the selected coordinates', true);
+  await click('Về khu vực Đắk Song');
+  check('editor provides a direct return to the Dak Song overview', await evaluate("document.querySelector('.map-editor-toolbar').innerText.includes('Đắk Song')"));
+  await click('Xóa vị trí');
+  check('clearing the position removes its pin and both coordinates', await evaluate("document.querySelector('[aria-label=\"Vĩ độ\"]').value === '' && document.querySelector('[aria-label=\"Kinh độ\"]').value === '' && !document.querySelector('.admin-location-picker .tour-place-marker')"));
+  await fill('Cặp tọa độ', '12.35, 107.75'); await click('Áp dụng tọa độ');
+  await fill('Trạng thái xuất bản', 'published');
   await click('Thêm nguồn tham khảo'); await fill('Tên nguồn 1', 'Nguồn demo'); await fill('Ngày kiểm tra nguồn 1', '2026-10-11'); await fill('Liên kết nguồn 1', 'https://example.com/location-demo');
   await click('Lưu điểm đến'); await waitFor("!document.querySelector('dialog[open]')");
   const created = writes.find(item => item.path === '/destinations' && item.status === 201);
   check('new destination persists classification, scope and coordinates', created?.body.placeGroup === 'nature' && created.body.areaScope === 'daksong' && created.body.coordinates.latitude === 12.35);
   await visit('/admin/destinations/' + process.env.LOCATION_LEGACY_ID + '/edit', "document.querySelector('dialog[open] textarea')");
-  check('legacy destination edit form does not add location fields', await evaluate("!document.querySelector('[aria-label=\"Vĩ độ\"]')"));
+  check('legacy destination exposes location editor without assigning an automatic pin', await evaluate("document.querySelector('[aria-label=\"Vĩ độ\"]').value === '' && document.querySelector('[aria-label=\"Phạm vi địa điểm\"]').value === 'unspecified' && !document.querySelector('.admin-location-picker .tour-place-marker')"));
   await visit('/admin/tours/' + tourId + '/edit', "document.querySelector('[aria-label=\"Chọn điểm tập trung\"]') && document.querySelector('.destination-picker-options label')");
   check('picker separates Dak Song, nearby and unclassified records', await evaluate("document.querySelector('.destination-picker-options').innerText.includes('Trong Đắk Song') && document.querySelector('.destination-picker-options').innerText.includes('Khu vực lân cận') && document.querySelector('.destination-picker-options').innerText.includes('Chưa phân khu vực')"));
   await fill('Khu vực điểm đến', 'daksong'); await fill('Nhóm điểm đến', 'nature'); await fill('Tìm điểm đến để liên kết', 'Khu demo mới');
@@ -143,6 +170,8 @@ try {
   check('drag and keyboard buttons reorder stops while keeping the meeting point first', selectedNames[0] === 'Demo new-stop' && selectedNames.indexOf('Demo new-pickup') < selectedNames.indexOf('Điểm demo bản đồ mới'));
   await fill('Chọn điểm tập trung', firstId);
   check('selecting a meeting place updates text and anchors it first', await evaluate("document.querySelector('[aria-label=\"Điểm tập trung\"]').value.includes('Demo new-pickup') && document.querySelector('.selected-destination-name b').innerText === 'Demo new-pickup'"));
+  await click('Đưa Demo legacy-location lên');
+  check('admin can preview mapped and missing locations before saving the tour', await evaluate("document.querySelectorAll('.admin-route-preview .tour-place-marker').length === 4 && document.querySelector('.admin-route-preview').innerText.includes('Chưa có tọa độ') && document.querySelector('.admin-route-preview').innerText.includes('Chưa xuất bản')"));
   await evaluate("document.querySelector('.destination-picker-field').scrollIntoView({block:'center'})"); await snapshot('admin-selected-desktop');
   await command('Emulation.setDeviceMetricsOverride', { width: 412, height: 915, deviceScaleFactor: 1, mobile: true });
   await snapshot('admin-selected-mobile');
@@ -155,7 +184,13 @@ try {
   const publicNames = await evaluate("[...document.querySelectorAll('.tour-map-places strong')].map(item => item.innerText)");
   check('user map receives the saved order and excludes draft destination details', publicNames[0] === 'Demo new-pickup' && !publicNames.includes('Demo draft-stop') && publicNames.includes('Điểm demo bản đồ mới'));
   check('unmapped old place stays in the list and receives no fabricated pin', publicNames.includes('Demo legacy-location') && await evaluate("document.querySelector('.tour-map-places').innerText.includes('Chưa xác định vị trí bản đồ')"));
-  const href = await evaluate("document.querySelector('.tour-directions-link').href");
+  const meetingHref = await evaluate("document.querySelector('.meeting-directions').href");
+  check('meeting navigation uses the saved pickup without a fixed starting city', new URL(meetingHref).searchParams.get('destination') === '12.2,107.6' && !new URL(meetingHref).searchParams.has('origin'));
+  check('map and list keep matching order numbers when a place lacks coordinates', await evaluate("JSON.stringify([...document.querySelectorAll('.tour-place-marker span')].map(el=>el.textContent)) === '[\"1\",\"2\",\"4\"]'"));
+  await evaluate("document.querySelectorAll('.tour-map-select')[1].click()");
+  await waitFor("document.querySelector('.leaflet-popup-content')?.innerText.includes('Demo new-stop')");
+  check('selecting a place in the list opens its matching pin', await evaluate("document.querySelector('.tour-map-places li.is-selected').innerText.includes('Demo new-stop')"));
+  const href = await evaluate("document.querySelector('.tour-map-directions .tour-directions-link').href");
   const query = new URL(href).searchParams;
   check('customer Google Maps route includes real persisted coordinates', query.get('origin') === '12.2,107.6' && (query.get('waypoints') || '').includes('12.3,107.7') && query.get('destination') === '12.35,107.75');
   await evaluate("document.querySelector('.tour-place-marker').click()");
@@ -163,6 +198,14 @@ try {
   check('map marker opens the matching destination information', await evaluate("document.querySelector('.leaflet-popup-content a').href.includes('12.2')"));
   await snapshot('user-map-mobile');
   check('user map fits mobile viewport', await evaluate("document.documentElement.scrollWidth <= innerWidth + 1"));
+  await visit('/destinations/' + secondId, "document.querySelector('.destination-location .tour-place-marker')");
+  check('destination details expose directions distinct from the tour meeting point', await evaluate("document.querySelector('.destination-location').innerText.includes('Điểm tập trung của tour có thể ở nơi khác')"));
+  tileFailure = true;
+  await visit('/tours/' + tourId, "document.querySelector('.map-retry')");
+  check('tile failure preserves the meeting directions and all place information', await evaluate("Boolean(document.querySelector('.meeting-directions')) && document.querySelectorAll('.tour-map-places li').length === 4"));
+  tileFailure = false;
+  await click('Tải lại bản đồ'); await waitFor("!document.querySelector('.map-retry')");
+  check('map can retry after a tile provider failure', true);
   check('UI never writes to a legacy destination', writes.every(item => !item.path.startsWith('/destinations/' + process.env.LOCATION_LEGACY_ID)));
   check('location flow has no browser exceptions', exceptions.length === 0);
   await writeFile(new URL('results.json', output), JSON.stringify({ checks, exceptions, writes }, null, 2));

@@ -7,6 +7,7 @@ import ImageGallery from "../../../components/common/ImageGallery";
 import Icon from "../../../components/common/Icon";
 import { ErrorState, LoadingState } from "../../../components/common/States";
 import TourCard from "../../../components/tour/TourCard";
+import DestinationLocation from "../../../components/tour/DestinationLocation";
 import useApi from "../../../hooks/useApi";
 import { previewExploreDestinations } from "../../../data/previewExplore";
 import {
@@ -86,6 +87,7 @@ export default function DestinationDetailPage() {
                 </details>
               ) : null}
             </div>
+            <DestinationLocation place={result.data} />
             <section className="section">
               <h2>Hành trình liên quan</h2>
               {related.loading ? (

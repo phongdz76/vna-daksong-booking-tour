@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import type {
   Article,
@@ -30,7 +30,9 @@ import {
 } from "./ContentFields";
 import Icon from "./Icon";
 import { validText, validHttpUrl, validDate } from '../../utils/inputValidation';
-import { areaScopeLabels, placeGroupLabels } from '../../utils/tourLocations';
+import { areaScopeLabels, getPlaceGroup, hasCoordinates, placeGroupLabels } from '../../utils/tourLocations';
+import LocationPicker from './LocationPicker';
+import LocationCanvas from '../common/LocationCanvas';
 
 export type Resource = "tours" | "destinations" | "articles";
 export type Content = Tour | Destination | Article;
@@ -54,7 +56,8 @@ export default function ContentForm({
   const article = initial as Article | undefined;
   const form = useAdminForm(onClose);
   const toast = useToast();
-  const locationEnabled = resource === "destinations" && (!initial || destination?.placeGroup !== undefined);
+  const locationEnabled = resource === "destinations";
+  const [locationTouched, setLocationTouched] = useState(false);
   const [values, setValues] = useState({
     name: initial ? ("title" in initial ? initial.title : initial.name) : "",
     slug: initial?.slug || "",
@@ -68,8 +71,8 @@ export default function ContentForm({
     childPolicy: tour?.childPolicy || "",
     cancellation: tour?.cancellationPolicy || "",
     address: destination?.address || "",
-    placeGroup: destination?.placeGroup || "nature",
-    areaScope: destination?.areaScope || "daksong",
+    placeGroup: destination ? getPlaceGroup(destination) : "nature",
+    areaScope: destination?.areaScope || (initial ? "unspecified" : "daksong"),
     locality: destination?.locality || "",
     latitude: destination?.coordinates ? String(destination.coordinates.latitude) : "",
     longitude: destination?.coordinates ? String(destination.coordinates.longitude) : "",
@@ -109,7 +112,10 @@ export default function ContentForm({
   const destinations = useOptions<Destination>(
     resource === "destinations" ? null : "/destinations",
   );
+  const selectedPlaces = useMemo(() => destinationIds.map(id => destinations.data.find(place => place._id === id)).filter((place): place is Destination => Boolean(place)), [destinationIds, destinations.data]);
+  const mappedPlaces = useMemo(() => selectedPlaces.map((place, index) => ({ ...place, order: index + 1 })).filter(hasCoordinates), [selectedPlaces]);
   const updateField = (key: keyof typeof values, value: string) => {
+    if (["placeGroup", "areaScope", "locality", "latitude", "longitude"].includes(key)) setLocationTouched(true);
     setValues((previous) => ({ ...previous, [key]: value }));
     form.touch();
   };
@@ -285,7 +291,7 @@ export default function ContentForm({
               description: values.body.trim(),
               category: values.category,
               address: values.address.trim(),
-              ...(locationEnabled ? { placeGroup: values.placeGroup, areaScope: values.areaScope,
+              ...(locationEnabled && (!initial || locationTouched || ["placeGroup", "areaScope", "locality", "coordinates"].some(key => key in initial)) ? { placeGroup: values.placeGroup, areaScope: values.areaScope,
                 locality: values.locality.trim(), coordinates } : {}),
               visitNotes: values.visitNotes.trim(),
               sources: references,
@@ -498,11 +504,14 @@ export default function ContentForm({
                   {Object.entries(areaScopeLabels).map(([key, title]) => <option key={key} value={key}>{title}</option>)}
                 </select></Field>
                 <Field label="Xã/khu vực" full><input aria-label="Xã/khu vực" maxLength={200} value={values.locality} onChange={event => updateField("locality", event.target.value)} /></Field>
+              </div>
+              <LocationPicker name={values.name} address={values.address} latitude={values.latitude} longitude={values.longitude} onChange={(latitude, longitude) => {
+                updateField("latitude", latitude); updateField("longitude", longitude);
+              }} />
+              <details className="coordinate-manual"><summary>Xem / nhập tọa độ thủ công</summary><div className="form-grid">
                 <Field label="Vĩ độ"><input aria-label="Vĩ độ" type="number" step="any" min={-90} max={90} value={values.latitude} onChange={event => updateField("latitude", event.target.value)} /></Field>
                 <Field label="Kinh độ"><input aria-label="Kinh độ" type="number" step="any" min={-180} max={180} value={values.longitude} onChange={event => updateField("longitude", event.target.value)} /></Field>
-              </div>
-              <p className="inline-note">Trên Google Maps, bấm chuột phải vào đúng địa điểm để lấy vĩ độ và kinh độ. Chỉ điền vị trí đã kiểm tra; để trống cả hai nếu chưa xác định được.</p>
-              {values.latitude.trim() && values.longitude.trim() && <a className="text-link" href={"https://www.google.com/maps/search/?" + new URLSearchParams({ api: "1", query: `${values.latitude},${values.longitude}` })} target="_blank" rel="noopener noreferrer">Kiểm tra vị trí trên Google Maps</a>}
+              </div></details>
             </section>}
             <section className="form-section">
               <h3>Nội dung chi tiết</h3>
@@ -581,7 +590,7 @@ export default function ContentForm({
                         <option value="">Nhập điểm tập trung bằng văn bản</option>
                         {destinations.data.filter(place => destinationIds.includes(place._id) && place.status !== "archived").map(place => <option key={place._id} value={place._id}>{place.name}</option>)}
                       </select>
-                      <small>Điểm tập trung đứng đầu cung đường. Chọn một địa điểm đã có tọa độ để đánh dấu đúng vị trí.</small>
+                      <small>Đây là nơi khách cần đến trước khi tham gia tour. Điểm này đứng đầu danh sách; cần có tọa độ để mở chỉ đường chính xác.</small>
                     </Field>
                     {text("Điểm tập trung", "meeting", 1000, true)}
                     {text(
@@ -595,6 +604,19 @@ export default function ContentForm({
                       30000,
                     )}
                   </div>
+                </section>
+                <section className="form-section admin-route-preview">
+                  <h3><Icon name="pin" /> Kiểm tra bản đồ trước khi xuất bản</h3>
+                  <p><strong>{mappedPlaces.length}/{selectedPlaces.length} điểm đã có tọa độ.</strong> Thứ tự bên dưới lấy từ Các điểm trong tour; có thể đổi bằng Lên/Xuống ở phần Điểm đến liên quan.</p>
+                  {!meetingDestinationId ? <Notice>Chưa liên kết điểm tập trung. Khách chỉ đọc được địa chỉ bằng chữ; hãy chọn địa điểm có tọa độ nếu cần nút chỉ đường đến điểm hẹn.</Notice>
+                    : !hasCoordinates(selectedPlaces.find(place => place._id === meetingDestinationId)) && <Notice>Điểm tập trung chưa có tọa độ. Mở mục Điểm đến, bổ sung vị trí, lưu rồi mở lại tour.</Notice>}
+                  {selectedPlaces.some(place => place.status !== "published") && <Notice>Có điểm chưa xuất bản. Hãy kiểm tra trạng thái điểm đến trước khi xuất bản tour.</Notice>}
+                  {mappedPlaces.length > 0 && <LocationCanvas points={mappedPlaces} showOrder />}
+                  <ol className="admin-route-checklist">{selectedPlaces.map((place, index) => <li key={place._id}>
+                    <strong>{index + 1}. {place.name}{place._id === meetingDestinationId ? " · Điểm tập trung" : ""}</strong>
+                    <small>{hasCoordinates(place) ? "Có ghim bản đồ" : "Chưa có tọa độ — khách chưa thể mở chỉ đường chính xác"}{place.status !== "published" ? " · Chưa xuất bản" : ""}</small>
+                  </li>)}</ol>
+                  <p className="inline-note">Đường nét đứt chỉ minh họa thứ tự ghé thăm, không phải đường xe chạy. Tuyến đường thực tế được xem trong Google Maps.</p>
                 </section>
                 <section className="form-section">
                   <h3>Chính sách</h3>
