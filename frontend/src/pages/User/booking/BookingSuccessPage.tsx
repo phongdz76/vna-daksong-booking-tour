@@ -20,7 +20,8 @@ import {
   paymentLabels,
 } from "../../../utils/format";
 import type { Booking } from "../../../types/api";
-import { openZaloPayCheckout, reserveZaloPayWindow, zaloPayErrorMessage } from "../../../utils/zalopay";
+import { openZaloPayCheckout } from "../../../utils/zalopay";
+import { errorMessage } from "../../../utils/api";
 
 export default function BookingSuccessPage() {
   const { id } = useParams();
@@ -50,11 +51,10 @@ export default function BookingSuccessPage() {
     openingPayment.current = true;
     setPaying(true);
     setPaymentError("");
-    const popup = reserveZaloPayWindow();
     try {
-      await openZaloPayCheckout(booking._id, popup);
+      await openZaloPayCheckout(booking._id);
     } catch (error) {
-      setPaymentError(zaloPayErrorMessage(error));
+      setPaymentError(errorMessage(error));
     } finally {
       openingPayment.current = false;
       setPaying(false);
@@ -167,7 +167,7 @@ export default function BookingSuccessPage() {
                       disabled={isPreview || paying}
                       onClick={handlePayment}
                     >
-                      {paying ? "Đang chờ thanh toán…" : "Thanh toán lại qua ZaloPay"}
+                      {paying ? "Đang mở ZaloPay…" : "Thanh toán lại qua ZaloPay"}
                     </button>
                   </div>
                 )}

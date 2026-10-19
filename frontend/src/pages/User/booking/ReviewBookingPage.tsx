@@ -16,7 +16,7 @@ import { dateTime, duration, money } from "../../../utils/format";
 import useApi from "../../../hooks/useApi";
 import type { Booking, Quote, Tour } from "../../../types/api";
 import { contactError } from '../../../utils/inputValidation';
-import { openZaloPayCheckout, reserveZaloPayWindow } from '../../../utils/zalopay';
+import { openZaloPayCheckout } from '../../../utils/zalopay';
 
 export default function ReviewBookingPage() {
   const { id } = useParams();
@@ -104,7 +104,6 @@ export default function ReviewBookingPage() {
     sending.current = true;
     setBusy(true);
     setError("");
-    const popup = !isPreview && paymentMethod === "zalopay" ? reserveZaloPayWindow() : null;
     try {
       let booking: Booking;
       if (isPreview) {
@@ -163,7 +162,7 @@ export default function ReviewBookingPage() {
         
         if (paymentMethod === "zalopay") {
           try {
-            await openZaloPayCheckout(booking._id, popup, () => {
+            await openZaloPayCheckout(booking._id, () => {
               setAttempt(null);
               setDraft(null);
               navigate("/booking/success/" + booking._id, true);
@@ -179,7 +178,6 @@ export default function ReviewBookingPage() {
       setDraft(null);
       navigate("/booking/success/" + booking._id, true);
     } catch (error) {
-      popup?.close();
       if (
         axios.isAxiosError(error) &&
         error.response &&

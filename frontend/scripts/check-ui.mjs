@@ -84,7 +84,7 @@ try {
   });
   let sequence = 0;
   const pending = new Map();
-  command = (method, params = {}, sessionId) =>
+  command = (method, params = {}) =>
     new Promise((resolve, reject) => {
       const id = ++sequence;
       const timer = setTimeout(() => {
@@ -92,7 +92,7 @@ try {
         reject(new Error(`CDP timeout: ${method}`));
       }, 12000);
       pending.set(id, { resolve, reject, timer });
-      socket.send(JSON.stringify({ id, method, params, ...(sessionId ? {sessionId} : {}) }));
+      socket.send(JSON.stringify({ id, method, params }));
     });
   socket.onmessage = (message) => {
     const event = JSON.parse(message.data);
@@ -680,12 +680,6 @@ try {
   let detailFails = false;
   let paymentRequests = 0;
   let checkoutMode = "error";
-  let checkoutProvider = "pending";
-  let checkoutQueries = 0;
-  const checkoutAppTransId = "261019_popup_checkout_test";
-  let checkoutPopupSession;
-  let checkoutPopupId;
-  let checkoutPopupLoaded = false;
   const paymentBookingIds = [];
   const syncBookingId = "999999999999999999999999";
   let syncBooking = {
@@ -739,31 +733,12 @@ try {
   }));
   socket.addEventListener("message", async (message) => {
     const event = JSON.parse(message.data);
-    if (event.method === "Target.attachedToTarget") {
-      checkoutPopupSession = event.params.sessionId;
-      checkoutPopupId = event.params.targetInfo.targetId;
-      try {
-        await command("Fetch.enable", {patterns:[{urlPattern:"https://gateway.example.test/*"},{urlPattern:"*/api/*"}]}, checkoutPopupSession);
-        await command("Runtime.runIfWaitingForDebugger", {}, checkoutPopupSession);
-      } catch { /* A failed create can close its reserved window immediately. */ }
-      return;
-    }
     if (event.method !== "Fetch.requestPaused") return;
     const { requestId, request } = event.params;
-    if (event.sessionId) {
-      const url = new URL(request.url);
-      const isGateway = url.hostname === "gateway.example.test";
-      const response = url.pathname === "/api/auth/me" ? {user}
-        : url.pathname === `/api/bookings/${detailBookingId}` ? {data:detailBooking}
-        : url.pathname.includes("/query") ? {status:"success"} : {data:[],unreadCount:0,pagination:{page:1,pages:0,total:0,limit:10}};
-      await command("Fetch.fulfillRequest", {requestId,responseCode:200,responseHeaders:[{name:"Content-Type",value:isGateway?"text/html":"application/json"}],body:Buffer.from(isGateway?'<!doctype html><h1>Sandbox checkout without automatic redirect</h1>':JSON.stringify(response)).toString('base64')},event.sessionId);
-      if(isGateway)checkoutPopupLoaded = true;
-      return;
-    }
     if (new URL(request.url).hostname === "gateway.example.test") {
       await command("Fetch.fulfillRequest", { requestId, responseCode: 200,
         responseHeaders: [{name:"Content-Type",value:"text/html"}],
-        body: Buffer.from('<!doctype html><h1 id="test-checkout">Sandbox checkout fixture</h1>').toString('base64') });
+        body: Buffer.from(`<!doctype html><h1 id="test-checkout">Sandbox checkout fixture</h1><a id="test-payment-return" href="${base}/booking/success/${detailBookingId}?status=1">Return to booking</a>`).toString('base64') });
       return;
     }
     const path = new URL(request.url).pathname;
@@ -904,11 +879,7 @@ try {
       paymentRequests++;
       paymentBookingIds.push(body.bookingId);
       status = checkoutMode === "error" ? 503 : 200;
-      response = checkoutMode !== "error" ? {order_url:"https://gateway.example.test/checkout",reused:true,...(checkoutMode === "monitored" ? {appTransId:checkoutAppTransId} : {})} : { message: "ZaloPay tạm thời chưa sẵn sàng" };
-    } else if (path === `/api/payments/zalopay/${checkoutAppTransId}/query`) {
-      checkoutQueries++;
-      if (checkoutProvider === "paid") detailBooking.paymentStatus = "paid";
-      response = {status:checkoutProvider === "pending" ? "pending" : "success"};
+      response = checkoutMode !== "error" ? {order_url:"https://gateway.example.test/checkout",reused:true,appTransId:"261019_same_tab_checkout_test"} : { message: "ZaloPay tạm thời chưa sẵn sàng" };
     } else if (path === "/api/bookings/mine") {
       if (showSyncBooking) response = list([syncBooking]);
       else {
@@ -1145,10 +1116,17 @@ try {
         "document.querySelector('.form-error').textContent.includes('ZaloPay tạm thời chưa sẵn sàng') && document.querySelector('.booking-payment-state strong').textContent === 'Chưa thanh toán'",
       )),
   );
+  const paymentTargetsBefore = (await command("Target.getTargets")).targetInfos.filter(t=>t.type === "page").length;
   checkoutMode = "success";
   await evaluate("document.querySelector('.booking-pay-button').click()");
   await waitFor("document.querySelector('#test-checkout')");
   check("Detail payment retry follows the server checkout link for the same booking", await evaluate("location.href === 'https://gateway.example.test/checkout'") && paymentBookingIds.at(-1) === detailBookingId);
+  check("Payment opens the gateway in the existing tab without a blank popup", (await command("Target.getTargets")).targetInfos.filter(t=>t.type === "page").length === paymentTargetsBefore);
+  detailBooking.paymentStatus = "paid";
+  await evaluate("document.querySelector('#test-payment-return').click()");
+  await waitFor("document.querySelector('.booking-payment-label.paid')");
+  check("Gateway return restores the same booking and authenticated session in the original tab", await evaluate(`location.pathname === '/booking/success/${detailBookingId}' && Boolean(sessionStorage.getItem('vna-customer-session'))`) && (await command("Target.getTargets")).targetInfos.filter(t=>t.type === "page").length === paymentTargetsBefore);
+  detailBooking.paymentStatus = "unpaid";
   await visit(`/booking/success/${detailBookingId}?status=1`, "document.querySelector('.success-card')");
   check("Returning with a success URL parameter does not mark an unpaid booking paid", await evaluate("document.querySelector('.success-body h1').textContent.includes('Đã nhận yêu cầu')"));
   const beforeSuccessRetry = paymentRequests;
@@ -1160,63 +1138,6 @@ try {
   await evaluate("[...document.querySelectorAll('.success-card button')].find(button => button.innerText.includes('Thanh toán lại')).click()");
   await waitFor("document.querySelector('.success-body .form-error')");
   check("Result page retry failure stays on the booking and shows an inline error", await evaluate("location.pathname.includes('/booking/success/') && document.querySelector('.form-error').innerText.includes('ZaloPay tạm thời chưa sẵn sàng')"));
-  await command("Target.setAutoAttach", {autoAttach:true,waitForDebuggerOnStart:true,flatten:true});
-  checkoutMode = "monitored";
-  checkoutProvider = "reported-success";
-  await visit(`/my-bookings/${detailBookingId}`, "document.querySelector('.booking-pay-button')");
-  await evaluate(`(() => {
-    const open = window.open.bind(window);
-    window.open = (...args) => { const popup = open(...args); window.__checkoutWindow = popup; return popup; };
-    window.addEventListener('beforeunload', () => sessionStorage.setItem('ui-checkout-window-closed', String(window.__checkoutWindow?.closed)));
-  })()`);
-  await evaluate("document.querySelector('.booking-pay-button').click()", true);
-  async function loadCheckoutFixture() {
-    // Attach explicitly if the popup was created before the auto-attach event.
-    for(let n=0;n<80&&!checkoutPopupLoaded;n++) {
-      const targets = await command("Target.getTargets");
-      const popupTarget = targets.targetInfos.find(t=>t.type==="page" && t.targetId!==target.id && t.url.startsWith("https://gateway.example.test/"));
-      if(popupTarget) {
-        const attached = await command("Target.attachToTarget", {targetId:popupTarget.targetId,flatten:true});
-        checkoutPopupSession = attached.sessionId;checkoutPopupId = popupTarget.targetId;
-        await command("Fetch.enable", {patterns:[{urlPattern:"https://gateway.example.test/*"},{urlPattern:"*/api/*"}]}, attached.sessionId);
-        await command("Page.navigate", {url:"https://gateway.example.test/checkout"}, attached.sessionId);
-        return;
-      }
-      await delay(100);
-    }
-  }
-  await loadCheckoutFixture();
-  for (let n=0;n<80&&!checkoutPopupLoaded;n++) await delay(100);
-  check("Checkout opens a real separate browser window while preserving the order page", checkoutPopupLoaded && await evaluate(`location.pathname === '/my-bookings/${detailBookingId}'`));
-  const isolatedPopup = await command("Runtime.evaluate", {expression:"(() => { try { return !window.opener || !window.opener.document; } catch { return true; } })()",returnByValue:true}, checkoutPopupSession);
-  check("Cross-origin payment gateway cannot read the application document or session", isolatedPopup.result.value === true);
-  for(let n=0;n<80&&checkoutQueries<1;n++) await delay(100);
-  check("Provider success alone does not redirect before the booking is verified paid", checkoutQueries > 0 && await evaluate(`location.pathname === '/my-bookings/${detailBookingId}' && document.querySelector('.booking-payment-state strong').textContent === 'Chưa thanh toán'`));
-  checkoutProvider = "paid";
-  await waitFor(`location.pathname === '/booking/success/${detailBookingId}' && document.querySelector('.success-body h1')?.textContent.includes('Thanh toán thành công')`);
-  let afterPaymentTargets;
-  for(let n=0;n<30;n++) {
-    afterPaymentTargets = await command("Target.getTargets");
-    const remainingPopup = afterPaymentTargets.targetInfos.find(t=>t.targetId===checkoutPopupId);
-    if(!remainingPopup || remainingPopup.url.startsWith(`${base}/booking/success/${detailBookingId}`)) break;
-    await delay(100);
-  }
-  const remainingCheckout = afterPaymentTargets.targetInfos.find(t=>t.targetId===checkoutPopupId);
-  const checkoutClosed = await evaluate("sessionStorage.getItem('ui-checkout-window-closed') === 'true'");
-  check("Verified payment returns to the paid booking and closes checkout or returns its window too, even without a gateway redirect", checkoutClosed || !remainingCheckout || remainingCheckout.url.startsWith(`${base}/booking/success/${detailBookingId}`));
-  if(remainingCheckout) await command("Target.closeTarget", {targetId:checkoutPopupId});
-  detailBooking.paymentStatus = "unpaid";
-  checkoutProvider = "pending";
-  checkoutPopupLoaded = false;
-  await visit(`/booking/success/${detailBookingId}`, "document.querySelector('.success-card button')");
-  await evaluate("document.querySelector('.success-card button').click()", true);
-  await loadCheckoutFixture();
-  for(let n=0;n<80&&!checkoutPopupLoaded;n++) await delay(100);
-  await command("Target.closeTarget", {targetId:checkoutPopupId});
-  await waitFor("document.querySelector('.form-error')?.textContent.includes('đã đóng trang thanh toán')");
-  check("Closing checkout preserves the unpaid order and lets the customer check or retry", await evaluate("document.querySelector('.success-body h1').textContent.includes('Đã nhận yêu cầu') && !document.querySelector('.success-card button').disabled"));
-  checkoutMode = "error";
-  await command("Target.setAutoAttach", {autoAttach:false,waitForDebuggerOnStart:false,flatten:true});
   await visit(`/my-bookings/${detailBookingId}`, "document.querySelector('.booking-pay-button')");
   detailBooking.paymentStatus = "paid";
   await evaluate("document.querySelector('.booking-refresh').click()");

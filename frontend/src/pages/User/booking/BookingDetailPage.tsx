@@ -16,7 +16,7 @@ import { previewBookingDetail } from "../../../data/previewBookingDetail";
 import useApi from "../../../hooks/useApi";
 import useBookingPaymentSync from "../../../hooks/useBookingPaymentSync";
 import { api, API_PATHS, errorMessage } from "../../../utils/api";
-import { openZaloPayCheckout, reserveZaloPayWindow, zaloPayErrorMessage } from "../../../utils/zalopay";
+import { openZaloPayCheckout } from "../../../utils/zalopay";
 import { dateTime, money, paymentLabels } from "../../../utils/format";
 import {
   bookingHistoryLabel,
@@ -103,11 +103,10 @@ export default function BookingDetailPage() {
     sending.current = true;
     setPaying(true);
     setError("");
-    const popup = reserveZaloPayWindow();
     try {
-      await openZaloPayCheckout(booking._id, popup);
+      await openZaloPayCheckout(booking._id);
     } catch (error) {
-      setError(zaloPayErrorMessage(error));
+      setError(errorMessage(error));
     } finally {
       sending.current = false;
       setPaying(false);
@@ -345,7 +344,7 @@ export default function BookingDetailPage() {
                     disabled={isPreview || paying || busy}
                     onClick={handlePayment}
                   >
-                    {paying ? "Đang chờ thanh toán…" : "Thanh toán lại qua ZaloPay"}
+                    {paying ? "Đang mở ZaloPay…" : "Thanh toán lại qua ZaloPay"}
                     <Icon name="arrow" size={18} />
                   </button>
                 )}
