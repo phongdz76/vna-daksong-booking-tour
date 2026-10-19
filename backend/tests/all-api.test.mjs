@@ -234,6 +234,11 @@ function installExternalStubs() {
     if(paymentMode==="rejected")return {data:{return_code:2,sub_return_code:-1,return_message:"SIMULATED_REJECTION"}};
     const signature=[order.app_id,order.app_trans_id,order.app_user,order.amount,order.app_time,order.embed_data,order.item].join("|");
     assert.equal(order.mac,createHmac("sha256",process.env.ZALOPAY_KEY1).update(signature).digest("hex"));
+    assert.ok(data instanceof URLSearchParams, "Create order must send fields in the POST body");
+    assert.equal(options.params, undefined);
+    assert.ok(JSON.parse(order.embed_data).redirecturl.startsWith(process.env.CLIENT_URL + "/booking/success/"));
+    assert.equal(order.callback_url, process.env.ZALOPAY_CALLBACK_URL);
+    assert.equal(Number(order.expire_duration_seconds), 900);
     return {data:{return_code:1,order_url:"https://example.invalid/sandbox-order/"+order.app_trans_id,zp_trans_token:"simulated-token"}};
   };
   cloudinary.uploader.upload=async(data,options)=>{
@@ -304,7 +309,8 @@ Object.assign(process.env,localEnv,{
   EMAIL_USER:"",EMAIL_PASS:"",
   ZALO_APP_SECRET:"isolated-zalo-secret",ZALOPAY_APP_ID:"999999",
   ZALOPAY_KEY1:"isolated-zalopay-key1",ZALOPAY_KEY2:"isolated-zalopay-key2",
-  ZALOPAY_ENDPOINT:"https://example.invalid/zalopay",CLIENT_URL:"https://example.invalid/client"
+  ZALOPAY_ENDPOINT:"https://example.invalid/zalopay",CLIENT_URL:"https://example.invalid/client",
+  ZALOPAY_CALLBACK_URL:"https://example.invalid/api/payments/zalopay/webhook"
 });
 mongoose.connect=function(uri,options={}){return originalConnect.call(this,uri,{...options,dbName:databaseName,serverSelectionTimeoutMS:10000});};
 express.application.listen=function(...args){server=originalListen.apply(this,args);return server;};
@@ -359,7 +365,12 @@ async function runPaymentTests() {
     assert.equal(state.txD.status,"pending");assert.equal(state.txD.amount,1350000);
     assert.equal((await Booking.findById(state.bookingD.booking._id)).paymentStatus,"unpaid");
   },"external-mocked");
-  await test("ZaloPay chặn tạo tiếp khi đã pending",async()=>status(await http("POST","/api/payments/zalopay/create",{token:customer(),body:{bookingId:state.bookingD.booking._id}}),409));
+  await test("ZaloPay mở lại link đang chờ mà không tạo giao dịch trùng",async()=>{
+    const result=status(await http("POST","/api/payments/zalopay/create",{token:customer(),body:{bookingId:state.bookingD.booking._id}}),200);
+    assert.equal(result.appTransId,state.txD.appTransId);assert.equal(result.reused,true);
+    assert.match(result.order_url,/^https:\/\//);
+    assert.equal(await PaymentTransaction.countDocuments({bookingId:state.bookingD.booking._id}),1);
+  });
   await test("Webhook sai MAC trả return_code -1",async()=>{
     assert.equal(status(await http("POST","/api/payments/zalopay/webhook",{body:{data:"{}",mac:"invalid",type:1}}),200).return_code,-1);
   });
@@ -396,6 +407,109 @@ async function runPaymentTests() {
       assert.equal((await PaymentTransaction.findOne({bookingId:b.booking._id})).status,"failed");}
     finally{paymentMode="success";}
   },"external-mocked");
+}
+
+async function runCouponTierTests() {
+  const members = [];
+  const tierCoupons = [];
+  const quoteBody = code => ({ departureId: state.departure, adults: 2, children: 1, couponCode: code });
+  await test("Coupon tiers: tạo và đọc lại ưu đãi cho từng hạng", async () => {
+    for (const [index, tier] of ["Bạc", "Vàng", "Kim Cương"].entries()) {
+      const user = await User.create({ name: "Tier fixture " + tier, zaloId: "tier-" + index + "-" + runId, membershipTier: tier, active: true });
+      const token = jwt.sign({ sub: String(user._id) }, sessionSecret, { issuer: "vna-daksong-api", audience: "session", expiresIn: "1h" });
+      members.push({ user, token });
+      const coupon = status(await http("POST", "/api/coupons", { token: admin(), body: couponBody({ code: "TIER-" + index + "-" + runId, applicableTier: tier }) }), 201).data;
+      assert.equal(coupon.applicableTier, tier);
+      tierCoupons.push(coupon);
+    }
+    const listed = status(await http("GET", "/api/coupons?limit=100", { token: admin() }), 200);
+    for (const coupon of tierCoupons) assert.equal(listed.data.find(item => item._id === coupon._id).applicableTier, coupon.applicableTier);
+  });
+  await test("Coupon tiers: khách chỉ thấy mã tất cả, tài khoản chỉ thấy đúng hạng và phân trang khớp", async () => {
+    assert.equal(members.length, 3);
+    for (const member of [null, ...members]) {
+      const visible = status(await http("GET", "/api/coupons/available?limit=100", { token: member?.token }), 200);
+      assert.equal(visible.pagination.total, visible.data.length);
+      for (const coupon of tierCoupons) assert.equal(visible.data.some(item => item.code === coupon.code), member?.user.membershipTier === coupon.applicableTier);
+      const first = status(await http("GET", "/api/coupons/available?limit=1", { token: member?.token }), 200);
+      assert.equal(first.pagination.total, visible.pagination.total);
+    }
+    status(await http("GET", "/api/coupons/available?membershipTier=Vang"), 400);
+    status(await http("GET", "/api/coupons/available", { token: "invalid-token" }), 401);
+  });
+  await test("Coupon tiers: báo giá xác minh đúng hạng, không tự cho Kim Cương dùng mã Vàng", async () => {
+    assert.equal(tierCoupons.length, 3);
+    for (const coupon of tierCoupons) {
+      status(await http("POST", "/api/bookings/quote", { body: quoteBody(coupon.code) }), 401);
+      for (const member of members) {
+        const allowed = member.user.membershipTier === coupon.applicableTier;
+        const quote = status(await http("POST", "/api/bookings/quote", { token: member.token, body: quoteBody(coupon.code) }), allowed ? 200 : 403);
+        if (allowed) { assert.equal(quote.appliedCoupon, coupon.code); assert.equal(quote.discountAmount, 135000); }
+        else assert.equal(quote.code, "COUPON_TIER_NOT_ELIGIBLE");
+      }
+    }
+    status(await http("POST", "/api/bookings/quote", { token: members[0].token, body: { ...quoteBody(tierCoupons[1].code), membershipTier: "Vàng" } }), 400);
+    const forged = jwt.sign({ sub: String(members[0].user._id), membershipTier: "Vàng" }, sessionSecret, { issuer: "vna-daksong-api", audience: "session" });
+    status(await http("POST", "/api/bookings/quote", { token: forged, body: quoteBody(tierCoupons[1].code) }), 403);
+  });
+  await test("Coupon tiers: đổi hạng áp dụng rồi mở lại tất cả qua PUT", async () => {
+    const coupon = tierCoupons[1];
+    const path = "/api/coupons/" + coupon._id;
+    for (const tier of ["Kim Cương", "all", "Vàng"]) {
+      assert.equal(status(await http("PUT", path, { token: admin(), body: { applicableTier: tier } }), 200).data.applicableTier, tier);
+      for (const member of members) {
+        const visible = status(await http("GET", "/api/coupons/available?limit=100", { token: member.token }), 200);
+        assert.equal(visible.data.some(item => item.code === coupon.code), tier === "all" || tier === member.user.membershipTier);
+      }
+    }
+  });
+  await test("Coupon tiers: dữ liệu hạng sai bị chặn khi tạo và sửa", async () => {
+    for (const applicableTier of [null, "", "gold", ["Vàng"], 1]) {
+      status(await http("POST", "/api/coupons", { token: admin(), body: couponBody({ code: "BAD-TIER-" + randomBytes(3).toString("hex"), applicableTier }) }), 400);
+      status(await http("PUT", "/api/coupons/" + tierCoupons[1]._id, { token: admin(), body: { applicableTier } }), 400);
+    }
+  });
+  await test("Coupon tiers: mã cũ chưa có trường hạng vẫn hiển thị và báo giá công khai", async () => {
+    const legacy = await Coupon.create(couponBody({ code: "LEGACY-TIER-" + runId }));
+    await Coupon.collection.updateOne({ _id: legacy._id }, { $unset: { applicableTier: "" } });
+    const visible = status(await http("GET", "/api/coupons/available?limit=100"), 200);
+    assert.equal(visible.data.find(item => item.code === legacy.code).applicableTier, "all");
+    assert.equal((await getQuote({ couponCode: legacy.code })).appliedCoupon, legacy.code);
+  });
+  await test("Coupon tiers: tạo đơn chặn dùng lại báo giá của hạng khác, quota không đổi", async () => {
+    const coupon = tierCoupons[1];
+    const quote = status(await http("POST", "/api/bookings/quote", { token: members[1].token, body: quoteBody(coupon.code) }), 200);
+    const before = await Booking.countDocuments();
+    const rejected = status(await http("POST", "/api/bookings", { token: members[0].token, body: bookingBody(quote), headers: { "Idempotency-Key": randomUUID() } }), 403);
+    assert.equal(rejected.code, "COUPON_TIER_NOT_ELIGIBLE");
+    assert.equal(await Booking.countDocuments(), before);
+    assert.equal((await Coupon.findById(coupon._id)).usedCount, 0);
+  });
+  await test("Coupon tiers: hạng tài khoản và điều kiện mã được kiểm tra lại sau báo giá", async () => {
+    const member = members[1], coupon = tierCoupons[1];
+    const quote = status(await http("POST", "/api/bookings/quote", { token: member.token, body: quoteBody(coupon.code) }), 200);
+    try {
+      await User.updateOne({ _id: member.user._id }, { $set: { membershipTier: "Bạc" } });
+      status(await http("POST", "/api/bookings", { token: member.token, body: bookingBody(quote), headers: { "Idempotency-Key": randomUUID() } }), 403);
+      await User.updateOne({ _id: member.user._id }, { $set: { membershipTier: "Vàng" } });
+      status(await http("PUT", "/api/coupons/" + coupon._id, { token: admin(), body: { applicableTier: "Kim Cương" } }), 200);
+      status(await http("POST", "/api/bookings", { token: member.token, body: bookingBody(quote), headers: { "Idempotency-Key": randomUUID() } }), 403);
+      assert.equal((await Coupon.findById(coupon._id)).usedCount, 0);
+    } finally {
+      await User.updateOne({ _id: member.user._id }, { $set: { membershipTier: "Vàng" } });
+      await Coupon.updateOne({ _id: coupon._id }, { $set: { applicableTier: "Vàng" } });
+    }
+  });
+  await test("Coupon tiers: tài khoản đúng hạng đặt thành công, hủy đơn trả lượt dùng", async () => {
+    const member = members[1], coupon = tierCoupons[1];
+    const quote = status(await http("POST", "/api/bookings/quote", { token: member.token, body: quoteBody(coupon.code) }), 200);
+    const booking = status(await http("POST", "/api/bookings", { token: member.token, body: bookingBody(quote), headers: { "Idempotency-Key": randomUUID() } }), 201).data;
+    assert.equal(booking.snapshot.appliedCoupon, coupon.code);
+    assert.equal(booking.snapshot.discountAmount, 135000);
+    assert.equal((await Coupon.findById(coupon._id)).usedCount, 1);
+    status(await cancel(booking._id, "Tier test cleanup", member.token), 200);
+    assert.equal((await Coupon.findById(coupon._id)).usedCount, 0);
+  });
 }
 
 async function runUploadTests() {
@@ -513,8 +627,11 @@ async function runPaymentRecoveryTests() {
   },"regression");
   await test("Năm yêu cầu tạo thanh toán đồng thời chỉ tạo một giao dịch",async()=>{
     const b=await createBooking();
+    const before=externalCalls.filter(call=>call.provider==="ZaloPay").length;
     const all=await Promise.all(Array.from({length:5},()=>http("POST","/api/payments/zalopay/create",{token:customer(),body:{bookingId:b.booking._id}})));
-    assert.deepEqual(all.map(r=>r.status).sort(),[200,409,409,409,409]);
+    assert.ok(all.every(r=>[200,409].includes(r.status)));assert.ok(all.some(r=>r.status===200));
+    assert.equal(new Set(all.filter(r=>r.status===200).map(r=>r.body.order_url)).size,1);
+    assert.equal(externalCalls.filter(call=>call.provider==="ZaloPay").length,before+1);
     assert.equal(await PaymentTransaction.countDocuments({bookingId:b.booking._id}),1);
   },"concurrency");
   await test("Năm callback đồng thời chỉ ghi nhận tiền một lần",async()=>{
@@ -553,6 +670,54 @@ async function runPaymentRecoveryTests() {
     providerOrders.set(tx.appTransId,{return_code:2,sub_return_code:-101,is_processing:false});
     assert.equal(status(await query(tx),200).status,"failed");
     const next=await paymentFor(b.booking._id);assert.notEqual(next.appTransId,tx.appTransId);
+  });
+  await test("BANK_ERROR -217 vẫn is_processing true: thanh toán lại tạo cổng mới trước khi hết hạn",async()=>{
+    const b=await createBooking();const tx=await paymentFor(b.booking._id);
+    providerOrders.set(tx.appTransId,{return_code:2,sub_return_code:-217,is_processing:true,amount:0});
+    const checked=status(await query(tx),200);
+    assert.equal(checked.status,"failed");assert.equal(checked.sub_return_code,-217);assert.match(checked.message,/BANK_ERROR/);
+    assert.equal((await PaymentTransaction.findById(tx._id)).activeAttempt,false);
+    const resumed=status(await http("POST","/api/payments/zalopay/create",{token:customer(),body:{bookingId:b.booking._id}}),200);
+    assert.notEqual(resumed.reused,true);assert.notEqual(resumed.appTransId,tx.appTransId);assert.ok(resumed.order_url);
+    assert.equal(await PaymentTransaction.countDocuments({bookingId:b.booking._id}),2);
+    assert.equal((await PaymentTransaction.findOne({appTransId:resumed.appTransId})).amount,tx.amount);
+    assert.equal(await PaymentTransaction.countDocuments({bookingId:b.booking._id,activeAttempt:true}),1);
+    assert.equal((await Booking.findById(b.booking._id)).paymentStatus,"unpaid");
+  });
+  await test("Callback BANK_ERROR đến muộn sau retry: ghi nhận một lần, tiền trùng cần hoàn",async()=>{
+    const b=await createBooking();const old=await paymentFor(b.booking._id);
+    providerOrders.set(old.appTransId,{return_code:2,sub_return_code:-217,is_processing:true,amount:0});
+    const retry=await paymentFor(b.booking._id);assert.notEqual(retry.appTransId,old.appTransId);
+    assert.equal(status(await webhook(old,{zp_trans_id:900002111}),200).return_code,1);
+    assert.equal((await Booking.findById(b.booking._id)).paymentStatus,"paid");
+    status(await http("POST","/api/payments/zalopay/create",{token:customer(),body:{bookingId:b.booking._id}}),400);
+    assert.equal(status(await webhook(retry,{zp_trans_id:900002112}),200).return_code,1);
+    const saved=await Booking.findById(b.booking._id);
+    assert.equal(String(saved.paidTransactionId),String(old._id));
+    assert.equal(saved.history.filter(h=>h.status==="payment_received").length,1);
+    assert.equal((await PaymentTransaction.findById(retry._id)).status,"refund_pending");
+  },"regression");
+  await test("Giao dịch BANK_ERROR cũ đã hết hạn và mất link có thể tạo link mới",async()=>{
+    const b=await createBooking();const tx=await paymentFor(b.booking._id);
+    await PaymentTransaction.updateOne({_id:tx._id},{$set:{expiresAt:new Date(Date.now()-1000)},$unset:{checkoutUrl:""}});
+    providerOrders.set(tx.appTransId,{return_code:2,sub_return_code:-217,is_processing:true,amount:0});
+    const next=await paymentFor(b.booking._id);assert.notEqual(next.appTransId,tx.appTransId);
+    assert.equal((await PaymentTransaction.findById(tx._id)).activeAttempt,false);
+    assert.equal((await PaymentTransaction.findById(tx._id)).status,"failed");
+  });
+  await test("Retry đối soát giao dịch đã trả tiền và chặn mở thanh toán lần nữa",async()=>{
+    const b=await createBooking();const tx=await paymentFor(b.booking._id);
+    providerOrders.set(tx.appTransId,{return_code:1,amount:tx.amount,zp_trans_id:"900001998"});
+    status(await http("POST","/api/payments/zalopay/create",{token:customer(),body:{bookingId:b.booking._id}}),400);
+    assert.equal((await Booking.findById(b.booking._id)).paymentStatus,"paid");
+    assert.equal(await PaymentTransaction.countDocuments({bookingId:b.booking._id}),1);
+  });
+  await test("Redirect cấu hình sai bị chặn trước khi tạo giao dịch",async()=>{
+    const b=await createBooking();const original=process.env.CLIENT_URL;
+    process.env.CLIENT_URL="payment-complete";
+    try{assert.equal(status(await http("POST","/api/payments/zalopay/create",{token:customer(),body:{bookingId:b.booking._id}}),503).code,"PAYMENT_URL_NOT_CONFIGURED");}
+    finally{process.env.CLIENT_URL=original;}
+    assert.equal(await PaymentTransaction.countDocuments({bookingId:b.booking._id}),0);
   });
   await test("Query lỗi MAC/hệ thống không tự giải phóng giao dịch cũ",async()=>{
     const b=await createBooking();const tx=await paymentFor(b.booking._id);
@@ -1171,7 +1336,7 @@ async function runTests() {
     const codes=result.data.map(c=>c.code);
     for(const name of ["AVAILABLE","MINIMUM"])assert.ok(codes.includes(name+"-"+runId.toUpperCase()));
     for(const name of ["OFF","FUTURE","EXPIRED","EXHAUSTED","ZERO"])assert.ok(!codes.includes(name+"-"+runId.toUpperCase()));
-    for(const item of result.data)assert.deepEqual(Object.keys(item).sort(),["code","description","discountType","discountValue","maxDiscount","minOrderValue","validUntil"].sort());
+    for(const item of result.data)assert.deepEqual(Object.keys(item).sort(),["code","description","applicableTier","discountType","discountValue","maxDiscount","minOrderValue","validUntil"].sort());
     const first=status(await http("GET","/api/coupons/available?limit=1&page=1",{token:customer()}),200);
     const second=status(await http("GET","/api/coupons/available?limit=1&page=2"),200);
     assert.equal(first.data.length,1);assert.notEqual(first.data[0].code,second.data[0].code);
@@ -1186,6 +1351,7 @@ async function runTests() {
     assert.ok(!available.data.some(c=>c.code===state.autoCoupon.code));
     status(await http("POST","/api/bookings/quote",{body:{departureId:state.departure,adults:2,children:1,couponCode:state.autoCoupon.code}}),400);
   });
+  await runCouponTierTests();
   const resources=[
     ["destinations","destination",{address:"Địa chỉ demo đã sửa"},{visitNotes:"Ghi chú đã sửa"}],
     ["articles","article",{summary:"Tóm tắt đã sửa"},{content:"Nội dung đã sửa"}],

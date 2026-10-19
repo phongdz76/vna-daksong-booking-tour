@@ -5,6 +5,7 @@ import { matchesImageSignature } from '../middlewares/uploadMiddleware.js';
 import Booking from '../models/Booking.js';
 import Coupon from '../models/Coupon.js';
 import Departure from '../models/Departure.js';
+import { COUPON_TIERS, MEMBERSHIP_TIERS, couponAppliesToTier } from '../utils/membership.js';
 const id = '507f1f77bcf86cd799439011';
 const shared = { slug: 'tour-test', summary: 'Mô tả', status: 'draft', images: [], sources: [] };
 const samples = {
@@ -56,6 +57,27 @@ test('nested content, immutable IDs and empty update payloads reject silent data
   assert.throws(() => validateBodyData('departure', { tourId: id }, true), InputError);
   assert.throws(() => validateBodyData('coupon', { code: 'NEW-CODE' }, true), InputError);
   assert.throws(() => validateBodyData('tour', {}, true), InputError);
+});
+
+test('coupon tiers accept exactly all, silver, gold and diamond; legacy offers remain public', async () => {
+  for (const applicableTier of COUPON_TIERS) {
+    assert.doesNotThrow(() => validateBodyData('coupon', { ...samples.coupon, applicableTier }));
+    assert.doesNotThrow(() => validateBodyData('coupon', { applicableTier }, true));
+    await new Coupon({ ...samples.coupon, applicableTier }).validate();
+    for (const tier of [undefined, ...MEMBERSHIP_TIERS]) {
+      assert.equal(couponAppliesToTier({ applicableTier }, tier), applicableTier === 'all' || applicableTier === tier);
+    }
+  }
+  for (const applicableTier of [null, '', 'gold', 'Tất cả', [], ['Vàng'], 1, true]) {
+    assert.throws(() => validateBodyData('coupon', { ...samples.coupon, applicableTier }), InputError);
+    assert.throws(() => validateBodyData('coupon', { applicableTier }, true), InputError);
+  }
+  assert.equal(new Coupon(samples.coupon).applicableTier, 'all');
+  assert.equal(couponAppliesToTier({}, undefined), true);
+  assert.equal(couponAppliesToTier({}, 'Bạc'), true);
+  assert.equal(couponAppliesToTier({ applicableTier: 'Vàng' }, 'Kim Cương'), false);
+  await assert.rejects(new Coupon({ ...samples.coupon, applicableTier: 'gold' }).validate(), /applicableTier/);
+  await assert.rejects(new Coupon({ ...samples.coupon, applicableTier: null }).validate(), /applicableTier/);
 });
 test('query filters reject repeated keys, malformed numbers and unsupported values', () => {
   for (const query of [{ page: '0' }, { limit: '1000' }, { page: ['1', '2'] }, { q: {} }, { page: '1junk' }, { minPrice: '-1' }, { minPrice: '5', maxPrice: '1' }, { sort: 'bad' }, { secret: 'x' }, { dateFrom: '2026-10-31', dateTo: '2026-10-10' }]) assert.throws(() => validateQueryData(query, 'tours'), InputError);

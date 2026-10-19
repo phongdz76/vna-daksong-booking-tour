@@ -103,9 +103,11 @@ export interface Quote {
   expiresAt: string;
   message: string;
 }
+export type CouponTier = "all" | "Bạc" | "Vàng" | "Kim Cương";
 export interface AvailableCoupon {
   code: string;
   description: string;
+  applicableTier?: CouponTier;
   discountType: "percentage" | "fixed";
   discountValue: number;
   maxDiscount: number | null;
@@ -146,6 +148,8 @@ export interface Booking {
 export interface BookingPayment {
   appTransId: string;
   status: "pending" | "success" | "failed" | "refund_pending" | "refunded";
+  activeAttempt?: boolean;
+  note?: string;
 }
 export interface BookingDetailResponse {
   data: Booking;

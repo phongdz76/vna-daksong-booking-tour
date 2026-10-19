@@ -342,6 +342,8 @@ GET /bookings không adminOnly ở route; controller tự lọc userId nếu cal
 | PATCH | /notifications/:id/read | Có phiên | Đọc một thông báo được phép |
 | POST | /upload | Admin | Một ảnh, multipart field image |
 
+Coupon có `applicableTier`: `all` (Tất cả), `Bạc`, `Vàng` hoặc `Kim Cương`. Mặc định và mã cũ chưa có trường này áp dụng cho tất cả. Hạng được so khớp chính xác: mã Vàng không tự áp dụng cho Kim Cương. `GET /coupons/available` lọc trước khi phân trang theo tài khoản đã xác thực; khách chưa đăng nhập chỉ thấy mã áp dụng cho tất cả. Backend không nhận hạng tự khai từ client.
+
 ### 7.5 ZaloPay
 
 | Method | Path | Quyền | Tác dụng |
@@ -374,7 +376,7 @@ children mặc định 0, couponCode tùy chọn. Quy trình getBookingQuote:
 3. Aggregate adults+children của đơn pending_confirmation/confirmed/completed; tính availableSeats.
 4. Chặn hết chỗ, vượt số chỗ hoặc maxGuestsPerBooking.
 5. Có trẻ em thì phải có childPrice và childPolicy.
-6. Tính subtotal từ giá chuyến; coupon phải active, trong thời gian, còn lượt và đạt minOrderValue.
+6. Tính subtotal từ giá chuyến; coupon phải active, trong thời gian, còn lượt, đạt minOrderValue và đúng `applicableTier`. Quote vẫn công khai khi không dùng mã giới hạn hạng; token được gửi lên luôn được xác thực. Mã giới hạn hạng yêu cầu đăng nhập (401), khác hạng trả 403 `COUPON_TIER_NOT_ELIGIBLE`.
 7. Tạo snapshot, SHA256 fingerprint theo object canonicalize (sort keys), ký JWT audience quote.
 8. Trả quoteToken, expiresAt, bảng giá và thông điệp chỗ được VNA xác nhận sau.
 
@@ -431,7 +433,7 @@ flowchart TD
   Email --> New[201, replayed false]
 ```
 
-Trong transaction, Tour/Departure được ghi tăng bookingRevision/__v, kiểm maxGuestsPerBooking mới, tính coupon và snapshot mới. Coupon/Booking cùng commit hoặc rollback. Index unique user+key xử lý race gửi lặp; nếu duplicate thì đọc lại và đối chiếu hash.
+Trong transaction, Tour/Departure được ghi tăng bookingRevision/__v, kiểm maxGuestsPerBooking mới, tính coupon và snapshot mới. Mã giới hạn hạng được đối chiếu lại với User trong database, kể cả sau khi đã lấy quote. Coupon/Booking cùng commit hoặc rollback. Index unique user+key xử lý race gửi lặp; nếu duplicate thì đọc lại và đối chiếu hash.
 
 Mã đơn `VNA-` + 12 ký tự hex ngẫu nhiên viết hoa. Trạng thái pending_confirmation/unpaid, history ghi actorId và thời điểm. paymentMethod enum cash_on_arrival/qr_transfer/zalopay, mặc định cash_on_arrival.
 
@@ -465,11 +467,22 @@ History còn chứa event tiền như payment_received/refund_pending/refunded, 
 
 ### Tạo payment attempt
 
-Chỉ owner, booking pending/confirmed, paymentStatus unpaid, amount nguyên dương. Chặn attempt đang chờ/active/đã nhận tiền; thử đối soát attempt cũ đã hết hạn trước khi tạo lại. Transaction ghi Booking/version và PaymentTransaction activeAttempt=true, expiresAt 15 phút. Partial unique index chặn hai attempt active cho cùng booking/provider.
+Chỉ owner, booking pending/confirmed, paymentStatus unpaid, amount nguyên dương. Đối soát attempt cũ trước khi tiếp tục; nếu còn hạn, còn active và đã lưu checkoutUrl thì trả lại chính link đó (`reused=true`). Riêng BANK_ERROR -217 được provider xác nhận thất bại thì đóng attempt và tạo link mới, không mở lại cổng lỗi. Attempt đang khởi tạo hoặc chưa xác định kết quả mà chưa có link trả 409/502. Transaction ghi Booking/version và PaymentTransaction activeAttempt=true, expiresAt 15 phút. Partial unique index chặn hai attempt active cho cùng booking/provider.
 
-appTransId có tiền tố YYMMDD theo UTC+7 và chuỗi ngẫu nhiên. Payload lấy amount từ snapshot, ký HMAC key1; URL redirect từ CLIENT_URL. Provider được gọi ngoài transaction MongoDB vì transaction có thể retry. Thành công trả order_url/zp_trans_token/appTransId.
+appTransId có tiền tố YYMMDD theo UTC+7 và chuỗi ngẫu nhiên. Payload lấy amount từ snapshot, ký HMAC key1; URL redirect tuyệt đối từ CLIENT_URL tới `/booking/success/:id`, callback riêng lấy từ ZALOPAY_CALLBACK_URL (HTTPS). Cấu hình URL sai bị chặn trước khi tạo attempt. Khi test web trên cùng máy, CLIENT_URL có thể là http://localhost:5173; test trên điện thoại cần URL frontend truy cập được từ điện thoại. Provider được gọi ngoài transaction MongoDB vì transaction có thể retry. Thành công lưu checkoutUrl (không trả trong danh sách giao dịch thông thường) và trả order_url/zp_trans_token/appTransId.
 
-sendZaloPayRequest timeout 10 giây. Tạo/query dùng tham số HTTP theo helper hiện tại; refund/query_refund dùng body form URL encoded UTF-8. HTTP lỗi/response không hợp lệ trả kết quả chưa xác định, giữ thông tin attempt để query.
+sendZaloPayRequest timeout 10 giây. Tạo/query/refund/query_refund đều gửi body form URL encoded UTF-8, gồm đầy đủ embed_data redirecturl và callback_url. HTTP lỗi/response không hợp lệ trả kết quả chưa xác định, giữ thông tin attempt để query.
+
+### Kiểm tra lỗi sandbox sau thẻ/OTP
+
+Kiểm tra trực tiếp ngày 19/10/2026 bằng giao dịch chẩn đoán riêng (không tạo booking hoặc ghi nhận thanh toán giả trong DB):
+
+- Nhánh **Thẻ/tài khoản nội địa**, thẻ ATM kiểm thử hợp lệ `9704540000000062`, tên `NGUYEN VAN A`, ngày phát hành `10/18`: sandbox báo thành công, quay về đúng `CLIENT_URL/booking/success/...`; API query xác nhận `return_code=1`, `is_processing=false`, amount 50.000đ sandbox.
+- Sau khi người dùng vẫn gặp BANK_ERROR ở đơn 2.120.000đ, đã thử một giao dịch mới riêng cùng số tiền 2.120.000đ với thẻ ATM trên: API query xác nhận thành công, amount đúng 2.120.000đ. HTML simulator hiển thị cố định 20.000đ nhưng payload phản hồi chứa đúng số tiền yêu cầu; không có chứng cứ mức tiền tour gây lỗi. Điều này chỉ xác nhận giao dịch mới đã thử, không chứng minh giao dịch cũ bị lỗi có thể tiếp tục thành công.
+- Nhánh thẻ quốc tế với Visa kiểm thử `4111111111111111` đã tái hiện URL lỗi `https://payment-complete/`, dù embed_data gửi URL trả về đầy đủ. Thử lại thẻ `4242424242424242` mà người dùng cung cấp đã ghi được chuyển hướng **HTTP 302** từ `https://sbzpbankconnector.zalopay.vn/web/cs/enroll` với header **Location: https://payment-complete**; trình duyệt sau đó báo `ERR_NAME_NOT_RESOLVED`. URL lỗi được máy chủ sandbox ngân hàng trả về, không phải đường dẫn do frontend dự án tạo. Không thể sửa trang này bằng cách đổi DNS hoặc URL backend Cloudflare. Không khẳng định toàn bộ giao dịch Visa đều lỗi; cần gửi mã giao dịch và chuỗi chuyển hướng cho bộ phận hỗ trợ ZaloPay nếu tiếp tục kiểm thử nhánh này.
+- Thẻ `4242424242424242` người dùng đang thử không nằm trong danh sách thẻ kiểm thử được công bố ở [tài liệu ZaloPay](https://docs.zalopay.vn/vi/docs/developer-tools/test-instructions/testing/). Không dùng danh sách thẻ của cổng khác để suy ra kết quả sandbox ZaloPay.
+
+Khi gặp trang DNS hoặc trang ngân hàng lỗi, quay về đơn và dùng **Thanh toán lại qua ZaloPay**, sau đó chọn thẻ ATM hợp lệ để đối chiếu. Ứng dụng đối soát giao dịch cũ trước khi trả link; BANK_ERROR -217 sẽ tạo lượt thanh toán mới với mã giao dịch mới. Không tự ghi paid từ thông báo/URL trình duyệt. Thành công của giao dịch chẩn đoán ở trên chỉ xác minh cổng sandbox và redirect trên web; không thay thế kiểm thử callback cho booking thật hoặc SDK trên Zalo.
 
 ### Callback và query
 
@@ -481,7 +494,7 @@ Webhook kiểm data/mac, timingSafeEqual HMAC key2, app_id, app_trans_id, amount
 - Đơn đã hủy/từ chối hoặc tiền trùng chuyển giao dịch cần refund; không ghi thêm tour confirmed/soldCount/loyalty.
 - Query thành công sử dụng cùng recordZaloPayPayment, rồi frontend đọc DB.
 
-Webhook trả return_code theo hợp đồng provider, thường HTTP 200 kể cả chữ ký sai hoặc cần retry; caller phải đọc return_code. Query không coi lỗi MAC/config/network là chứng cứ chưa thu tiền. Attempt hết hạn chỉ giải phóng khi provider xác nhận không còn xử lý với kết quả mà controller nhận diện.
+Webhook trả return_code theo hợp đồng provider, thường HTTP 200 kể cả chữ ký sai hoặc cần retry; caller phải đọc return_code. Query không coi lỗi MAC/config/network là chứng cứ chưa thu tiền. Các lỗi thanh toán đã được provider xác nhận lưu failed và ghi chú, kể cả is_processing vẫn true. BANK_ERROR -217 và TIME_INVALID -54 giải phóng attempt để retry tạo giao dịch mới; lỗi số dư -63 vẫn có thể mở lại cổng còn hạn sau khi bổ sung số dư. ORDER_NOT_EXIST -101 chỉ giải phóng khi đã hết hạn và is_processing=false. Callback thành công đến muộn vẫn được kiểm tra và ghi nhận; nếu hai giao dịch cùng thành công, chỉ một khoản được áp dụng vào booking, khoản trùng được chuyển sang refund_pending để đối soát.
 
 ### Refund
 
@@ -601,7 +614,7 @@ Chạy từ root dự án sau khi có backend/.env và dependencies:
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-zalo-local.ps1
 ```
 
-Script có tác động: tải cloudflared nếu thiếu; khởi động backend ở cổng 8000 với NODE_ENV=production/ALLOW_MOCK_LOGIN=false; kiểm truy vấn API/DB; mở tunnel HTTPS; lưu process/session/log trong tmp/zalo-local; đổi riêng dòng VITE_API_BASE_URL trong frontend/.env.local. Nếu cổng đã dùng, script dừng với lỗi, không tự giết process khác.
+Script có tác động: tải cloudflared nếu thiếu; khởi động backend ở cổng 8000 với NODE_ENV=production/ALLOW_MOCK_LOGIN=false; kiểm truy vấn API/DB; mở tunnel HTTPS; sau khi có URL thì nạp lại backend với ZALOPAY_CALLBACK_URL trỏ tới webhook qua tunnel; lưu process/session/log trong tmp/zalo-local; đổi riêng dòng VITE_API_BASE_URL trong frontend/.env.local. Nếu cổng đã dùng, script dừng với lỗi, không tự giết process khác.
 
 Sau khi URL sẵn sàng, ở frontend:
 

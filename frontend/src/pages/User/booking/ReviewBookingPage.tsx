@@ -16,6 +16,7 @@ import { dateTime, duration, money } from "../../../utils/format";
 import useApi from "../../../hooks/useApi";
 import type { Booking, Quote, Tour } from "../../../types/api";
 import { contactError } from '../../../utils/inputValidation';
+import { openZaloPayCheckout, reserveZaloPayWindow } from '../../../utils/zalopay';
 
 export default function ReviewBookingPage() {
   const { id } = useParams();
@@ -103,6 +104,7 @@ export default function ReviewBookingPage() {
     sending.current = true;
     setBusy(true);
     setError("");
+    const popup = !isPreview && paymentMethod === "zalopay" ? reserveZaloPayWindow() : null;
     try {
       let booking: Booking;
       if (isPreview) {
@@ -161,13 +163,12 @@ export default function ReviewBookingPage() {
         
         if (paymentMethod === "zalopay") {
           try {
-            const paymentResponse = await api.post<{ order_url: string }>("/payments/zalopay/create", { bookingId: booking._id });
-            if (paymentResponse.data.order_url) {
+            await openZaloPayCheckout(booking._id, popup, () => {
               setAttempt(null);
               setDraft(null);
-              window.location.href = paymentResponse.data.order_url;
-              return;
-            }
+              navigate("/booking/success/" + booking._id, true);
+            });
+            return;
           } catch (e) {
             // Proceed to success page even if ZaloPay API fails, they can retry on Detail Page
             console.error("ZaloPay create error:", e);
@@ -178,6 +179,7 @@ export default function ReviewBookingPage() {
       setDraft(null);
       navigate("/booking/success/" + booking._id, true);
     } catch (error) {
+      popup?.close();
       if (
         axios.isAxiosError(error) &&
         error.response &&

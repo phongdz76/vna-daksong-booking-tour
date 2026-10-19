@@ -668,6 +668,24 @@
     font-size: 14px;
     margin-top: 12px;
   }
+  .account-coupons-intro { color: #66766c; font-size: 13px; line-height: 1.6; }
+  .account-coupon-list { display: grid; gap: 14px; margin-top: 16px; }
+  .account-coupon { min-width: 0; padding: 16px; border: 1px solid #d9e7dd; border-radius: 14px; background: #f8fcf9; overflow-wrap: anywhere; }
+  .account-coupon-heading { display: flex; gap: 12px; align-items: center; }
+  .account-coupon-heading > div { display: grid; gap: 5px; min-width: 0; }
+  .account-coupon-icon { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; background: #e4f1e7; color: #17634b; }
+  .account-coupon-discount { color: #04432f; font-size: 20px; line-height: 1.3; }
+  .account-coupon-tier { width: fit-content; padding: 2px 8px; border-radius: 20px; color: #914b2b; background: #fff0e6; font-size: 11px; line-height: 1.6; }
+  .account-coupon-description { margin-top: 12px; font-size: 13px; }
+  .account-coupon-conditions { display: grid; gap: 6px; margin: 14px 0; font-size: 12px; line-height: 1.6; }
+  .account-coupon-conditions > div { display: flex; flex-wrap: wrap; gap: 3px 12px; justify-content: space-between; }
+  .account-coupon-conditions dt { color: #66766c; }
+  .account-coupon-conditions dd { margin: 0; font-weight: 500; }
+  .account-coupon-footer { display: grid; gap: 12px; padding-top: 12px; border-top: 1px dashed #cbdccf; }
+  .account-coupon-code { color: #245b45; font-size: 12px; font-weight: 600; letter-spacing: .04em; }
+  .account-coupon-footer .button { width: 100%; margin-top: 0; }
+  .account-coupons-pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-top: 16px; font-size: 12px; }
+  .account-coupons-pagination .button { min-height: 44px; margin-top: 0; padding: 8px 14px; }
   @media (max-width: 374px) {
     .account-profile-info h1 {
       font-size: 17px;

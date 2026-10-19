@@ -23,10 +23,10 @@ export default function LocationCanvas({ points, editable = false, showOrder = f
   const markers = useRef(new Map<string, Marker>());
   const chooseRef = useRef(onChoose);
   const selectRef = useRef(onSelect);
+  const retryTiles = useRef<(() => void) | null>(null);
   chooseRef.current = onChoose;
   selectRef.current = onSelect;
   const [tileError, setTileError] = useState(false);
-  const [revision, setRevision] = useState(0);
 
   useEffect(() => {
     if (!container.current) return;
@@ -37,13 +37,40 @@ export default function LocationCanvas({ points, editable = false, showOrder = f
     // This is the initial viewport, not an assigned destination or a boundary.
     view.setView([12.23, 107.68], 10);
     let loaded = 0;
+    let reportedTileError = false;
     const tiles = tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
+      // OSM requires a Referer for web requests. Override restrictive WebView
+      // defaults without disclosing the page path or query string.
+      referrerPolicy: "strict-origin-when-cross-origin",
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
-    }).addTo(view);
-    tiles.on("tileerror", () => { if (!loaded) setTileError(true); });
-    tiles.on("tileload", () => { loaded++; setTileError(false); });
-    const deadline = window.setTimeout(() => { if (!loaded) setTileError(true); }, 10000);
+    });
+    tiles.on("tileerror", () => {
+      if (!loaded) setTileError(true);
+      if (!reportedTileError) {
+        reportedTileError = true;
+        console.warn("[map] Could not load OpenStreetMap tiles. Check tile.openstreetmap.org in the device Network panel.", {
+          origin: window.location.origin,
+          referrerPolicy: tiles.options.referrerPolicy,
+        });
+      }
+    });
+    let deadline = window.setTimeout(() => { if (!loaded) setTileError(true); }, 10000);
+    tiles.on("tileload", () => {
+      loaded++;
+      window.clearTimeout(deadline);
+      setTileError(false);
+    });
+    retryTiles.current = () => {
+      loaded = 0;
+      reportedTileError = false;
+      setTileError(false);
+      window.clearTimeout(deadline);
+      deadline = window.setTimeout(() => { if (!loaded) setTileError(true); }, 10000);
+      // Keep the map and its pins alive, including any pending zoom animation.
+      tiles.redraw();
+    };
+    tiles.addTo(view);
     if (editable) view.on("click", event => {
       keepView.current = true;
       chooseRef.current?.({ latitude: event.latlng.lat, longitude: event.latlng.lng });
@@ -52,13 +79,14 @@ export default function LocationCanvas({ points, editable = false, showOrder = f
     observer.observe(container.current);
     return () => {
       window.clearTimeout(deadline);
+      retryTiles.current = null;
       observer.disconnect();
       markers.current.clear();
       layersRef.current = null;
       viewRef.current = null;
       view.remove();
     };
-  }, [editable, revision]);
+  }, [editable]);
 
   useEffect(() => {
     const view = viewRef.current;
@@ -95,12 +123,12 @@ export default function LocationCanvas({ points, editable = false, showOrder = f
     if (showOrder && locations.length > 1) polyline(locations, { color: "#245b45", weight: 3, dashArray: "7 8", interactive: false }).addTo(layers);
     if (locations.length && !keepView.current) view.fitBounds(latLngBounds(locations), { padding: [35, 35], maxZoom: editable ? 16 : 14 });
     keepView.current = false;
-  }, [points, editable, showOrder, revision]);
+  }, [points, editable, showOrder]);
 
   useEffect(() => {
     const pin = selectedId ? markers.current.get(selectedId) : undefined;
     if (pin) { pin.openPopup(); viewRef.current?.panTo(pin.getLatLng()); }
-  }, [selectedId, points, revision]);
+  }, [selectedId, points]);
 
   return <>
     {editable && <div className="map-editor-toolbar"><span>Khung xem mặc định: khu vực Đắk Song</span>
@@ -109,7 +137,7 @@ export default function LocationCanvas({ points, editable = false, showOrder = f
     <div ref={container} className="tour-location-canvas" role="region" aria-label={editable ? "Bản đồ chọn vị trí địa điểm" : "Bản đồ các điểm trong tour"} />
     {tileError && <div className="tour-map-notice" role="status">
       <p>Chưa tải được nền bản đồ. Bạn vẫn có thể dùng tọa độ và các liên kết Google Maps.</p>
-      <button type="button" className="map-retry" onClick={() => setRevision(value => value + 1)}>Tải lại bản đồ</button>
+      <button type="button" className="map-retry" onClick={() => retryTiles.current?.()}>Tải lại bản đồ</button>
     </div>}
   </>;
 }

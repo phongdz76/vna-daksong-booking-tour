@@ -122,6 +122,7 @@ export default function CouponPicker({
                         : money(offer.discountValue)}
                     </strong>
                     {offer.description && <span>{offer.description}</span>}
+                    <small>Hạng áp dụng: {offer.applicableTier && offer.applicableTier !== "all" ? offer.applicableTier : "Tất cả"}</small>
                     <small>
                       Đơn từ {money(offer.minOrderValue)}
                       {offer.discountType === "percentage" &&

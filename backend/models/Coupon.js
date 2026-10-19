@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
+import { COUPON_TIERS } from "../utils/membership.js";
 
 const couponSchema = new mongoose.Schema({
   code: { type: String, required: true, unique: true, uppercase: true, trim: true, maxlength: 50, match: /^[A-Z0-9_-]+$/ },
   description: { type: String, default: "", maxlength: 1000 },
+  applicableTier: { type: String, enum: COUPON_TIERS, default: "all", required: true },
   discountType: { type: String, enum: ["percentage", "fixed"], required: true },
   discountValue: { type: Number, required: true, min: 0, max: 1_000_000_000, validate: Number.isFinite },
   maxDiscount: { type: Number, default: null, min: 0, max: 1_000_000_000, validate: value => value === null || Number.isSafeInteger(value) },

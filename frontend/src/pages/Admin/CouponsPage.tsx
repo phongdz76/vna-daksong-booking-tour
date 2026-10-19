@@ -157,6 +157,7 @@ export default function CouponsPage() {
                             <small className="coupon-description">
                               {c.description || "Chưa bổ sung mô tả"}
                             </small>
+                            <small>Hạng áp dụng: {c.applicableTier && c.applicableTier !== "all" ? c.applicableTier : "Tất cả"}</small>
                           </td>
                           <td>
                             <strong className="price">
@@ -318,6 +319,7 @@ function CouponForm({
   const [value, setValue] = useState({
     code: initial?.code || "",
     description: initial?.description || "",
+    applicableTier: initial?.applicableTier || "all",
     type: initial?.discountType || "percentage",
     discount: initial ? String(initial.discountValue) : "",
     max: initial?.maxDiscount == null ? "" : String(initial.maxDiscount),
@@ -352,6 +354,7 @@ function CouponForm({
     }
     const payload = {
       description: value.description.trim(),
+      applicableTier: value.applicableTier,
       discountType: value.type,
       discountValue: Number(value.discount),
       maxDiscount:
@@ -435,6 +438,18 @@ function CouponForm({
                     updateField("description", event.target.value)
                   }
                 />
+              </Field>
+              <Field label="Hạng thành viên áp dụng" hint="Chọn một hạng cụ thể hoặc áp dụng cho tất cả khách hàng." full>
+                <select
+                  aria-label="Hạng thành viên áp dụng"
+                  value={value.applicableTier}
+                  onChange={(event) => updateField("applicableTier", event.target.value)}
+                >
+                  <option value="all">Tất cả</option>
+                  <option value="Bạc">Bạc</option>
+                  <option value="Vàng">Vàng</option>
+                  <option value="Kim Cương">Kim Cương</option>
+                </select>
               </Field>
               <Field label="Hình thức giảm">
                 <select

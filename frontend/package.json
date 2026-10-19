@@ -14,6 +14,7 @@
     "test:scroll": "node tests/scroll-ui.mjs",
     "test:explore": "node --test tests/explore-catalog.test.mjs",
     "test:admin": "node tests/admin-ui.mjs",
+    "test:departure-pricing": "node --test tests/admin-departure-pricing.test.mjs",
     "test:locations": "node --test tests/tour-locations.test.mjs"
   },
   "engines": {

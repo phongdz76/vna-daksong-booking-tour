@@ -1,4 +1,5 @@
 // Validate raw HTTP values before Mongoose can cast strings, booleans or arrays.
+import { COUPON_TIERS } from './membership.js';
 export class InputError extends Error {
   constructor(field, message) {
     super(`${field}: ${message}`);
@@ -68,7 +69,7 @@ export const bodySchemas = {
   article: { ...shared, title: text(200, true), content: text(50000, true), category: choice(['culture', 'food', 'travel_tips', 'story']), destinationIds: array(id, 100, true) },
   tour: { ...shared, name: text(200, true), description: text(30000, true), durationHours: number(1, 720, false), themes: array(choice(categories), 4, true), destinationIds: array(id, 100, true), itinerary: array(itinerary), meetingPoint: text(1000, true), meetingDestinationId: nullable(id), includes: array(text(500, true)), excludes: array(text(500, true)), childPolicy: text(3000), cancellationPolicy: text(3000, true) },
   departure: { tourId: id, departureAt: date, bookingDeadline: date, adultPrice: money, childPrice: nullable(money), maxGuestsPerBooking: number(1, 100), status: choice(['open', 'closed']) },
-  coupon: { code: couponCode, description: text(1000), discountType: choice(['percentage', 'fixed']), discountValue: number(0, 1_000_000_000, false), maxDiscount: nullable(money), minOrderValue: money, validFrom: date, validUntil: date, usageLimit: nullable(number(0, 1_000_000_000)), isActive: boolean },
+  coupon: { code: couponCode, description: text(1000), applicableTier: choice(COUPON_TIERS), discountType: choice(['percentage', 'fixed']), discountValue: number(0, 1_000_000_000, false), maxDiscount: nullable(money), minOrderValue: money, validFrom: date, validUntil: date, usageLimit: nullable(number(0, 1_000_000_000)), isActive: boolean },
   quote: { departureId: id, adults: number(1, 100), children: number(0, 100), couponCode },
   booking: { quoteToken: text(4096, true), contact: object({ name: text(200, true), phone: (value, field) => { if (!isPhone(value)) fail(field, 'nhập số di động Việt Nam hợp lệ, bắt đầu bằng 0 hoặc +84.'); }, email: (value, field) => { if (!isEmail(value)) fail(field, 'email không hợp lệ.'); } }, ['name', 'phone', 'email']), note: text(2000), couponCode, paymentMethod: choice(['cash_on_arrival', 'qr_transfer', 'zalopay']) },
   bookingStatus: { status: choice(['pending_confirmation', 'confirmed', 'cancelled', 'rejected', 'completed']), reason: text(1000) },

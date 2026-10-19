@@ -10,6 +10,7 @@ import Coupon from "../models/Coupon.js";
 import User from "../models/User.js";
 import PaymentTransaction from "../models/PaymentTransaction.js";
 import { sendBookingConfirmation } from "../utils/email.js";
+import { couponAppliesToTier } from "../utils/membership.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -119,6 +120,12 @@ function publicBooking(booking) {
       const coupon = await Coupon.findOne({ code: couponCode.trim().toUpperCase() });
       if (!coupon) return res.status(400).json({ message: "Mã giảm giá không tồn tại." });
       if (!coupon.isValid()) return res.status(400).json({ message: "Mã giảm giá đã hết hạn hoặc hết lượt sử dụng." });
+      if (!couponAppliesToTier(coupon, req.user?.membershipTier)) {
+        return res.status(req.user ? 403 : 401).json({
+          message: req.user ? "Mã giảm giá không áp dụng cho hạng thành viên của bạn." : "Đăng nhập để sử dụng mã giảm giá dành cho hạng thành viên.",
+          code: req.user ? "COUPON_TIER_NOT_ELIGIBLE" : "AUTH_REQUIRED",
+        });
+      }
       discountAmount = coupon.calculateDiscount(total);
       if (discountAmount > 0) {
         total -= discountAmount;
@@ -253,6 +260,12 @@ export const createBooking = async (req, res) => {
           const coupon = await Coupon.findOne({ code: couponCode.trim().toUpperCase() }).session(session);
           if (!coupon) throw new Error("COUPON_NOT_FOUND");
           if (!coupon.isValid()) throw new Error("COUPON_EXPIRED");
+          if (coupon.applicableTier && coupon.applicableTier !== "all") {
+            const currentUser = await User.findById(req.user._id).session(session);
+            if (!currentUser?.active || !couponAppliesToTier(coupon, currentUser.membershipTier)) {
+              throw new Error("COUPON_TIER_NOT_ELIGIBLE");
+            }
+          }
           discountAmount = coupon.calculateDiscount(total);
           if (discountAmount > 0) {
             total -= discountAmount;
@@ -336,6 +349,9 @@ export const createBooking = async (req, res) => {
       if (error.message === "INVALID_COUPON") {
           return res.status(400).json({ message: "Mã giảm giá không hợp lệ." });
       }
+      if (error.message === "COUPON_TIER_NOT_ELIGIBLE") {
+        return res.status(403).json({ message: "Mã giảm giá không áp dụng cho hạng thành viên của bạn. Vui lòng chọn ưu đãi khác.", code: "COUPON_TIER_NOT_ELIGIBLE" });
+      }
       throw error;
     }
     try {
@@ -395,7 +411,7 @@ export const getBookingById = async (req, res) => {
     const booking = await Booking.findOne(filter);
     if (!booking) return res.status(404).json({ message: "Đơn không tồn tại." });
     const payments = await PaymentTransaction.find({ bookingId: booking._id })
-      .select("appTransId amount status paidAt refundRequestId providerRefundId refundState refundedAt createdAt")
+      .select("appTransId amount status activeAttempt expiresAt note paidAt refundRequestId providerRefundId refundState refundedAt createdAt")
       .sort({ createdAt: -1 }).lean();
     res.json({ data: booking, payments });
   } catch (error) {

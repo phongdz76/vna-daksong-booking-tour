@@ -46,6 +46,7 @@ export default function useBookingPaymentSync(
           booking.paymentStatus === "unpaid",
       );
       running = (async () => {
+        const paymentFailures: string[] = [];
         const results = await Promise.allSettled(
           seeds.map(async (seed) => {
             const path = API_PATHS.BOOKINGS.GET_BY_ID(seed._id);
@@ -55,7 +56,7 @@ export default function useBookingPaymentSync(
               })
             ).data;
             const transaction = detail.payments?.find((payment) =>
-              ["pending", "success"].includes(payment.status),
+              ["pending", "success"].includes(payment.status) || payment.activeAttempt,
             );
             let queryError: unknown;
             if (detail.data.paymentStatus === "unpaid" && transaction) {
@@ -78,6 +79,10 @@ export default function useBookingPaymentSync(
             const changed =
               detail.data.paymentStatus !== seed.paymentStatus ||
               detail.data.status !== seed.status;
+            const latestPayment = detail.payments?.[0];
+            if (detail.data.paymentStatus === "unpaid" && latestPayment?.status === "failed") {
+              paymentFailures.push(latestPayment.note || "Lần thanh toán trước chưa thành công. Bạn có thể thanh toán lại qua ZaloPay.");
+            }
             if (queryError && !changed) throw queryError;
             return changed;
           }),
@@ -94,7 +99,7 @@ export default function useBookingPaymentSync(
         if (controller.signal.aborted) return;
         const failure = results.find((result) => result.status === "rejected");
         setError(
-          failure?.status === "rejected" ? errorMessage(failure.reason) : "",
+          failure?.status === "rejected" ? errorMessage(failure.reason) : paymentFailures[0] || "",
         );
       })().finally(() => {
         running = null;

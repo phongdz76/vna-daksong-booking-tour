@@ -49,7 +49,7 @@ export default function DestinationDetailPage() {
               alt={result.data.name}
               eager
             />
-            <div className="section">
+            <div className="section destination-detail-content">
               <span className="badge">{themeLabels[result.data.category]}</span>
               <h1 className="detail-title">{result.data.name}</h1>
               <p className="meta">

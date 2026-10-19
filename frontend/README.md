@@ -52,6 +52,7 @@ Không thêm /api vào VITE_API_BASE_URL. VITE_* xuất hiện trong bundle; kh�
 | npm.cmd run test:scroll | Chrome cuộn/tab/refresh |
 | npm.cmd run test:explore | Node test khử trùng/phân trang catalog |
 | npm.cmd run test:admin | Chrome cổng quản trị |
+| npm.cmd run test:departure-pricing | Chọn giá gợi ý khi tạo chuyến khởi hành |
 | npm.cmd run test:locations | Node test helper vị trí/cung đường |
 
 Không có package ở root điều phối tự động hai phần. Test UI cần server đang chạy; typecheck/build không cần gọi database.
@@ -186,7 +187,7 @@ Các trang khám phá công khai. Các màn đơn/tác vụ có kiểm auth tron
 | /admin/:resource/new | ContentPage + ContentForm | Tạo, chỉ ba resource trên |
 | /admin/:resource/:id/edit | ContentPage + ContentForm | Sửa |
 | /admin/departures | DeparturesPage | Chuyến/giá/hạn nhận |
-| /admin/coupons | CouponsPage | Điều kiện ưu đãi |
+| /admin/coupons | CouponsPage | Điều kiện ưu đãi, hạng áp dụng Tất cả/Bạc/Vàng/Kim Cương |
 | Route admin khác | Empty trong AdminApp | Không tìm thấy trang |
 
 RequireAdmin chờ kiểm phiên, chuyển về login nếu chưa có user; nếu token còn nhưng API lỗi thì cho thử lại/đăng xuất. Backend vẫn kiểm adminOnly trên endpoint.
@@ -229,11 +230,12 @@ PullToRefresh tránh input/textarea/select/contenteditable, dialog đang mở, k
 | TourReviews | Danh sách/form, eligibility, gửi/sửa/xóa và callback refresh |
 | TourLocationMap | Marker địa điểm và link vị trí/cung đường |
 | GuestCounter | Số khách và nút tăng/giảm theo giới hạn props |
-| CouponPicker | Đọc coupon khả dụng, kiểm minOrderValue để hiển thị, chọn/bỏ mã |
+| CouponPicker | Đọc coupon khả dụng đã lọc theo hạng ở backend, hiển thị hạng áp dụng, kiểm minOrderValue để hiển thị, chọn/bỏ mã |
 | BookingSteps | Hai bước chọn chuyến/kiểm tra gửi |
 | BookingProgress | Trình bày tiến trình từ Booking.status |
 | BookingTicketCode | Mã đơn thật; QR minh họa chỉ preview |
 | AccountMenuItem | Mục tài khoản với icon/nhãn/hành động |
+| AccountCoupons | Danh sách voucher trong tài khoản, điều kiện/hạn dùng, phân trang và nút Sử dụng ngay dẫn tới /tours |
 
 Page điều phối phần dữ liệu/nghiệp vụ của màn; component có thể chứa state/hook. TourReviews gọi API mutation, CouponPicker đọc API; source không bắt mọi component là presentational thuần.
 
@@ -363,6 +365,8 @@ Khi API tạo booking thành công, clear draft/attempt. Với ZaloPay thử t�
 
 ### Kết quả, đơn và tiền
 
+Đặt mới và thanh toán lại dùng chung `openZaloPayCheckout`. Trên web, cửa sổ thanh toán được giữ chỗ ngay từ thao tác bấm (trước request booking/API) rồi mở order_url. Trang chính giữ phiên, query giao dịch và đọc lại booking mỗi 3 giây. Chỉ khi Booking.paymentStatus=paid từ backend mới đóng cửa sổ thanh toán và tự chuyển tới `/booking/success/:id`, kể cả cổng thanh toán không tự redirect. Nếu trình duyệt giữ cửa sổ thanh toán mở thì cũng chuyển cửa sổ đó về kết quả đơn. Khách đóng cửa sổ thì đối soát lần cuối và cho kiểm tra/thử lại; kết quả chưa rõ không được coi là đã trả tiền. Nếu popup bị chặn hoặc chạy trong Zalo thì dùng chuyển trang cùng đường dẫn redirect của provider; hành vi SDK trên Zalo thật cần kiểm riêng. Nút có khóa chống bấm lặp và hiển thị lỗi trên màn. Backend trả link của attempt đang chờ hoặc tạo attempt mới sau khi xác nhận BANK_ERROR.
+
 BookingSuccess/MyBookings/BookingDetail đọc server; trạng thái đặt tour và tiền hiển thị riêng từ Booking.status/paymentStatus. Mới tạo là pending_confirmation/unpaid. Các page dùng useBookingPaymentSync để đối soát và refresh.
 
 BookingDetail cho hủy có reason khi phù hợp, thanh toán ZaloPay nếu đủ điều kiện, history và hỗ trợ bằng cấu hình OA/phone. Server kiểm lại owner/status. Đơn thật hiển thị mã VNA; QR trong preview là minh họa không check-in.
@@ -393,11 +397,13 @@ TourDetail đọc danh sách/summary; TourReviews đọc eligibility nếu có u
 
 Profile/hạng/điểm từ /auth/me; confirmed và completed từ /bookings/mine; saved tour từ /tours/saved; chuyến sắp đi là confirmed chưa khởi hành gần nhất. Trip count cộng tổng confirmed/completed, không phải toàn bộ đơn đã gửi.
 
+Ô Mã ưu đãi lấy số lượng từ `GET /coupons/available` theo phiên đăng nhập. Chưa đăng nhập hiển thị `—`, không tải danh sách và bấm vào sẽ chuyển đến đăng nhập với `returnTo=/account`. Khi đăng nhập, bấm mở danh sách sẽ tải lại các mã còn hiệu lực và phù hợp với hạng; mỗi trang 10 mã, có trạng thái tải/lỗi/thử lại/rỗng. Nút Sử dụng ngay đóng hộp thoại và dẫn đến danh sách tour; khách chọn mã ở bước đặt chuyến, backend xác nhận điều kiện khi báo giá.
+
 Hạng backend có **Bạc, Vàng, Kim Cương**, ngưỡng 1000/5000. Thanh progress là logic trình bày riêng: khi Bạc ≤500 điểm, targetPoints ở helper là 500, sau đó 1000; nhãn vẫn hướng tới Vàng. Không dùng phần trăm progress làm quy tắc nâng hạng thay backend.
 
 Panel saved hoạt động bằng API. Panel hành khách/ảnh/ví/ZNS/chính sách/FAQ có phần thông tin/preview; chưa có CRUD profile hành khách, ví tiền, upload ảnh kỷ niệm hay ZNS service. Nhãn “Thông báo hành trình ZNS” không chứng minh tích hợp gửi ZNS. Hỗ trợ chỉ có đường liên hệ thật khi env cung cấp hợp lệ.
 
-Panel payments trong AccountPage vẫn có câu hướng dẫn cũ rằng ZaloPay chưa được tích hợp, trong khi các trang booking đã có luồng gọi API ZaloPay. Đây là nội dung UI chưa đồng bộ trong source; khi xác định khả năng thanh toán, đối chiếu luồng booking và paymentController. Panel coupon tài khoản cũng chưa đọc danh sách coupon khả dụng; CouponPicker ở bước chọn chuyến mới là nơi đang dùng API ưu đãi.
+Panel payments trong AccountPage vẫn có câu hướng dẫn cũ rằng ZaloPay chưa được tích hợp, trong khi các trang booking đã có luồng gọi API ZaloPay. Đây là nội dung UI chưa đồng bộ trong source; khi xác định khả năng thanh toán, đối chiếu luồng booking và paymentController.
 
 ## 11. Quản trị
 
@@ -408,6 +414,8 @@ Dashboard đọc thêm booking gần đây và tours sort most_bought. totalReve
 BookingsPage điều phối detail/status/query/refund; UI chặn/báo kết quả chưa rõ, backend quyết transition. Refund mới là gửi yêu cầu; cần query xác nhận. Không có API/UI hoàn một phần hoặc đánh dấu tiền mặt đã thu.
 
 ContentPage dùng resource config cho list/new/edit. ContentForm nhận resource/initial/onClose, useAdminForm giữ dirty/busy, field chung và field từng loại. Upload gọi /upload field image, tối đa 5 MiB theo backend; form giữ URL/alt/credit và sources. PUT/POST xong changed()/toast để các query đọc lại.
+
+Trong form tạo chuyến khởi hành, chọn tour sẽ tự điền giá người lớn và trẻ em từ cùng chuyến đang mở bán có giá người lớn thấp nhất; nếu bằng giá thì chọn chuyến sớm nhất. Bỏ qua chuyến đã đóng, hết hạn hoặc đã khởi hành. Nếu không có chuyến phù hợp, chỉ điền giá tham khảo người lớn của tour và để trống giá trẻ em. Admin có thể sửa giá trước khi lưu; đổi tour lấy lại giá của tour mới, còn sửa chuyến hiện có giữ giá đã lưu. Giá trẻ em không được tự suy ra từ phần trăm trong nội dung chính sách.
 
 DestinationPicker lọc địa điểm không archived theo tên/địa chỉ/khu vực/nhóm, chọn nhiều điểm, có thứ tự cho tour. Form point location chỉ bật với bản mới hoặc bản cũ đã có placeGroup, không tự áp default location cho mọi destination cũ. Meeting destination nằm trong tuyến; itinerary destinationId thuộc destinationIds; API kiểm lại.
 

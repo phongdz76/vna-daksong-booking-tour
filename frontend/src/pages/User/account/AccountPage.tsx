@@ -10,6 +10,7 @@ import {
   LoadingState,
 } from "../../../components/common/States";
 import AccountMenuItem from "../../../components/account/AccountMenuItem";
+import AccountCoupons from "../../../components/account/AccountCoupons";
 import TourCard from "../../../components/tour/TourCard";
 import { useAuth } from "../../../context/AuthContext";
 import { usePageRefreshHandler } from "../../../context/PageRefreshContext";
@@ -27,7 +28,12 @@ import { previewTours } from "../../../data/preview";
 import { API_PATHS } from "../../../utils/api";
 import { dateTime } from "../../../utils/format";
 import { isZalo } from "../../../utils/zalo";
-import type { Booking, ListResponse, Tour } from "../../../types/api";
+import type { AvailableCoupon, Booking, ListResponse, Tour } from "../../../types/api";
+
+const previewCoupons: ListResponse<AvailableCoupon> = {
+  data: [],
+  pagination: { page: 1, limit: 10, total: 0, pages: 0 },
+};
 
 const panelTitles: Record<string, string> = {
   saved: "Tour đã lưu",
@@ -79,10 +85,15 @@ export default function AccountPage() {
   usePageRefreshHandler(refreshProfile, !isPreview && Boolean(user));
   const navigate = useAppNavigate();
   const [panel, setPanel] = useState<string | null>(null);
+  const [couponPage, setCouponPage] = useState(1);
   const [previewNotifications, setPreviewNotifications] = useState(true);
   const dialog = useRef<HTMLDialogElement>(null);
   const profile = isPreview ? previewAccountUser : user;
   const tierInfo = getTierProgressInfo(profile?.loyaltyPoints ?? 0, profile?.membershipTier ?? "Bạc");
+  const coupons = useApi<ListResponse<AvailableCoupon>>(
+    loading || !user ? null : `${API_PATHS.COUPONS.AVAILABLE}?page=${couponPage}&limit=10`,
+    previewCoupons,
+  );
   const confirmed = useApi<ListResponse<Booking>>(
     user ? API_PATHS.BOOKINGS.GET_MINE + "?status=confirmed&limit=100" : null,
     previewConfirmedBookings,
@@ -129,9 +140,13 @@ export default function AccountPage() {
   }, [panel]);
 
   function openPanel(name: string) {
-    if (!profile && ["saved", "passengers", "membership"].includes(name)) {
+    if (!profile && ["saved", "passengers", "membership", "coupons"].includes(name)) {
       navigate("/login?returnTo=%2Faccount");
       return;
+    }
+    if (name === "coupons") {
+      if (couponPage !== 1) setCouponPage(1);
+      else coupons.retry();
     }
     setPanel(name);
   }
@@ -250,7 +265,7 @@ export default function AccountPage() {
               <span className="account-stat-icon">
                 <Icon name="ticket" size={20} />
               </span>
-              <strong>{isPreview ? 2 : "—"}</strong>
+              <strong>{profile ? coupons.data?.pagination.total ?? "—" : "—"}</strong>
               <small>Mã ưu đãi</small>
             </button>
           </div>
@@ -542,7 +557,10 @@ export default function AccountPage() {
         className="account-dialog"
         aria-labelledby="account-panel-title"
         ref={dialog}
-        onClose={() => setPanel(null)}
+        onClose={(event) => {
+          // A queued close event from the previous panel must not close a reopened dialog.
+          if (!event.currentTarget.open) setPanel(null);
+        }}
         onCancel={() => setPanel(null)}
         onClick={(event) => {
           if (event.target === dialog.current) setPanel(null);
@@ -650,16 +668,15 @@ export default function AccountPage() {
             </>
           )}
           {panel === "coupons" && (
-            <>
-              <p>
-                {isPreview
-                  ? "Số mã ưu đãi trên màn mẫu lấy từ thiết kế Stitch."
-                  : "Hiện chưa có mã ưu đãi dành riêng cho tài khoản. Vui lòng theo dõi các chương trình khuyến mãi từ VNA Đắk Song."}
-              </p>
-              <AppLink className="button button-primary" to="/tours">
-                Chọn tour
-              </AppLink>
-            </>
+            <AccountCoupons
+              data={coupons.data}
+              loading={coupons.loading}
+              error={coupons.error}
+              page={couponPage}
+              onPageChange={setCouponPage}
+              onRetry={coupons.retry}
+              onUse={() => setPanel(null)}
+            />
           )}
           {panel === "ticket" && (
             <>

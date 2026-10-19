@@ -1,4 +1,5 @@
 import type { PlaceLocation } from "./location";
+import type { CouponTier } from "./api";
 export type ContentStatus = "draft" | "published" | "archived";
 export type Theme = "nature" | "culture" | "food" | "history";
 export type BookingStatus =
@@ -97,6 +98,7 @@ export interface Coupon {
   _id: string;
   code: string;
   description: string;
+  applicableTier?: CouponTier;
   discountType: "percentage" | "fixed";
   discountValue: number;
   maxDiscount: number | null;

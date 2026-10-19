@@ -13,6 +13,7 @@ const paymentTransactionSchema = new mongoose.Schema({
   zpTransId: { type: String, default: "" },
   activeAttempt: { type: Boolean, default: false },
   expiresAt: { type: Date, default: null },
+  checkoutUrl: { type: String, maxlength: 4000, default: "", select: false },
   refundRequestId: { type: String, default: "" },
   providerRefundId: { type: String, default: "" },
   refundState: { type: String, enum: ["none", "pending", "failed", "success"], default: "none" },

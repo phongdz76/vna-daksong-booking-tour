@@ -20,6 +20,7 @@ import useAdminForm from "../../hooks/useAdminForm";
 import { useToast } from "../../context/AdminToastContext";
 import type { Departure, ListResponse, Tour } from "../../types/admin";
 import { api, changed, errorMessage, query } from "../../utils/adminApi";
+import { suggestedDeparturePrices } from "../../utils/adminDeparturePricing";
 import {
   date,
   departureState,
@@ -316,20 +317,38 @@ function DepartureForm({
     tourId: initial?.tourId || defaultTour,
     departureAt: localDateTime(initial?.departureAt),
     deadline: localDateTime(initial?.bookingDeadline),
-    adultPrice: initial ? String(initial.adultPrice) : "",
-    childPrice: initial?.childPrice == null ? "" : String(initial.childPrice),
+    adultPrice: initial ? String(initial.adultPrice) : null as string | null,
+    childPrice: initial
+      ? initial.childPrice == null ? "" : String(initial.childPrice)
+      : null as string | null,
     guests: String(initial?.maxGuestsPerBooking || 20),
     status: initial?.status || "open",
   });
+  const tour = tours.data.find((item) => item._id === value.tourId);
+  const tourDepartures = useOptions<Departure>(
+    !initial && value.tourId ? `/tours/${value.tourId}/departures` : null,
+  );
+  const suggested = suggestedDeparturePrices(
+    tour,
+    tourDepartures.loading || tourDepartures.error ? [] : tourDepartures.data,
+  );
+  const adultPrice = value.adultPrice ?? (
+    suggested.adultPrice == null ? "" : String(suggested.adultPrice)
+  );
+  const childPrice = value.childPrice ?? (
+    suggested.childPrice == null ? "" : String(suggested.childPrice)
+  );
   const updateField = (key: keyof typeof value, text: string) =>
-    setValue((v) => ({ ...v, [key]: text }));
+    setValue((v) => key === "tourId"
+      ? { ...v, tourId: text, adultPrice: null, childPrice: null }
+      : { ...v, [key]: text });
   async function handleSave(event: FormEvent) {
     event.preventDefault();
     form.setError("");
     if (!validDate(value.departureAt) || !validDate(value.deadline)) {
       form.setError('Chọn ngày giờ khởi hành và hạn nhận đặt hợp lệ.'); return;
     }
-    if (!validIntegerInput(value.adultPrice, 0, 1000000000) || (value.childPrice !== '' && !validIntegerInput(value.childPrice, 0, 1000000000))) {
+    if (!validIntegerInput(adultPrice, 0, 1000000000) || (childPrice !== '' && !validIntegerInput(childPrice, 0, 1000000000))) {
       form.setError('Giá vé phải là số nguyên từ 0 đến 1.000.000.000 đồng.'); return;
     }
     if (!validIntegerInput(value.guests, 1, initial?.maxCapacity ?? 50)) {
@@ -347,8 +366,8 @@ function DepartureForm({
       ...(initial ? {} : { tourId: value.tourId }),
       departureAt: isoDateTime(value.departureAt),
       bookingDeadline: isoDateTime(value.deadline),
-      adultPrice: Number(value.adultPrice),
-      childPrice: value.childPrice === "" ? null : Number(value.childPrice),
+      adultPrice: Number(adultPrice),
+      childPrice: childPrice === "" ? null : Number(childPrice),
       maxGuestsPerBooking: Number(value.guests),
       status: value.status,
     };
@@ -381,7 +400,7 @@ function DepartureForm({
         max={max}
         step={type === "number" ? 1 : undefined}
         required={required}
-        value={value[key]}
+        value={key === "adultPrice" ? adultPrice : key === "childPrice" ? childPrice : value[key] ?? ""}
         onChange={(event) => updateField(key, event.target.value)}
       />
     </Field>
@@ -434,6 +453,26 @@ function DepartureForm({
                     : "Tour cần được xuất bản để khách có thể đặt."}
                 </small>
               </Field>
+              {!initial && value.tourId && (
+                <div className="field full" aria-live="polite">
+                  {tourDepartures.loading ? (
+                    <p className="inline-note">Đang tải giá của tour…</p>
+                  ) : tourDepartures.error ? (
+                    <Notice error>
+                      Chưa tải được giá các chuyến hiện có. Bạn có thể nhập giá
+                      thủ công hoặc mở lại form để thử lại.
+                    </Notice>
+                  ) : (
+                    <p className="inline-note">
+                      {suggested.source
+                        ? `Giá gợi ý từ chuyến đang mở bán ngày ${date(suggested.source.departureAt, true)}, có giá người lớn thấp nhất của tour. Bạn có thể sửa trước khi lưu.`
+                        : suggested.adultPrice != null
+                          ? "Giá người lớn được điền từ giá tham khảo của tour. Chưa có giá trẻ em từ chuyến đang mở bán; hãy nhập theo chính sách tour nếu áp dụng."
+                          : "Tour chưa có giá tham khảo hoặc chuyến đang mở bán. Hãy nhập giá cho chuyến mới."}
+                    </p>
+                  )}
+                </div>
+              )}
               {input("Khởi hành", "departureAt", "datetime-local")}
               {input("Hạn nhận đặt", "deadline", "datetime-local")}
               {input(
@@ -485,7 +524,7 @@ function DepartureForm({
             type="submit"
             icon="check"
             busy={form.busy}
-            disabled={!initial && (tours.loading || Boolean(tours.error))}
+            disabled={!initial && (tours.loading || Boolean(tours.error) || tourDepartures.loading)}
           >
             Lưu chuyến khởi hành
           </Button>

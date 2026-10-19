@@ -1171,6 +1171,10 @@
     font-weight: 550;
     font-size: 13px;
   }
+  .destination-detail-content > .notice,
+  .destination-detail-content > .policy {
+    margin-top: 16px;
+  }
   .policy p,
   .policy h4 {
     font-size: 12px;

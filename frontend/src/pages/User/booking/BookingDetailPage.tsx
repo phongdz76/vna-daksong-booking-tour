@@ -16,6 +16,7 @@ import { previewBookingDetail } from "../../../data/previewBookingDetail";
 import useApi from "../../../hooks/useApi";
 import useBookingPaymentSync from "../../../hooks/useBookingPaymentSync";
 import { api, API_PATHS, errorMessage } from "../../../utils/api";
+import { openZaloPayCheckout, reserveZaloPayWindow, zaloPayErrorMessage } from "../../../utils/zalopay";
 import { dateTime, money, paymentLabels } from "../../../utils/format";
 import {
   bookingHistoryLabel,
@@ -47,7 +48,7 @@ export default function BookingDetailPage() {
   const sending = useRef(false);
   const booking = result.data?.data;
   const paymentSync = useBookingPaymentSync(
-    booking ? [booking] : undefined,
+    booking && !paying ? [booking] : undefined,
     result.refresh,
   );
   const phone = String(import.meta.env.VITE_SUPPORT_PHONE || "").trim();
@@ -102,15 +103,11 @@ export default function BookingDetailPage() {
     sending.current = true;
     setPaying(true);
     setError("");
+    const popup = reserveZaloPayWindow();
     try {
-      const response = await api.post<{ order_url: string }>(
-        "/payments/zalopay/create",
-        { bookingId: booking._id },
-      );
-      if (!response.data.order_url) throw new Error("Missing payment URL");
-      window.location.assign(response.data.order_url);
+      await openZaloPayCheckout(booking._id, popup);
     } catch (error) {
-      setError(errorMessage(error));
+      setError(zaloPayErrorMessage(error));
     } finally {
       sending.current = false;
       setPaying(false);
@@ -348,7 +345,7 @@ export default function BookingDetailPage() {
                     disabled={isPreview || paying || busy}
                     onClick={handlePayment}
                   >
-                    {paying ? "Đang mở ZaloPay…" : "Thanh toán qua ZaloPay"}
+                    {paying ? "Đang chờ thanh toán…" : "Thanh toán lại qua ZaloPay"}
                     <Icon name="arrow" size={18} />
                   </button>
                 )}

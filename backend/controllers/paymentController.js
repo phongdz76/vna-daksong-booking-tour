@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import moment from "moment";
 import Booking from "../models/Booking.js";
 import PaymentTransaction from "../models/PaymentTransaction.js";
+import { paymentReturnUrl, paymentCallbackUrl, validCheckoutUrl } from "../utils/zalopayUrls.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 const ORDER_EXPIRY_MS = 15 * 60 * 1000;
@@ -28,7 +29,7 @@ function getConfig() {
 
 // Dùng chung cho tạo giao dịch, đối soát và hoàn tiền.
 // Timeout chưa chứng minh provider chưa thu/hoàn tiền.
-export async function sendZaloPayRequest(url, payload, formBody = false) {
+export async function sendZaloPayRequest(url, payload, formBody = true) {
   try {
     const response = formBody
       ? await axios.post(url, new URLSearchParams(
@@ -190,12 +191,16 @@ async function refreshZaloPayOrder(transaction, config) {
       expiresAt = new Date(transaction.createdAt.getTime() + ORDER_EXPIRY_MS);
     }
 
-    // Chỉ giải phóng giao dịch khi provider xác nhận hết hạn, không còn xử lý.
-    // Lỗi MAC/cấu hình/hệ thống không chứng minh rằng chưa thu tiền.
-    if (providerResult.return_code === 2 &&
-        providerResult.is_processing === false &&
-        [-101, -63].includes(providerResult.sub_return_code) &&
-        expiresAt <= new Date()) {
+    // Documented payment failures are distinct from MAC/config/network errors.
+    // is_processing is provider-internal and can remain true for BANK_ERROR.
+    // A confirmed bank failure needs a fresh order, rather than reopening its failed checkout.
+    const paymentFailed = providerResult.return_code === 2 &&
+      [-54, -63, -217, -332, -333, -1330, -1331, -1332, -1333, -1340, -1341, -1342, -1343].includes(providerResult.sub_return_code);
+    const expired = expiresAt <= new Date();
+    const missingExpired = providerResult.return_code === 2 && providerResult.sub_return_code === -101 &&
+      providerResult.is_processing === false && expired;
+    if (paymentFailed || missingExpired) {
+      const release = expired || [-54, -217].includes(providerResult.sub_return_code);
       await PaymentTransaction.updateOne(
         {
           _id: transaction._id,
@@ -205,8 +210,10 @@ async function refreshZaloPayOrder(transaction, config) {
         {
           $set: {
             status: "failed",
-            activeAttempt: false,
-            note: "Đối soát: đơn hết hạn, không thanh toán.",
+            ...(release ? { activeAttempt: false } : {}),
+            note: providerResult.sub_return_code === -217
+              ? "Ngân hàng/cổng thanh toán báo giao dịch thất bại (BANK_ERROR -217). Bấm thanh toán lại để tạo lượt thanh toán mới."
+              : "ZaloPay xác nhận lần thanh toán chưa thành công. Bạn có thể thanh toán lại.",
           },
           $inc: { __v: 1 },
         }
@@ -214,7 +221,7 @@ async function refreshZaloPayOrder(transaction, config) {
     }
   }
 
-  const updatedTransaction = await PaymentTransaction.findById(transaction._id);
+  const updatedTransaction = await PaymentTransaction.findById(transaction._id).select("+checkoutUrl");
   return {
     transaction: updatedTransaction,
     provider: providerResult,
@@ -255,6 +262,9 @@ export const createZaloPayOrder = async (req, res, next) => {
     if (!Number.isSafeInteger(booking.snapshot.total) || booking.snapshot.total <= 0) {
       return res.status(400).json({ message: "Đơn không có số tiền hợp lệ để thanh toán ZaloPay." });
     }
+    // Validate redirect configuration before reserving a payment attempt.
+    const redirectUrl = paymentReturnUrl(bookingId);
+    const callbackUrl = paymentCallbackUrl();
 
     // 2. Đối soát dữ liệu cũ hoặc giao dịch đang chờ đã hết hạn.
     const unsettledTransaction = await PaymentTransaction.findOne({
@@ -269,14 +279,25 @@ export const createZaloPayOrder = async (req, res, next) => {
     const previousTransaction = await PaymentTransaction.findOne({
       bookingId,
       $or: [{ status: "pending" }, { activeAttempt: true }],
-    });
+    }).select("+checkoutUrl");
     if (previousTransaction) {
-      let expiresAt = previousTransaction.expiresAt;
-      if (!expiresAt) {
-        expiresAt = new Date(previousTransaction.createdAt.getTime() + ORDER_EXPIRY_MS);
+      // Reconcile before reopening an existing checkout or creating another.
+      const refreshed = await refreshZaloPayOrder(previousTransaction, config);
+      const previous = refreshed.transaction;
+      const currentBooking = await Booking.findById(bookingId);
+      if (currentBooking.paymentStatus !== "unpaid") {
+        return res.status(400).json({ message: "Đơn hàng đã được thanh toán hoặc đang hoàn tiền." });
       }
-      if (expiresAt <= new Date()) {
-        await refreshZaloPayOrder(previousTransaction, config);
+      if (!["pending_confirmation", "confirmed"].includes(currentBooking.status)) {
+        return res.status(400).json({ message: "Đơn hàng không thể thanh toán ở trạng thái hiện tại." });
+      }
+      let expiresAt = previous.expiresAt;
+      if (!expiresAt) {
+        expiresAt = new Date(previous.createdAt.getTime() + ORDER_EXPIRY_MS);
+      }
+      if (previous.activeAttempt && ["pending", "failed"].includes(previous.status) &&
+          expiresAt > new Date() && validCheckoutUrl(previous.checkoutUrl)) {
+        return res.json({ order_url: previous.checkoutUrl, appTransId: previous.appTransId, reused: true });
       }
     }
 
@@ -338,7 +359,7 @@ export const createZaloPayOrder = async (req, res, next) => {
       itemquantity: 1,
     }];
     const embedData = {
-      redirecturl: (process.env.CLIENT_URL || "") + "/booking/success/" + bookingId,
+      redirecturl: redirectUrl,
     };
     const order = {
       app_id: config.app_id,
@@ -350,6 +371,8 @@ export const createZaloPayOrder = async (req, res, next) => {
       embed_data: JSON.stringify(embedData),
       description: "Thanh toán Tour Đắk Song - Đơn hàng #" + paymentBooking.code,
       bank_code: "",
+      expire_duration_seconds: ORDER_EXPIRY_MS / 1000,
+      ...(callbackUrl ? { callback_url: callbackUrl } : {}),
     };
     const signatureData = [
       order.app_id,
@@ -365,6 +388,8 @@ export const createZaloPayOrder = async (req, res, next) => {
     // 5. Gọi provider ngoài transaction MongoDB.
     const providerResult = await sendZaloPayRequest(config.endpoint, order);
     if (providerResult.return_code === 1) {
+      if (!validCheckoutUrl(providerResult.order_url)) throw new Error("PAYMENT_RESULT_UNKNOWN");
+      await PaymentTransaction.updateOne({ _id: transaction._id }, { $set: { checkoutUrl: providerResult.order_url } });
       return res.json({
         order_url: providerResult.order_url,
         zp_trans_token: providerResult.zp_trans_token,
@@ -396,6 +421,9 @@ export const createZaloPayOrder = async (req, res, next) => {
       appTransId: transaction.appTransId,
     });
   } catch (error) {
+    if (error.message === "PAYMENT_URL_NOT_CONFIGURED") {
+      return res.status(503).json({ message: "Địa chỉ quay về hoặc callback ZaloPay chưa hợp lệ. Vui lòng kiểm tra CLIENT_URL và ZALOPAY_CALLBACK_URL.", code: "PAYMENT_URL_NOT_CONFIGURED" });
+    }
     if (error.message === "BOOKING_NOT_FOUND") {
       return res.status(404).json({ message: "Không tìm thấy đơn hàng." });
     }
@@ -426,7 +454,7 @@ export const createZaloPayOrder = async (req, res, next) => {
         appTransId = pendingTransaction.appTransId;
       }
       return res.status(409).json({
-        message: "Đã có giao dịch đang chờ. Hãy truy vấn trạng thái giao dịch.",
+        message: "Giao dịch trước đang chờ đối soát hoặc chưa có link mở lại. Vui lòng kiểm tra trạng thái trước khi thanh toán lại.",
         code: "PAYMENT_PENDING",
         appTransId,
       });
@@ -487,6 +515,8 @@ export const queryZaloPayOrder = async (req, res, next) => {
       appTransId: transaction.appTransId,
       status: result.transaction.status,
       return_code: result.provider.return_code,
+      sub_return_code: result.provider.sub_return_code,
+      message: result.transaction.status === "failed" ? result.transaction.note : undefined,
     });
   } catch (error) {
     if (error.message === "PAYMENT_RESULT_UNKNOWN") {

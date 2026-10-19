@@ -32,6 +32,9 @@ function Read-ActiveLog($path) {
 function Start-Backend {
     # The local credential file is authoritative; keep mock login disabled.
     $overrides = @{ NODE_ENV = 'production'; ALLOW_MOCK_LOGIN = 'false'; PORT = '8000'; VERCEL = $null; ZALO_APP_SECRET = $null; ZALO_APP_ID = $null }
+    if ($script:session.url) {
+        $overrides['ZALOPAY_CALLBACK_URL'] = "$($script:session.url)/api/payments/zalopay/webhook"
+    }
     $previous = @{}
     try {
         foreach ($name in $overrides.Keys) {
@@ -141,6 +144,15 @@ try {
         Start-Sleep -Seconds 1
     }
     if (-not $script:session.url) { throw 'No HTTPS URL was returned. Check tmp/zalo-local/tunnel.err.log.' }
+
+    # The tunnel URL is now known. Reload the owned backend with its public
+    # payment callback URL before exposing the frontend configuration.
+    if (Test-RecordedProcess $script:session.backend) {
+        Stop-Process -Id $script:session.backend.pid
+        Wait-Process -Id $script:session.backend.pid -Timeout 10 -ErrorAction SilentlyContinue
+    }
+    Start-Backend
+    Wait-Backend
 
     $deadline = [DateTime]::UtcNow.AddSeconds(45)
     $ready = $false

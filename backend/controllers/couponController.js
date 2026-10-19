@@ -16,6 +16,11 @@ export const getAvailableCoupons = async (req, res, next) => {
         { usageLimit: null },
         { $expr: { $lt: ["$usedCount", "$usageLimit"] } },
       ],
+      $and: [{ $or: [
+        { applicableTier: { $exists: false } },
+        { applicableTier: "all" },
+        ...(req.user?.membershipTier ? [{ applicableTier: req.user.membershipTier }] : []),
+      ] }],
     };
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
     const limit = Math.min(
@@ -25,7 +30,7 @@ export const getAvailableCoupons = async (req, res, next) => {
     const [data, total] = await Promise.all([
       Coupon.find(filter)
         .select(
-          "code description discountType discountValue maxDiscount minOrderValue validUntil -_id",
+          "code description applicableTier discountType discountValue maxDiscount minOrderValue validUntil -_id",
         )
         .sort({ createdAt: -1, _id: -1 })
         .skip((page - 1) * limit)
@@ -34,7 +39,7 @@ export const getAvailableCoupons = async (req, res, next) => {
       Coupon.countDocuments(filter),
     ]);
     res.json({
-      data,
+      data: data.map(coupon => ({ ...coupon, applicableTier: coupon.applicableTier ?? "all" })),
       pagination: { page, limit, total, pages: Math.ceil(total / limit) },
     });
   } catch (error) {
@@ -91,6 +96,7 @@ export const createCoupon = async (req, res, next) => {
     const {
       code,
       description,
+      applicableTier,
       discountType,
       discountValue,
       maxDiscount,
@@ -175,6 +181,7 @@ export const createCoupon = async (req, res, next) => {
     // 2. Chuẩn hóa và lưu; model kiểm tra khoảng ngày hiệu lực.
     const fields = {
       description: description ? description.trim() : "",
+      applicableTier: applicableTier ?? "all",
       discountType,
       discountValue,
       maxDiscount: maxDiscount ?? null,
@@ -216,6 +223,7 @@ export const updateCoupon = async (req, res, next) => {
   try {
     const {
       description,
+      applicableTier,
       discountType,
       discountValue,
       maxDiscount,
@@ -296,6 +304,9 @@ export const updateCoupon = async (req, res, next) => {
     // 2. Chỉ cập nhật các trường được gửi lên.
     if (description !== undefined) {
       coupon.description = description.trim();
+    }
+    if (applicableTier !== undefined) {
+      coupon.applicableTier = applicableTier;
     }
     if (discountType !== undefined) {
       if (!["percentage", "fixed"].includes(discountType)) {

@@ -1,6 +1,6 @@
 import { API_PATHS } from "../../../utils/api";
 import { useParams } from "react-router-dom";
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import Header from "../../../components/layout/Header";
 import AppLink from "../../../components/common/AppLink";
 import Icon from "../../../components/common/Icon";
@@ -20,6 +20,7 @@ import {
   paymentLabels,
 } from "../../../utils/format";
 import type { Booking } from "../../../types/api";
+import { openZaloPayCheckout, reserveZaloPayWindow, zaloPayErrorMessage } from "../../../utils/zalopay";
 
 export default function BookingSuccessPage() {
   const { id } = useParams();
@@ -37,10 +38,28 @@ export default function BookingSuccessPage() {
     previewData,
   );
   const booking = result.data?.data;
+  const [paying, setPaying] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
+  const openingPayment = useRef(false);
   const paymentSync = useBookingPaymentSync(
-    booking ? [booking] : undefined,
+    booking && !paying ? [booking] : undefined,
     result.refresh,
   );
+  async function handlePayment() {
+    if (!booking || isPreview || openingPayment.current) return;
+    openingPayment.current = true;
+    setPaying(true);
+    setPaymentError("");
+    const popup = reserveZaloPayWindow();
+    try {
+      await openZaloPayCheckout(booking._id, popup);
+    } catch (error) {
+      setPaymentError(zaloPayErrorMessage(error));
+    } finally {
+      openingPayment.current = false;
+      setPaying(false);
+    }
+  }
   return (
     <div className="page">
       <Header title="Yêu cầu của bạn" back fallback="/my-bookings" />
@@ -143,31 +162,19 @@ export default function BookingSuccessPage() {
                 ) && (
                   <div style={{ marginTop: "20px" }}>
                     <button
+                      type="button"
                       className="button button-primary button-wide"
-                      onClick={async () => {
-                        try {
-                          const { api } = await import("../../../utils/api");
-                          const res = await api.post<{ order_url: string }>(
-                            "/payments/zalopay/create",
-                            { bookingId: booking._id },
-                          );
-                          if (res.data.order_url)
-                            window.location.href = res.data.order_url;
-                        } catch (error) {
-                          alert(
-                            "Không thể khởi tạo thanh toán ZaloPay. Vui lòng thử lại sau.",
-                          );
-                        }
-                      }}
+                      disabled={isPreview || paying}
+                      onClick={handlePayment}
                     >
-                      Thanh toán qua ZaloPay
+                      {paying ? "Đang chờ thanh toán…" : "Thanh toán lại qua ZaloPay"}
                     </button>
                   </div>
                 )}
             </section>
-            {(paymentSync.error || result.refreshError) && (
+            {(paymentError || paymentSync.error || result.refreshError) && (
               <p className="form-error" role="alert">
-                {paymentSync.error || result.refreshError}
+                {paymentError || paymentSync.error || result.refreshError}
               </p>
             )}
             {!isPreview &&
